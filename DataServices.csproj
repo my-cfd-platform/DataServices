@@ -17,7 +17,6 @@
     </PackageReference>
     <PackageReference Include="MyNoSqlServer.DataReader" Version="1.8.13" />
     <PackageReference Include="MyNoSqlServer.DataWriter" Version="1.8.13" />
-    <PackageReference Include="SimpleTrading.Abstraction" Version="2.0.24" />
     <PackageReference Include="SimpleTrading.SettingsReader" Version="1.1.0" />
   </ItemGroup>
 
