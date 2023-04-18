@@ -17,8 +17,6 @@ namespace DataServices.Services;
 
 public class ClientsService : IClientsService
 {
-    private readonly DataServicesSettings _settings;
-
     private readonly TraderCredentialsGrpcService.TraderCredentialsGrpcServiceClient? _traderCredentialsClient;
     private readonly ReportGrpcService.ReportGrpcServiceClient? _reportClient;
     private readonly AuthenticationGrpcService.AuthenticationGrpcServiceClient? _authServiceClient;
@@ -26,42 +24,39 @@ public class ClientsService : IClientsService
     private readonly AccountsManagerGrpcService.AccountsManagerGrpcServiceClient? _accountsManagerClient;
     private readonly TradeLogGrpcService.TradeLogGrpcServiceClient? _tradeLogClient;
 
-
-
     public ClientsService(
-        DataServicesSettings serviceSettings
+        DataServicesSettings settings
     )
     {
-        _settings = serviceSettings;
-        if (_settings.TraderCredentialsFlowsGrpcUrl.IsNotNullOrEmpty())
+        if (settings.TraderCredentialsFlowsGrpcUrl.IsNotNullOrEmpty())
         {
             _traderCredentialsClient = new TraderCredentialsGrpcService.TraderCredentialsGrpcServiceClient(
-                GrpcChannel.ForAddress(_settings.TraderCredentialsFlowsGrpcUrl));
+                GrpcChannel.ForAddress(settings.TraderCredentialsFlowsGrpcUrl));
         }
 
-        if (_settings.ReportGrpcUrl.IsNotNullOrEmpty())
+        if (settings.ReportGrpcUrl.IsNotNullOrEmpty())
         {
             _reportClient = new ReportGrpcService.ReportGrpcServiceClient(
-                GrpcChannel.ForAddress(_settings.ReportGrpcUrl));
+                GrpcChannel.ForAddress(settings.ReportGrpcUrl));
         }
 
-        if (_settings.AuthGrpcUrl.IsNotNullOrEmpty())
+        if (settings.AuthGrpcUrl.IsNotNullOrEmpty())
         {
             _authServiceClient = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(
-                GrpcChannel.ForAddress(_settings.AuthGrpcUrl));
+                GrpcChannel.ForAddress(settings.AuthGrpcUrl));
         }
 
-        if (_settings.TradeLogGrpcServiceUrl.IsNotNullOrEmpty())
+        if (settings.TradeLogGrpcServiceUrl.IsNotNullOrEmpty())
         {
             _tradeLogClient = new TradeLogGrpcService.TradeLogGrpcServiceClient(
-                GrpcChannel.ForAddress(_settings.TradeLogGrpcServiceUrl));
+                GrpcChannel.ForAddress(settings.TradeLogGrpcServiceUrl));
         }
 
-        if (_settings.AccountsManagerGrpcUrl.IsNotNullOrEmpty())
+        if (settings.AccountsManagerGrpcUrl.IsNotNullOrEmpty())
         {
             _accountsManagerClient = new AccountsManagerGrpcService.AccountsManagerGrpcServiceClient
             (
-                GrpcChannel.ForAddress(_settings.AccountsManagerGrpcUrl));
+                GrpcChannel.ForAddress(settings.AccountsManagerGrpcUrl));
         }
     }
 
