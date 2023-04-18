@@ -1,4 +1,5 @@
-﻿using DataServices.MyNoSql.Interfaces;
+﻿using DataServices.Models;
+using DataServices.MyNoSql.Interfaces;
 using DataServices.MyNoSql.Models;
 using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataWriter;
