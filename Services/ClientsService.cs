@@ -1,0 +1,271 @@
+using AccountsManager;
+using AuthenticationIntegration;
+using DataServices.Extensions;
+using DataServices.Models;
+using DataServices.Models.Clients;
+using DataServices.Services.Interfaces;
+using DataServices.Utils;
+using DotNetCoreDecorators;
+using Grpc.Core;
+using Grpc.Net.Client;
+using Pd;
+using ReportGrpc;
+using TradeLog;
+using TraderCredentials;
+
+namespace DataServices.Services;
+
+public class ClientsService : IClientsService
+{
+    private readonly DataServicesSettings _settings;
+
+    private readonly TraderCredentialsGrpcService.TraderCredentialsGrpcServiceClient? _traderCredentialsClient;
+    private readonly ReportGrpcService.ReportGrpcServiceClient? _reportClient;
+    private readonly AuthenticationGrpcService.AuthenticationGrpcServiceClient? _authServiceClient;
+    private readonly PersonalDataService.PersonalDataServiceClient? _personalDataClient;
+    private readonly AccountsManagerGrpcService.AccountsManagerGrpcServiceClient? _accountsManagerClient;
+    private readonly TradeLogGrpcService.TradeLogGrpcServiceClient? _tradeLogClient;
+
+
+
+    public ClientsService(
+        DataServicesSettings serviceSettings
+    )
+    {
+        _settings = serviceSettings;
+        if (_settings.TraderCredentialsFlowsGrpcUrl.IsNotNullOrEmpty())
+        {
+            _traderCredentialsClient = new TraderCredentialsGrpcService.TraderCredentialsGrpcServiceClient(
+                GrpcChannel.ForAddress(_settings.TraderCredentialsFlowsGrpcUrl));
+        }
+
+        if (_settings.ReportGrpcUrl.IsNotNullOrEmpty())
+        {
+            _reportClient = new ReportGrpcService.ReportGrpcServiceClient(
+                GrpcChannel.ForAddress(_settings.ReportGrpcUrl));
+        }
+
+        if (_settings.AuthGrpcUrl.IsNotNullOrEmpty())
+        {
+            _authServiceClient = new AuthenticationGrpcService.AuthenticationGrpcServiceClient(
+                GrpcChannel.ForAddress(_settings.AuthGrpcUrl));
+        }
+
+        if (_settings.TradeLogGrpcServiceUrl.IsNotNullOrEmpty())
+        {
+            _tradeLogClient = new TradeLogGrpcService.TradeLogGrpcServiceClient(
+                GrpcChannel.ForAddress(_settings.TradeLogGrpcServiceUrl));
+        }
+
+        if (_settings.AccountsManagerGrpcUrl.IsNotNullOrEmpty())
+        {
+            _accountsManagerClient = new AccountsManagerGrpcService.AccountsManagerGrpcServiceClient
+            (
+                GrpcChannel.ForAddress(_settings.AccountsManagerGrpcUrl));
+        }
+    }
+
+    private string GetProcessId()
+    {
+        return $"Dealing-Admin-{FormatUtils.DateTimeNamedWithMsFormat(DateTime.UtcNow)}";
+    }
+
+    public async Task<List<TradeLogItem>> GetTradeLog(string accountId, string traderId, DateTime from, DateTime to)
+    {
+        var tradeLogStream = _tradeLogClient.Read(new()
+        {
+            AccountId = accountId,
+            TraderId = traderId,
+            DateFromMicros = from.ToEpochMic(),
+            DateToMicros = to.ToEpochMic()
+        }).ResponseStream;
+        var logItems = new List<TradeLogItem>();
+        while (await tradeLogStream.MoveNext())
+        {
+            logItems.Add(tradeLogStream.Current);
+        }
+        return logItems;
+    }
+
+
+    public async Task<string> GetClientRedirectUrl(string clientId)
+    {
+        var redirectUrl = await _authServiceClient.GeneratePlatformRedirectUrlAsync(new GeneratePlatformRedirectUrlGrpcRequest
+        {
+            TraderId = clientId
+        });
+
+        return redirectUrl.RedirectUrl;
+    }
+
+    #region Trader and Account
+
+    public async Task<List<TradingAccountModel>> GetTraderAccountsAsync(string traderId)
+    {
+        var traderAccountsStream =
+            _accountsManagerClient!
+                .GetClientAccounts(new() { TraderId = traderId })
+                .ResponseStream;
+
+        var accounts = new List<TradingAccountModel>();
+        while (await traderAccountsStream.MoveNext())
+        {
+            accounts.Add(TradingAccountModel.FromGrpc(traderAccountsStream.Current));
+        }
+        return accounts;
+    }
+
+    public async Task<List<TraderBrandModel>> SearchTraderBrandsAsync(string searchValue)
+    {
+        var traderIds = await _traderCredentialsClient!.SearchByIdOrEmailAsync(new()
+        {
+            Phrase = searchValue
+        });
+        return traderIds.Ids.Count == 0 ?
+            new() :
+            traderIds.Ids.Select(TraderBrandModel.FromGrpc).ToList();
+    }
+
+    public async Task<AccountsManagerOperationResult> SetTraderAccountDisabledAsync(string accountId, string traderId, bool disabled)
+    {
+        var res = await _accountsManagerClient!.UpdateAccountTradingDisabledAsync(new()
+        {
+            AccountId = accountId,
+            ProcessId = GetProcessId(),
+            TraderId = traderId,
+            TradingDisabled = disabled
+        });
+        return res.Result;
+    }
+
+    #endregion
+
+    #region Balance
+
+    public async Task<AccountManagerUpdateAccountBalanceGrpcResponse> UpdateAccountBalanceAsync(UpdateBalanceModel requestModel)
+    {
+        var res = await _accountsManagerClient!.UpdateClientAccountBalanceAsync(new()
+        {
+            AccountId = requestModel.AccountId,
+            AllowNegativeBalance = requestModel.AllowNegativeBalance,
+            Comment = requestModel.Comment,
+            Delta = requestModel.Delta,
+            ProcessId = GetProcessId(),
+            Reason = requestModel.Reason,
+            ReferenceTransactionId = requestModel.ReferenceTransactionId,
+            TraderId = requestModel.TraderId
+        });
+        return res;
+    }
+
+    public async Task<List<AccountBalanceModel>> GetBalanceHistoryAsync(string accountId)
+    {
+        var page = 1;
+        var size = 100;
+        var initResult = await GetBalanceHistoryPageAsync(accountId, page, size);
+        var items = initResult.History;
+        while (items.Count < (int)initResult.TotalItems)
+        {
+            page++;
+            var res = await GetBalanceHistoryPageAsync(accountId, page, size);
+            items.AddRange(res.History);
+        }
+
+        return items.Select(AccountBalanceModel.FromGrpc).ToList();
+    }
+
+    public async Task<ReportFlowsOperationsGetHistoryPaginatedGrpcResponse> GetBalanceHistoryPageAsync(
+        string accountId, int page, int size = 100)
+    {
+        var res = await _reportClient!.GetHistoryPaginatedAsync(new()
+        {
+            AccountId = accountId,
+            Page = page,
+            Size = size
+        });
+
+        return res;
+    }
+
+
+    #endregion
+
+    #region Active Positions
+
+    public async Task<List<InvestmentPositionModel>> GetActivePositionsAsync(string accountId, DateTime from, DateTime to)
+    {
+        var request = new ReportFlowsOperationsGetInDateRangeGrpcRequest
+        {
+            AccountId = accountId
+        };
+        if (from == DateTime.MinValue || from == DateTime.MinValue)
+            return await GetActivePositionsAsync(request);
+        request.DateFrom = (ulong)from.UnixTime();
+        request.DateTo = (ulong)to.UnixTime();
+        return await GetActivePositionsAsync(request); ;
+    }
+
+    public async Task<List<InvestmentPositionModel>> GetAllActivePositionsAsync(DateTime from, DateTime to)
+    {
+        var request = new ReportFlowsOperationsGetInDateRangeGrpcRequest
+        {
+            DateFrom = (ulong)from.UnixTime(),
+            DateTo = (ulong)to.UnixTime()
+        };
+        return await GetActivePositionsAsync(request);
+    }
+
+    private async Task<List<InvestmentPositionModel>> GetActivePositionsAsync(
+        ReportFlowsOperationsGetInDateRangeGrpcRequest request)
+    {
+        var activePositionsStream = _reportClient!.GetActivePositionsInDateRange(request).ResponseStream;
+        var positions = new List<InvestmentPositionModel>();
+        while (await activePositionsStream.MoveNext())
+        {
+            positions.Add(InvestmentPositionModel.FromGrpc(activePositionsStream.Current));
+        }
+        return positions;
+    }
+
+    #endregion
+
+    #region Closed Positions
+
+    public async Task<List<InvestmentPositionModel>> GetHistoryPositionsAsync(string accountId, DateTime from, DateTime to)
+    {
+        var request = new ReportFlowsOperationsGetInDateRangeGrpcRequest
+        {
+            AccountId = accountId
+        };
+        if (from != DateTime.MinValue && from != DateTime.MinValue)
+        {
+            request.DateFrom = (ulong)from.UnixTime();
+            request.DateTo = (ulong)to.UnixTime();
+        }
+        return await GetHistoryPositionsAsync(request);
+    }
+
+    public async Task<List<InvestmentPositionModel>> GetAllHistoryPositionsAsync(DateTime from, DateTime to)
+    {
+        var request = new ReportFlowsOperationsGetInDateRangeGrpcRequest
+        {
+            DateFrom = (ulong)from.UnixTime(),
+            DateTo = (ulong)to.UnixTime()
+        };
+        return await GetHistoryPositionsAsync(request);
+    }
+
+    private async Task<List<InvestmentPositionModel>> GetHistoryPositionsAsync(
+        ReportFlowsOperationsGetInDateRangeGrpcRequest request)
+    {
+        var activePositionsStream = _reportClient!.GetHistoryPositionsInDateRange(request).ResponseStream;
+        var positions = new List<InvestmentPositionModel>();
+        while (await activePositionsStream.MoveNext())
+        {
+            positions.Add(InvestmentPositionModel.FromGrpc(activePositionsStream.Current));
+        }
+        return positions;
+    }
+
+    #endregion
+}
