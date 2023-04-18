@@ -1,0 +1,3 @@
+[submodule "ProtoFiles"]
+	path = ProtoFiles
+	url = git@github.com:my-cfd-platform/proto-files.git
