@@ -1,5 +1,6 @@
 ﻿using AccountsManager;
 using DataServices.Models.Clients;
+using Pd;
 using ReportGrpc;
 using TradeLog;
 
@@ -25,4 +26,6 @@ public interface IClientsService
     Task<List<InvestmentPositionModel>> GetAllHistoryPositionsAsync(DateTime from, DateTime to);
     Task<List<InvestmentPositionModel>> GetHistoryPositionsAsync(string accountId, DateTime from, DateTime to);
     Task<List<TradeLogItem>> GetTradeLog(string accountId, string traderId, DateTime from, DateTime to);
+    Task SetTraderPersonalData(PersonalDataModel model, string traderId);
+    Task<Pd.PersonalDataModel> GetTraderPersonalDataGrpc(TraderBrandModel traderBrand);
 }

@@ -14,6 +14,11 @@ public static class NumericExtension
         return EpochMicToDateTime((ulong)milliseconds);
     }
 
+    public static long UnixTime(this DateTime? dateTime )
+    {
+        return dateTime?.UnixTime() ?? DateTime.UnixEpoch.UnixTime();
+    }
+
     public static DateTime EpochMilToDateTime(this ulong javaTimeStamp )
     {
         DateTime dateTime = new(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);

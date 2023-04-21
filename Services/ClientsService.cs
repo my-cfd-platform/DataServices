@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using AccountsManager;
 using AuthenticationIntegration;
 using DataServices.Extensions;
@@ -8,6 +9,7 @@ using DataServices.Utils;
 using DotNetCoreDecorators;
 using Grpc.Core;
 using Grpc.Net.Client;
+using Newtonsoft.Json;
 using Pd;
 using ReportGrpc;
 using TradeLog;
@@ -24,10 +26,14 @@ public class ClientsService : IClientsService
     private readonly AccountsManagerGrpcService.AccountsManagerGrpcServiceClient? _accountsManagerClient;
     private readonly TradeLogGrpcService.TradeLogGrpcServiceClient? _tradeLogClient;
 
-    public ClientsService(
-        DataServicesSettings settings
-    )
+    public ClientsService(DataServicesSettings settings)
     {
+        if (settings.PersonalDataGrpcServiceUrl.IsNotNullOrEmpty())
+        {
+            _personalDataClient = new PersonalDataService.PersonalDataServiceClient(
+                GrpcChannel.ForAddress(settings.PersonalDataGrpcServiceUrl));
+        }
+
         if (settings.TraderCredentialsFlowsGrpcUrl.IsNotNullOrEmpty())
         {
             _traderCredentialsClient = new TraderCredentialsGrpcService.TraderCredentialsGrpcServiceClient(
@@ -82,7 +88,6 @@ public class ClientsService : IClientsService
         return logItems;
     }
 
-
     public async Task<string> GetClientRedirectUrl(string clientId)
     {
         var redirectUrl = await _authServiceClient.GeneratePlatformRedirectUrlAsync(new GeneratePlatformRedirectUrlGrpcRequest
@@ -92,6 +97,28 @@ public class ClientsService : IClientsService
 
         return redirectUrl.RedirectUrl;
     }
+
+    #region Personal Data
+
+    public async Task<Pd.PersonalDataModel> GetTraderPersonalDataGrpc(TraderBrandModel traderBrand)
+    {
+        var request = new GetPersonalDataRequest { Id = traderBrand.TraderId };
+        var clientData = await _personalDataClient!.GetAsync(request);
+        return clientData.PersonalDataModel;
+    }
+    
+    public async Task SetTraderPersonalData(PersonalDataModel model, string traderId)
+    {
+        var request = new SetPersonalDataRequest
+        {
+            Id = traderId,
+            PersonalDataModel = model
+        };
+        var a = JsonConvert.SerializeObject(request);
+        await _personalDataClient!.SetAsync(request);
+    }
+
+    #endregion
 
     #region Trader and Account
 
@@ -197,7 +224,7 @@ public class ClientsService : IClientsService
             return await GetActivePositionsAsync(request);
         request.DateFrom = (ulong)from.UnixTime();
         request.DateTo = (ulong)to.UnixTime();
-        return await GetActivePositionsAsync(request); ;
+        return await GetActivePositionsAsync(request);
     }
 
     public async Task<List<InvestmentPositionModel>> GetAllActivePositionsAsync(DateTime from, DateTime to)
