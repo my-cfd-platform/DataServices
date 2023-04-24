@@ -9,6 +9,7 @@ using DataServices.Utils;
 using DotNetCoreDecorators;
 using Grpc.Core;
 using Grpc.Net.Client;
+using Keyvalue;
 using Newtonsoft.Json;
 using Pd;
 using ReportGrpc;
@@ -25,9 +26,16 @@ public class ClientsService : IClientsService
     private readonly PersonalDataService.PersonalDataServiceClient? _personalDataClient;
     private readonly AccountsManagerGrpcService.AccountsManagerGrpcServiceClient? _accountsManagerClient;
     private readonly TradeLogGrpcService.TradeLogGrpcServiceClient? _tradeLogClient;
+    private readonly KeyValueFlowsGrpcService.KeyValueFlowsGrpcServiceClient? _keyValueClient;
 
     public ClientsService(DataServicesSettings settings)
     {
+        if (settings.KeyValueGrpcServiceUrl.IsNotNullOrEmpty())
+        {
+            _keyValueClient = new KeyValueFlowsGrpcService.KeyValueFlowsGrpcServiceClient(
+                GrpcChannel.ForAddress(settings.KeyValueGrpcServiceUrl));
+        }
+
         if (settings.PersonalDataGrpcServiceUrl.IsNotNullOrEmpty())
         {
             _personalDataClient = new PersonalDataService.PersonalDataServiceClient(
@@ -97,6 +105,41 @@ public class ClientsService : IClientsService
 
         return redirectUrl.RedirectUrl;
     }
+
+    #region KeyValue Service
+
+    public async Task<List<GetKeyValueGrpcResponseModel>> GetClientKeyValues(string clientId)
+    {
+        var keyValuesList = new List<GetKeyValueGrpcResponseModel>();
+        var keyValuesStream = _keyValueClient
+            .GetAllByUser(new()
+            {
+                ClientId = clientId
+            })
+            .ResponseStream;
+        while (await keyValuesStream.MoveNext())
+        {
+            keyValuesList.Add(keyValuesStream.Current);
+        }
+
+        return keyValuesList;
+    }
+
+    public async Task SetClientKeyValue(string clientId, string key, string value)
+    {
+        var call = _keyValueClient.Set();
+        await call.RequestStream.WriteAsync(new SetKeyValueGrpcRequestModel
+        {
+            ClientId = clientId,
+            Key = key,
+            Value = value,
+
+        });
+        await call.RequestStream.CompleteAsync();
+    }
+
+
+    #endregion
 
     #region Personal Data
 

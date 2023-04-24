@@ -28,6 +28,7 @@
     <Protobuf Include="ProtoFiles\proto\ReportGrpcService.proto" GrpcServices="Client" />
     <Protobuf Include="ProtoFiles\proto\TradeLog.proto" GrpcServices="Client" />
     <Protobuf Include="ProtoFiles\proto\TraderCredentialsGrpcService.proto" GrpcServices="Client" />
+    <Protobuf Include="ProtoFiles\proto\KeyValueFlows.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>

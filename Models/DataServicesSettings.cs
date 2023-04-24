@@ -17,4 +17,6 @@ public class DataServicesSettings
 
     public string TradeLogGrpcServiceUrl { get; set; } = null!;
     public string PersonalDataGrpcServiceUrl { get; set; } = null!;
+
+    public string KeyValueGrpcServiceUrl { get; set; } = null!;
 }
