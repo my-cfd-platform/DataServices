@@ -18,6 +18,7 @@ public interface IClientsService
 
     Task<AccountManagerUpdateAccountBalanceGrpcResponse> UpdateAccountBalanceAsync(UpdateBalanceModel requestModel);
     Task<List<AccountBalanceModel>> GetBalanceHistoryAsync(string accountId);
+    Task<List<ReportOperationHistoryItem>> GetOperationsHistoryAsync(string accountId, DateTime from, DateTime to);
 
     Task<ReportFlowsOperationsGetHistoryPaginatedGrpcResponse> GetBalanceHistoryPageAsync(string accountId,
         int page, int size = 100);

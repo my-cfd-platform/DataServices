@@ -223,6 +223,28 @@ public class ClientsService : IClientsService
         return res;
     }
 
+    public async Task<List<ReportOperationHistoryItem>> GetOperationsHistoryAsync(string accountId, DateTime from, DateTime to) {
+        var request = new ReportFlowsOperationsGetInDateRangeGrpcRequest
+        {
+            AccountId = accountId
+        };
+        if (from != DateTime.MinValue)
+        {
+            request.DateFrom = (ulong)from.UnixTime();
+        } 
+        if(to != DateTime.MinValue)
+        {
+            request.DateTo = (ulong)to.UnixTime();
+        }
+        var responseStream = _reportClient.GetOperationsHistoryInDateRange(request).ResponseStream;
+        var operations = new List<ReportOperationHistoryItem>();
+        while (await responseStream.MoveNext())
+        {
+            operations.Add(responseStream.Current);
+        }
+        return operations;
+    }
+
     public async Task<List<AccountBalanceModel>> GetBalanceHistoryAsync(string accountId)
     {
         var page = 1;
@@ -327,6 +349,7 @@ public class ClientsService : IClientsService
         var positions = new List<InvestmentPositionModel>();
         while (await activePositionsStream.MoveNext())
         {
+            var a = activePositionsStream.Current;
             positions.Add(InvestmentPositionModel.FromGrpc(activePositionsStream.Current));
         }
         return positions;
