@@ -37,5 +37,14 @@ public static class PriceUtils
             order.Profit = (nowPrice / order.OpenPrice - 1) * order.InvestAmount * order.Leverage * opSide;
             return order.Profit;
         }
+
+        public static double CalcProfitLossByPrice(InvestmentPositionModel order, BidAskModel bidAsk)
+        {
+            var nowPrice = GetOrderPrice(order.Side, bidAsk);
+            var opSide = order.Side == ReportsFlowsPositionSide.Buy ? 1 : -1;
+
+            order.Profit = (nowPrice / order.OpenPrice - 1) * order.InvestAmount * order.Leverage * opSide;
+            return order.Profit;
+        }
     }
 
