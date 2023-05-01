@@ -15,8 +15,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="MyCrm.Auth.Common" Version="1.0.42" />
     <PackageReference Include="MyNoSqlServer.DataReader" Version="1.8.13" />
     <PackageReference Include="MyNoSqlServer.DataWriter" Version="1.8.13" />
+    <PackageReference Include="MyPostgreSQL" Version="1.0.10" />
     <PackageReference Include="SimpleTrading.SettingsReader" Version="1.1.0" />
   </ItemGroup>
 
@@ -29,6 +31,10 @@
     <Protobuf Include="ProtoFiles\proto\TradeLog.proto" GrpcServices="Client" />
     <Protobuf Include="ProtoFiles\proto\TraderCredentialsGrpcService.proto" GrpcServices="Client" />
     <Protobuf Include="ProtoFiles\proto\KeyValueFlows.proto" GrpcServices="Client" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\Enums\" />
   </ItemGroup>
 
 </Project>
