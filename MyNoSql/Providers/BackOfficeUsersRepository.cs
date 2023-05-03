@@ -38,4 +38,9 @@ public class BackOfficeUsersRepository : IRepository<IBackofficeUser>
         var entity = BackofficeUserMyNoSqlEntity.Create(item);
         await _table.InsertOrReplaceAsync(entity);
     }
+
+    public async Task DeleteAsync(string key)
+    {
+        await _table.DeleteAsync(BackofficeUserMyNoSqlEntity.GeneratePartitionKey(), key);
+    }
 }

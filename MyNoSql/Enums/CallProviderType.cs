@@ -1,4 +1,4 @@
-﻿namespace DataServices.Services.Enums;
+﻿namespace DataServices.MyNoSql.Enums;
 
 public enum CallProviderType
 {

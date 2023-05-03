@@ -37,4 +37,9 @@ public class BackOfficeRolesRepository : IRepository<IBackofficeRole>
         var entity = BackofficeRoleMyNoSqlEntity.Create(item);
         await _table.InsertOrReplaceAsync(entity);
     }
+
+    public async Task DeleteAsync(string key)
+    {
+        await _table.DeleteAsync(BackofficeRoleMyNoSqlEntity.GeneratePartitionKey(), key);
+    }
 }

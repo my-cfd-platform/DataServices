@@ -37,4 +37,9 @@ public class InstrumentMappingRepository : IRepository<IProviderInstrumentMap>
         var entity = ProviderInstrumentEntity.Create(item);
         await _table.InsertOrReplaceAsync(entity);
     }
+
+    public async Task DeleteAsync(string key)
+    {
+        await _table.DeleteAsync(ProviderInstrumentEntity.GeneratePartitionKey(), key);
+    }
 }

@@ -1,55 +1,45 @@
-﻿using DataServices.MyNoSql.Enums;
+﻿using DataServices.Extensions;
+using DataServices.MyNoSql.Enums;
 using DataServices.MyNoSql.Interfaces;
-using MyCrm.Auth.Common.Roles;
-using MyCrm.Auth.Common.Users;
 using MyNoSqlServer.Abstractions;
 
 namespace DataServices.MyNoSql.Models;
 
-public class BackofficeUserMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeUser
+public class BackofficeTeamMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeTeam
 {
     public static string GeneratePartitionKey() => "bu";
 
     public static string GenerateRowKey(string id) => id;
 
-    public string Id => this.RowKey;
-
-    public DateTime Registered { get; set; }
-    public bool IsBlocked { get; set; }
-    public string PersonalName { get; set; }
-    public bool IsAdmin { get; set; }
-    public string ReferralLink { get; set; }
-    public IEnumerable<string> Roles { get; set; }
-    public IEnumerable<string> CertAliases { get; set; }
-    public string InternalPhoneNumberId { get; set; }
-    public IEnumerable<string> AssignedPhonePoolIds { get; set; }
-    public string AsteriskPhoneNumberId { get; set; }
-    public string TeamId { get; set; }
-    public int DataAccessRules { get; set; }
-    public int? SkillLevel { get; set; }
-
-    public static BackofficeUserMyNoSqlEntity Create(IBackofficeUser src)
+    public string Id
     {
-        return new BackofficeUserMyNoSqlEntity
+        get => this.RowKey;
+        set => this.RowKey = value;
+    }
+
+    public string Name { get; set; }
+    public IEnumerable<string> OfficeIds { get; set; }
+    public string TeamLeadId { get; set; }
+    public TeamType Type { get; set; }
+
+    public static BackofficeTeamMyNoSqlEntity Create(IBackofficeTeam src)
+    {
+        if(src.Id.IsNullOrEmpty()) 
+            src.Id = Guid.NewGuid().ToString();
+        return new BackofficeTeamMyNoSqlEntity
         {
             PartitionKey = GeneratePartitionKey(),
             RowKey = GenerateRowKey(src.Id),
-            Registered = src.Registered,
-            IsBlocked = src.IsBlocked ,
-            PersonalName = src.PersonalName ,
-            IsAdmin = src.IsAdmin ,
-            ReferralLink = src.ReferralLink,
-            Roles = src.Roles ,
-            CertAliases = src.CertAliases ,
-            InternalPhoneNumberId = src.InternalPhoneNumberId ,
-            AssignedPhonePoolIds = src.AssignedPhonePoolIds ,
-            AsteriskPhoneNumberId = src.AsteriskPhoneNumberId ,
-            TeamId = src.TeamId ,
-            DataAccessRules = src.DataAccessRules ,
-            SkillLevel = src.SkillLevel
+            Name = src.Name,
+            OfficeIds = src.OfficeIds,
+            TeamLeadId = src.TeamLeadId,
+            Type = src.Type,
         };
     }
 
+
+
+    /*
     public static BackofficeUserMyNoSqlEntity Create(IBackOfficeUser src)
     {
         return new BackofficeUserMyNoSqlEntity
@@ -63,9 +53,9 @@ public class BackofficeUserMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeUser
             ReferralLink = src.ReferralLink,
             Roles = src.Roles.Select(r=>r.Id) ,
             CertAliases = src.CertAliases ,
-            InternalPhoneNumberId = src.PhoneNumberIds.FirstOrDefault(n => n.Key == (int) CallProviderType.Samcon).Value,
+            InternalPhoneNumberId = src.PhoneNumberIds.FirstOrDefault(n => n.Key == (int) DataServices.Services.Enums.CallProviderType.Samcon).Value,
             AssignedPhonePoolIds = src.AssignedPhonePoolIds ,
-            AsteriskPhoneNumberId = src.PhoneNumberIds.FirstOrDefault(n => n.Key == (int) CallProviderType.Asterisk).Value,
+            AsteriskPhoneNumberId = src.PhoneNumberIds.FirstOrDefault(n => n.Key == (int) DataServices.Services.Enums.CallProviderType.Asterisk).Value,
             TeamId = (string.IsNullOrEmpty(src.TeamId) ? null : src.TeamId)!,
             DataAccessRules = (int) src.DataAccessRules,
             SkillLevel = src.SkillLevel.HasValue ? (int) src.SkillLevel : null
@@ -95,10 +85,5 @@ public class BackofficeUserMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeUser
             }
         };
     }
-
-    private static IEnumerable<BackofficeRoleModel> GetUserRoles(IEnumerable<BackofficeRoleModel> roles, IBackofficeUser user)
-    {
-        return roles.Where(r => user.Roles.Contains(r.Id));
-    }
-
+    */
 }

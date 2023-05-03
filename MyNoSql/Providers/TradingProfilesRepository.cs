@@ -39,4 +39,9 @@ public class TradingProfilesRepository : IRepository<ITradingProfile>
         var entity = TradingProfileMyNoSqlEntity.Create(item);
         await _table.InsertOrReplaceAsync(entity);
     }
+
+    public async Task DeleteAsync(string key)
+    {
+        await _table.DeleteAsync(TradingProfileMyNoSqlEntity.GeneratePartitionKey(), key);
+    }
 }

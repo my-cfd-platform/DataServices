@@ -33,8 +33,4 @@
     <Protobuf Include="ProtoFiles\proto\KeyValueFlows.proto" GrpcServices="Client" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\Enums\" />
-  </ItemGroup>
-
 </Project>

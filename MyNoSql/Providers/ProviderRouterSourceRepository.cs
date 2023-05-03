@@ -37,4 +37,9 @@ public class ProviderRouterSourceRepository : IRepository<IProviderRouterSource>
         var entity = ProviderRouterSourceEntity.Create(item);
         await _table.InsertOrReplaceAsync(entity);
     }
+
+    public async Task DeleteAsync(string key)
+    {
+        await _table.DeleteAsync(ProviderRouterSourceEntity.GeneratePartitionKey(), key);
+    }
 }

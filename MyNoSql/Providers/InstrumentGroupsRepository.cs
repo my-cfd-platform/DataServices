@@ -38,4 +38,9 @@ public class InstrumentGroupsRepository : IRepository<IInstrumentGroup>
         var entity = InstrumentGroupMyNoSqlEntity.Create(item);
         await _table.InsertOrReplaceAsync(entity);
     }
+
+    public async Task DeleteAsync(string key)
+    {
+        await _table.DeleteAsync(InstrumentGroupMyNoSqlEntity.GeneratePartitionKey(), key);
+    }
 }

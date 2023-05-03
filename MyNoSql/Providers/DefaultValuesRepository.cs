@@ -37,4 +37,9 @@ public class DefaultValuesRepository : IRepository<IDefaultValues>
         var partitionKey = DefaultValuesEntity.GeneratePartitionKey();
         return await _table.GetAsync(partitionKey, key);
     }
+
+    public async Task DeleteAsync(string key)
+    {
+        await _table.DeleteAsync(DefaultValuesEntity.GeneratePartitionKey(), key);
+    }
 }
