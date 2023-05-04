@@ -1,5 +1,4 @@
-﻿using DataServices.Models.Teams;
-using DataServices.MyNoSql.Interfaces;
+﻿using DataServices.MyNoSql.Interfaces;
 using MyCrm.Auth.Common.Roles;
 using MyCrm.Auth.Common.Users;
 
@@ -31,6 +30,21 @@ public interface IBackofficeAuthService
     Task<IEnumerable<IBackofficeTeam>> GetAllTeamsAsync();
     Task<IBackofficeTeam> GetTeamByIdAsync(string id);
     Task DeleteTeamAsync(string key);
+
+    #endregion
+
+    #region Offices
+
+    Task<IEnumerable<IBackofficeOffice>> GetAllOfficesAsync();
+    Task AddUpdateOfficeAsync(IBackofficeOffice office);
+
+    #endregion
+
+    #region AutoOwner
+
+    Task<IEnumerable<IBackofficeAutoOwner>> GetAllAutoOwnersAsync();
+    Task DeleteAutoOwnerAsync(string key);
+    Task AddUpdateAutoOwnerAsync(IBackofficeAutoOwner owner);
 
     #endregion
 }

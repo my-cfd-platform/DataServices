@@ -7,6 +7,7 @@ namespace DataServices.MyNoSql.Models;
 
 public class BackofficeTeamMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeTeam
 {
+    //todo fix to bt
     public static string GeneratePartitionKey() => "bu";
 
     public static string GenerateRowKey(string id) => id;

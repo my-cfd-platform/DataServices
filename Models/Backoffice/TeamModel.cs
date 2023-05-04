@@ -1,7 +1,7 @@
 ﻿using DataServices.MyNoSql.Enums;
 using DataServices.MyNoSql.Interfaces;
 
-namespace DataServices.Models.Teams;
+namespace DataServices.Models.Backoffice;
 
 public class TeamModel : IBackofficeTeam
 {

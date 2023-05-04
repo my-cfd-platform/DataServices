@@ -15,6 +15,9 @@ public class BackofficeAuthService : IBackofficeAuthService
 
     private readonly IRepository<IBackofficeRole> _rolesRepository;
     private readonly IRepository<IBackofficeTeam> _teamsRepository;
+    private readonly IRepository<IBackofficeOffice> _officesRepository;
+    private readonly IRepository<IBackofficeAutoOwner> _autoOwnersRepository;
+
     //private readonly ICache<IBackofficeUser> _usersCache;
     public BackofficeAuthService(DataServicesSettings settings)
     {
@@ -23,6 +26,8 @@ public class BackofficeAuthService : IBackofficeAuthService
             _usersRepository = new BackOfficeUsersRepository(settings.MyNoSqlServerWriterUrl);
             _rolesRepository = new BackOfficeRolesRepository(settings.MyNoSqlServerWriterUrl);
             _teamsRepository = new BackOfficeTeamsRepository(settings.MyNoSqlServerWriterUrl);
+            _officesRepository = new BackOfficeOfficeRepository(settings.MyNoSqlServerWriterUrl);
+            _autoOwnersRepository = new BackOfficeAutoOwnerRepository(settings.MyNoSqlServerWriterUrl);
         }
     }
 
@@ -109,5 +114,37 @@ public class BackofficeAuthService : IBackofficeAuthService
         await _teamsRepository.DeleteAsync(key);
     }
 
+    #endregion
+
+    #region Offices
+
+    public async Task<IEnumerable<IBackofficeOffice>> GetAllOfficesAsync()
+    {
+        return await _officesRepository.GetAllAsync();
+    }
+
+    public async Task AddUpdateOfficeAsync(IBackofficeOffice office)
+    {
+        await _officesRepository.UpdateAsync(office);
+    }
+
+    #endregion
+
+    #region AutoOwner
+
+    public async Task<IEnumerable<IBackofficeAutoOwner>> GetAllAutoOwnersAsync()
+    {
+        return await _autoOwnersRepository.GetAllAsync();
+    }
+
+    public async Task DeleteAutoOwnerAsync(string key)
+    {
+        await _autoOwnersRepository.DeleteAsync(key);
+    }
+
+    public async Task AddUpdateAutoOwnerAsync(IBackofficeAutoOwner owner)
+    {
+        await _autoOwnersRepository.UpdateAsync(owner);
+    }
     #endregion
 }
