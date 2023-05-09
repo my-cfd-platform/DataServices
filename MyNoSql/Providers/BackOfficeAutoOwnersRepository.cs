@@ -5,11 +5,11 @@ using MyNoSqlServer.DataWriter;
 
 namespace DataServices.MyNoSql.Providers;
 
-public class BackOfficeAutoOwnerRepository : IRepository<IBackofficeAutoOwner>
+public class BackOfficeAutoOwnersRepository : IRepository<IBackofficeAutoOwner>
 {
     private readonly IMyNoSqlServerDataWriter<BackofficeAutoOwnerMyNoSqlEntity> _table;
-    private const string TableName = "backoffice-office";
-    public BackOfficeAutoOwnerRepository(string url)
+    private const string TableName = "backoffice-autoowner";
+    public BackOfficeAutoOwnersRepository(string url)
     {
         var table = new MyNoSqlServerDataWriter<BackofficeAutoOwnerMyNoSqlEntity>(
             () => url,

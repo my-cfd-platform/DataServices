@@ -8,41 +8,42 @@ public interface IBackofficeAuthService
 {
     #region Users
 
-    Task<IEnumerable<BackOfficeUserModel>> GetAllUsersAsync();
-    ValueTask<IBackOfficeUser?> GetUserByIdAsync(string boUserId);
-    ValueTask<string> GetUserByCertAliasAsync(string certAlias);
-    Task UpdateUserAsync(IBackOfficeUser user);
+    IEnumerable<BackOfficeUserModel> GetAllUsers();
+    IBackOfficeUser? GetUserById(string id);
+    string GetUserByCertAlias(string certAlias);
+    Task AddUpdateUserAsync(IBackOfficeUser user);
 
     #endregion
 
     #region Roles
-
-    Task<IEnumerable<BackofficeRoleModel>> GetAllRolesAsync();
+    IEnumerable<BackofficeRoleModel> GetAllRoles();
 
     Task AddUpdateRoleAsync(BackofficeRoleModel backOfficeRole);
-    Task<BackofficeRoleModel> GetRoleByIdAsync(string roleId);
+    BackofficeRoleModel GetRoleById(string id);
 
     #endregion
 
     #region Teams
 
     Task AddUpdateTeamAsync(IBackofficeTeam backOfficeRole);
-    Task<IEnumerable<IBackofficeTeam>> GetAllTeamsAsync();
-    Task<IBackofficeTeam> GetTeamByIdAsync(string id);
+    IEnumerable<IBackofficeTeam> GetAllTeams();
+    IBackofficeTeam GetTeamById(string id);
     Task DeleteTeamAsync(string key);
 
     #endregion
 
     #region Offices
 
-    Task<IEnumerable<IBackofficeOffice>> GetAllOfficesAsync();
+    IEnumerable<IBackofficeOffice> GetAllOffices();
+    IBackofficeOffice GetOfficeById(string id);
+    string GetOfficeNameById(string id);
     Task AddUpdateOfficeAsync(IBackofficeOffice office);
 
     #endregion
 
     #region AutoOwner
 
-    Task<IEnumerable<IBackofficeAutoOwner>> GetAllAutoOwnersAsync();
+    IEnumerable<IBackofficeAutoOwner> GetAllAutoOwners();
     Task DeleteAutoOwnerAsync(string key);
     Task AddUpdateAutoOwnerAsync(IBackofficeAutoOwner owner);
 

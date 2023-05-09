@@ -3,45 +3,45 @@ using DataServices.MyNoSql.Models;
 using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataReader;
 
-namespace DataServices.MyNoSql.Providers
+namespace DataServices.MyNoSql.Providers;
+
+public class InstrumentMappingCache : ICache<IProviderInstrumentMap>
 {
-    public class InstrumentMappingCache : ICache<IProviderInstrumentMap>
+    private readonly IMyNoSqlServerDataReader<ProviderInstrumentEntity> _readRepository;
+    private const string TableName = "instrument-mapping";
+
+    public InstrumentMappingCache(IMyNoSqlServerDataReader<ProviderInstrumentEntity> readRepository)
     {
-        private readonly IMyNoSqlServerDataReader<ProviderInstrumentEntity> _readRepository;
-        private const string TableName = "instrument-mapping";
+        _readRepository = readRepository;
+    }
 
-        public InstrumentMappingCache(IMyNoSqlServerDataReader<ProviderInstrumentEntity> readRepository)
-        {
-            _readRepository = readRepository;
-        }
-        public InstrumentMappingCache(IMyNoSqlSubscriber tcpConnection)
-        {
-            var readRepository =
-                new MyNoSqlReadRepository<ProviderInstrumentEntity>(tcpConnection, TableName);
-            _readRepository = readRepository;
-        }
+    public InstrumentMappingCache(IMyNoSqlSubscriber tcpConnection)
+    {
+        var readRepository =
+            new MyNoSqlReadRepository<ProviderInstrumentEntity>(tcpConnection, TableName);
+        _readRepository = readRepository;
+    }
 
-        public IEnumerable<IProviderInstrumentMap> GetAll()
-        {
-            var partitionKey = ProviderInstrumentEntity.GeneratePartitionKey();
-            return _readRepository.Get(partitionKey);
-        }
+    public IEnumerable<IProviderInstrumentMap> GetAll()
+    {
+        var partitionKey = ProviderInstrumentEntity.GeneratePartitionKey();
+        return _readRepository.Get(partitionKey);
+    }
 
-        public IProviderInstrumentMap Get(string id)
-        {
-            var partitionKey = ProviderInstrumentEntity.GeneratePartitionKey();
-            var rowKey = ProviderInstrumentEntity.GenerateRowKey(id);
-            return _readRepository.Get(partitionKey, rowKey);
-        }
+    public IProviderInstrumentMap Get(string id)
+    {
+        var partitionKey = ProviderInstrumentEntity.GeneratePartitionKey();
+        var rowKey = ProviderInstrumentEntity.GenerateRowKey(id);
+        return _readRepository.Get(partitionKey, rowKey);
+    }
 
-        public void SubscribeOnChanges(Type type, Action<IReadOnlyList<IProviderInstrumentMap>> priceChanges)
-        {
-            throw new NotImplementedException();
-        }
+    public void SubscribeOnChanges(Type type, Action<IReadOnlyList<IProviderInstrumentMap>> priceChanges)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void UnsubscribeOnChanges(Type type)
-        {
-            throw new NotImplementedException();
-        }
+    public void UnsubscribeOnChanges(Type type)
+    {
+        throw new NotImplementedException();
     }
 }

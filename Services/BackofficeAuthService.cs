@@ -6,64 +6,78 @@ using DataServices.MyNoSql.Providers;
 using DataServices.Services.Interfaces;
 using MyCrm.Auth.Common.Roles;
 using MyCrm.Auth.Common.Users;
+using MyNoSqlServer.DataReader;
 
 namespace DataServices.Services;
 
 public class BackofficeAuthService : IBackofficeAuthService
 {
     private readonly IRepository<IBackofficeUser> _usersRepository;
-
+    private readonly ICache<IBackofficeUser> _usersCache;
+    
     private readonly IRepository<IBackofficeRole> _rolesRepository;
+    private readonly ICache<IBackofficeRole> _rolesCache;
+    
     private readonly IRepository<IBackofficeTeam> _teamsRepository;
-    private readonly IRepository<IBackofficeOffice> _officesRepository;
-    private readonly IRepository<IBackofficeAutoOwner> _autoOwnersRepository;
+    private readonly ICache<IBackofficeTeam> _teamsCache;
 
-    //private readonly ICache<IBackofficeUser> _usersCache;
-    public BackofficeAuthService(DataServicesSettings settings)
+    private readonly IRepository<IBackofficeOffice> _officesRepository;
+    private readonly ICache<IBackofficeOffice> _officesCache;
+
+    private readonly IRepository<IBackofficeAutoOwner> _autoOwnersRepository;
+    private readonly ICache<IBackofficeAutoOwner> _autoOwnersCache;
+
+    public BackofficeAuthService(DataServicesSettings settings, IMyNoSqlSubscriber tcpConnection)
     {
-        if (settings.MyNoSqlServerWriterUrl.IsNotNullOrEmpty())
-        {
-            _usersRepository = new BackOfficeUsersRepository(settings.MyNoSqlServerWriterUrl);
-            _rolesRepository = new BackOfficeRolesRepository(settings.MyNoSqlServerWriterUrl);
-            _teamsRepository = new BackOfficeTeamsRepository(settings.MyNoSqlServerWriterUrl);
-            _officesRepository = new BackOfficeOfficeRepository(settings.MyNoSqlServerWriterUrl);
-            _autoOwnersRepository = new BackOfficeAutoOwnerRepository(settings.MyNoSqlServerWriterUrl);
-        }
+        _usersRepository = new BackOfficeUsersRepository(settings.MyNoSqlServerWriterUrl);
+        _usersCache = new BackOfficeUsersCache(tcpConnection);
+
+        _rolesRepository = new BackOfficeRolesRepository(settings.MyNoSqlServerWriterUrl);
+        _rolesCache = new BackOfficeRolesCache(tcpConnection);
+
+        _teamsRepository = new BackOfficeTeamsRepository(settings.MyNoSqlServerWriterUrl);
+        _teamsCache = new BackOfficeTeamsCache(tcpConnection);
+
+        _officesRepository = new BackOfficeOfficesRepository(settings.MyNoSqlServerWriterUrl);
+        _officesCache = new BackOfficeOfficesCache(tcpConnection);
+
+        _autoOwnersRepository = new BackOfficeAutoOwnersRepository(settings.MyNoSqlServerWriterUrl);
+
     }
 
     #region Users
 
-    public async Task<IEnumerable<BackOfficeUserModel>> GetAllUsersAsync()
+    public IEnumerable<BackOfficeUserModel> GetAllUsers()
     {
-        var models = await _usersRepository.GetAllAsync();
+        var users = _usersCache.GetAll();
+        
+        var roles = GetAllRoles();
 
-        var roles = await GetAllRolesAsync();
-
-        var result = models
+        var result = users
             .Select(m => BackofficeUserMyNoSqlEntity.ToDomain(m, roles));
         return result;
     }
 
-    public async ValueTask<IBackOfficeUser?> GetUserByIdAsync(string boUserId)
+    public IBackOfficeUser? GetUserById(string id)
     {
-        var user = await _usersRepository.GetAsync(boUserId);
+        var user = _usersCache.Get(id);
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (user == null)
         {
             return null;
         }
 
-        var roles = await GetAllRolesAsync();
+        var roles = GetAllRoles();
         return BackofficeUserMyNoSqlEntity.ToDomain(user, roles);
     }
 
-    public async ValueTask<string> GetUserByCertAliasAsync(string certAlias)
+    public string GetUserByCertAlias(string certAlias)
     {
-        //todo load users via cache?
-        var users = await GetAllUsersAsync();
-        return users.FirstOrDefault(u => u.CertAliases.Contains(certAlias))?.Id;
+        var users = GetAllUsers();
+        return users.FirstOrDefault(u => u.CertAliases.Contains(certAlias))?.Id!;
     }
 
-    public async Task UpdateUserAsync(IBackOfficeUser user)
+    public async Task AddUpdateUserAsync(IBackOfficeUser user)
     {
         await _usersRepository.UpdateAsync(BackofficeUserMyNoSqlEntity.Create(user));
     }
@@ -72,16 +86,16 @@ public class BackofficeAuthService : IBackofficeAuthService
 
     #region Roles
 
-    public async Task<IEnumerable<BackofficeRoleModel>> GetAllRolesAsync()
+    public IEnumerable<BackofficeRoleModel> GetAllRoles()
     {
-        //todo load roles via cache?
-        return (await _rolesRepository.GetAllAsync()).Select(BackofficeRoleMyNoSqlEntity.ToDomain);
+        var roles = _rolesCache.GetAll().Select(BackofficeRoleMyNoSqlEntity.ToDomain);
+        return roles;
     }
 
-    public async Task<BackofficeRoleModel> GetRoleByIdAsync(string roleId)
+    public BackofficeRoleModel GetRoleById(string id)
     {
-        var role = await _rolesRepository.GetAsync(roleId);
-        //todo load roles via cache?
+        var role = _rolesCache.Get(id);
+
         return BackofficeRoleMyNoSqlEntity.ToDomain(role);
     }
 
@@ -94,14 +108,14 @@ public class BackofficeAuthService : IBackofficeAuthService
 
     #region Teams
 
-    public async Task<IBackofficeTeam> GetTeamByIdAsync(string id)
+    public IEnumerable<IBackofficeTeam> GetAllTeams()
     {
-        return await _teamsRepository.GetAsync(id);
+        return _teamsCache.GetAll();
     }
 
-    public async Task<IEnumerable<IBackofficeTeam>> GetAllTeamsAsync()
+    public IBackofficeTeam GetTeamById(string id)
     {
-        return await _teamsRepository.GetAllAsync();
+        return _teamsCache.Get(id);
     }
 
     public async Task AddUpdateTeamAsync(IBackofficeTeam backOfficeRole)
@@ -118,9 +132,26 @@ public class BackofficeAuthService : IBackofficeAuthService
 
     #region Offices
 
-    public async Task<IEnumerable<IBackofficeOffice>> GetAllOfficesAsync()
+    public IEnumerable<IBackofficeOffice> GetAllOffices()
     {
-        return await _officesRepository.GetAllAsync();
+        return _officesCache.GetAll();
+    }
+
+    public IBackofficeOffice GetOfficeById(string id)
+    {
+        return _officesCache.Get(id);
+    }
+
+    public string GetOfficeNameById(string id)
+    {
+        if (string.IsNullOrEmpty(id))
+        {
+            return "<No office>";
+        }
+        var office = GetOfficeById(id);
+
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        return office == null ? "<Not Found>" : office.Name;
     }
 
     public async Task AddUpdateOfficeAsync(IBackofficeOffice office)
@@ -132,9 +163,9 @@ public class BackofficeAuthService : IBackofficeAuthService
 
     #region AutoOwner
 
-    public async Task<IEnumerable<IBackofficeAutoOwner>> GetAllAutoOwnersAsync()
+    public IEnumerable<IBackofficeAutoOwner> GetAllAutoOwners()
     {
-        return await _autoOwnersRepository.GetAllAsync();
+        return _autoOwnersCache.GetAll();
     }
 
     public async Task DeleteAutoOwnerAsync(string key)
@@ -146,5 +177,6 @@ public class BackofficeAuthService : IBackofficeAuthService
     {
         await _autoOwnersRepository.UpdateAsync(owner);
     }
+
     #endregion
 }
