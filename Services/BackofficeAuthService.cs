@@ -14,10 +14,10 @@ public class BackofficeAuthService : IBackofficeAuthService
 {
     private readonly IRepository<IBackofficeUser> _usersRepository;
     private readonly ICache<IBackofficeUser> _usersCache;
-    
+
     private readonly IRepository<IBackofficeRole> _rolesRepository;
     private readonly ICache<IBackofficeRole> _rolesCache;
-    
+
     private readonly IRepository<IBackofficeTeam> _teamsRepository;
     private readonly ICache<IBackofficeTeam> _teamsCache;
 
@@ -41,6 +41,7 @@ public class BackofficeAuthService : IBackofficeAuthService
         _officesRepository = new BackOfficeOfficesRepository(settings.MyNoSqlServerWriterUrl);
         _officesCache = new BackOfficeOfficesCache(tcpConnection);
 
+        _autoOwnersCache = new BackOfficeAutoOwnersCache(tcpConnection);
         _autoOwnersRepository = new BackOfficeAutoOwnersRepository(settings.MyNoSqlServerWriterUrl);
 
     }
@@ -50,7 +51,7 @@ public class BackofficeAuthService : IBackofficeAuthService
     public IEnumerable<BackOfficeUserModel> GetAllUsers()
     {
         var users = _usersCache.GetAll();
-        
+
         var roles = GetAllRoles();
 
         var result = users
@@ -139,7 +140,7 @@ public class BackofficeAuthService : IBackofficeAuthService
 
     public IBackofficeOffice GetOfficeById(string id)
     {
-        return _officesCache.Get(id);
+        return id.IsNullOrEmpty() ? null! : _officesCache.Get(id);
     }
 
     public string GetOfficeNameById(string id)

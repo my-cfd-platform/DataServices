@@ -25,6 +25,11 @@ public class InstrumentMappingCache : ICache<IProviderInstrumentMap>
     public IEnumerable<IProviderInstrumentMap> GetAll()
     {
         var partitionKey = ProviderInstrumentEntity.GeneratePartitionKey();
+        return GetAll(partitionKey);
+    }
+
+    public IEnumerable<IProviderInstrumentMap> GetAll(string partitionKey)
+    {
         return _readRepository.Get(partitionKey);
     }
 
@@ -32,7 +37,12 @@ public class InstrumentMappingCache : ICache<IProviderInstrumentMap>
     {
         var partitionKey = ProviderInstrumentEntity.GeneratePartitionKey();
         var rowKey = ProviderInstrumentEntity.GenerateRowKey(id);
-        return _readRepository.Get(partitionKey, rowKey);
+        return Get(rowKey, partitionKey);
+    }
+
+    public IProviderInstrumentMap Get(string id, string partitionKey)
+    {
+        return _readRepository.Get(partitionKey, id);
     }
 
     public void SubscribeOnChanges(Type type, Action<IReadOnlyList<IProviderInstrumentMap>> priceChanges)

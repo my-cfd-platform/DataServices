@@ -23,7 +23,23 @@ public class DefaultValuesRepository : IRepository<IDefaultValues>
     public async Task<IEnumerable<IDefaultValues>> GetAllAsync()
     {
         var partitionKey = DefaultValuesEntity.GeneratePartitionKey();
+        return await GetAllAsync(partitionKey);
+    }
+
+    public async Task<IEnumerable<IDefaultValues>> GetAllAsync(string partitionKey)
+    {
         return await _table.GetAsync(partitionKey);
+    }
+
+    public async Task<IDefaultValues> GetAsync(string key)
+    {
+        var partitionKey = DefaultValuesEntity.GeneratePartitionKey();
+        return await GetAsync(partitionKey, key);
+    }
+
+    public async Task<IDefaultValues> GetAsync(string key, string partitionKey)
+    {
+        return await _table.GetAsync(partitionKey, key);
     }
 
     public async Task UpdateAsync(IDefaultValues item)
@@ -32,14 +48,13 @@ public class DefaultValuesRepository : IRepository<IDefaultValues>
         await _table.InsertOrReplaceAsync(entity);
     }
 
-    public async Task<IDefaultValues> GetAsync(string key)
-    {
-        var partitionKey = DefaultValuesEntity.GeneratePartitionKey();
-        return await _table.GetAsync(partitionKey, key);
-    }
-
     public async Task DeleteAsync(string key)
     {
         await _table.DeleteAsync(DefaultValuesEntity.GeneratePartitionKey(), key);
+    }
+
+    public async Task DeleteAsync(IDefaultValues item)
+    {
+        await DeleteAsync(item.Id);
     }
 }

@@ -24,12 +24,22 @@ public class InstrumentGroupsRepository : IRepository<IInstrumentGroup>
     public async Task<IEnumerable<IInstrumentGroup>> GetAllAsync()
     {
         var partitionKey = InstrumentGroupMyNoSqlEntity.GeneratePartitionKey();
+        return await GetAllAsync(partitionKey);
+    }
+
+    public async Task<IEnumerable<IInstrumentGroup>> GetAllAsync(string partitionKey)
+    {
         return await _table.GetAsync(partitionKey);
     }
 
     public async Task<IInstrumentGroup> GetAsync(string key)
     {
         var partitionKey = InstrumentGroupMyNoSqlEntity.GeneratePartitionKey();
+        return await GetAsync(partitionKey, key);
+    }
+
+    public async Task<IInstrumentGroup> GetAsync(string key, string partitionKey)
+    {
         return await _table.GetAsync(partitionKey, key);
     }
 
@@ -42,5 +52,10 @@ public class InstrumentGroupsRepository : IRepository<IInstrumentGroup>
     public async Task DeleteAsync(string key)
     {
         await _table.DeleteAsync(InstrumentGroupMyNoSqlEntity.GeneratePartitionKey(), key);
+    }
+
+    public async Task DeleteAsync(IInstrumentGroup item)
+    {
+        await DeleteAsync(item.Id);
     }
 }

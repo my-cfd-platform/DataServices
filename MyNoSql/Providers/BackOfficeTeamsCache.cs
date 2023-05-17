@@ -25,6 +25,11 @@ public class BackOfficeTeamsCache : ICache<IBackofficeTeam>
     public IEnumerable<IBackofficeTeam> GetAll()
     {
         var partitionKey = BackofficeTeamMyNoSqlEntity.GeneratePartitionKey();
+        return GetAll(partitionKey);
+    }
+
+    public IEnumerable<IBackofficeTeam> GetAll(string partitionKey)
+    {
         return _readRepository.Get(partitionKey);
     }
 
@@ -32,7 +37,12 @@ public class BackOfficeTeamsCache : ICache<IBackofficeTeam>
     {
         var partitionKey = BackofficeTeamMyNoSqlEntity.GeneratePartitionKey();
         var rowKey = BackofficeTeamMyNoSqlEntity.GenerateRowKey(id);
-        return _readRepository.Get(partitionKey, rowKey);
+        return Get(rowKey, partitionKey);
+    }
+
+    public IBackofficeTeam Get(string id, string partitionKey)
+    {
+        return _readRepository.Get(partitionKey, id);
     }
 
     public void SubscribeOnChanges(Type type, Action<IReadOnlyList<IBackofficeTeam>> changes)

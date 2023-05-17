@@ -23,12 +23,22 @@ public class BackOfficeRolesRepository : IRepository<IBackofficeRole>
     public async Task<IEnumerable<IBackofficeRole>> GetAllAsync()
     {
         var partitionKey = BackofficeRoleMyNoSqlEntity.GeneratePartitionKey();
+        return await GetAllAsync(partitionKey);
+    }
+
+    public async Task<IEnumerable<IBackofficeRole>> GetAllAsync(string partitionKey)
+    {
         return await _table.GetAsync(partitionKey);
     }
 
     public async Task<IBackofficeRole> GetAsync(string key)
     {
         var partitionKey = BackofficeRoleMyNoSqlEntity.GeneratePartitionKey();
+        return await GetAsync(partitionKey, key);
+    }
+
+    public async Task<IBackofficeRole> GetAsync(string key, string partitionKey)
+    {
         return await _table.GetAsync(partitionKey, key);
     }
 
@@ -41,5 +51,10 @@ public class BackOfficeRolesRepository : IRepository<IBackofficeRole>
     public async Task DeleteAsync(string key)
     {
         await _table.DeleteAsync(BackofficeRoleMyNoSqlEntity.GeneratePartitionKey(), key);
+    }
+
+    public async Task DeleteAsync(IBackofficeRole item)
+    {
+        await DeleteAsync(item.Id);
     }
 }

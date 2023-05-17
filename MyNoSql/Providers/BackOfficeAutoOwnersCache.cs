@@ -25,6 +25,11 @@ public class BackOfficeAutoOwnersCache : ICache<IBackofficeAutoOwner>
     public IEnumerable<IBackofficeAutoOwner> GetAll()
     {
         var partitionKey = BackofficeAutoOwnerMyNoSqlEntity.GeneratePartitionKey();
+        return GetAll(partitionKey);
+    }
+
+    public IEnumerable<IBackofficeAutoOwner> GetAll(string partitionKey)
+    {
         return _readRepository.Get(partitionKey);
     }
 
@@ -32,7 +37,12 @@ public class BackOfficeAutoOwnersCache : ICache<IBackofficeAutoOwner>
     {
         var partitionKey = BackofficeAutoOwnerMyNoSqlEntity.GeneratePartitionKey();
         var rowKey = BackofficeAutoOwnerMyNoSqlEntity.GenerateRowKey(id);
-        return _readRepository.Get(partitionKey, rowKey);
+        return Get(rowKey, partitionKey);
+    }
+
+    public IBackofficeAutoOwner Get(string id, string partitionKey)
+    {
+        return _readRepository.Get(partitionKey, id);
     }
 
     public void SubscribeOnChanges(Type type, Action<IReadOnlyList<IBackofficeAutoOwner>> changes)

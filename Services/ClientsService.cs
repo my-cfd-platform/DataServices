@@ -4,12 +4,15 @@ using AuthenticationIntegration;
 using DataServices.Extensions;
 using DataServices.Models;
 using DataServices.Models.Clients;
+using DataServices.MyNoSql.Interfaces;
+using DataServices.MyNoSql.Providers;
 using DataServices.Services.Interfaces;
 using DataServices.Utils;
 using DotNetCoreDecorators;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Keyvalue;
+using MyNoSqlServer.DataReader;
 using Newtonsoft.Json;
 using Pd;
 using ReportGrpc;
@@ -28,7 +31,10 @@ public class ClientsService : IClientsService
     private readonly TradeLogGrpcService.TradeLogGrpcServiceClient? _tradeLogClient;
     private readonly KeyValueFlowsGrpcService.KeyValueFlowsGrpcServiceClient? _keyValueClient;
 
-    public ClientsService(DataServicesSettings settings)
+    //private readonly IRepository<IStatus> _statusRepository;
+    //private readonly ICache<IStatus> _statusCache;
+
+    public ClientsService(DataServicesSettings settings, IMyNoSqlSubscriber tcpConnection)
     {
         if (settings.KeyValueGrpcServiceUrl.IsNotNullOrEmpty())
         {
@@ -72,6 +78,9 @@ public class ClientsService : IClientsService
             (
                 GrpcChannel.ForAddress(settings.AccountsManagerGrpcUrl));
         }
+
+        //_statusRepository = new StatusesRepository(settings.MyNoSqlServerWriterUrl);
+        //_statusCache = new StatusesCache(tcpConnection);
     }
 
     private string GetProcessId()
@@ -143,13 +152,13 @@ public class ClientsService : IClientsService
 
     #region Personal Data
 
-    public async Task<Pd.PersonalDataModel> GetTraderPersonalDataGrpc(TraderBrandModel traderBrand)
+    public async Task<PersonalDataModel> GetTraderPersonalDataAsync(TraderBrandModel traderBrand)
     {
         var request = new GetPersonalDataRequest { Id = traderBrand.TraderId };
         var clientData = await _personalDataClient!.GetAsync(request);
         return clientData.PersonalDataModel;
     }
-    
+
     public async Task SetTraderPersonalData(PersonalDataModel model, string traderId)
     {
         var request = new SetPersonalDataRequest
@@ -178,6 +187,23 @@ public class ClientsService : IClientsService
             accounts.Add(TradingAccountModel.FromGrpc(traderAccountsStream.Current));
         }
         return accounts;
+    }
+
+    public async Task<TradingAccountModel> GetTraderAccountAsync(string traderId, string accountId)
+    {
+        var traderAccountsStream =
+            _accountsManagerClient!
+                .GetClientAccounts(new() { TraderId = traderId })
+                .ResponseStream;
+
+        while (await traderAccountsStream.MoveNext())
+        {
+            if (traderAccountsStream.Current.Id == accountId)
+            {
+                return TradingAccountModel.FromGrpc(traderAccountsStream.Current);
+            }
+        }
+        return default!;
     }
 
     public async Task<List<TraderBrandModel>> SearchTraderBrandsAsync(string searchValue)

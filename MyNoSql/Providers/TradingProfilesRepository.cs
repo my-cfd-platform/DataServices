@@ -25,12 +25,22 @@ public class TradingProfilesRepository : IRepository<ITradingProfile>
     public async Task<IEnumerable<ITradingProfile>> GetAllAsync()
     {
         var partitionKey = TradingProfileMyNoSqlEntity.GeneratePartitionKey();
+        return await GetAllAsync(partitionKey);
+    }
+
+    public async Task<IEnumerable<ITradingProfile>> GetAllAsync(string partitionKey)
+    {
         return await _table.GetAsync(partitionKey);
     }
 
     public async Task<ITradingProfile> GetAsync(string key)
     {
         var partitionKey = TradingProfileMyNoSqlEntity.GeneratePartitionKey();
+        return await GetAsync(partitionKey, key);
+    }
+
+    public async Task<ITradingProfile> GetAsync(string key, string partitionKey)
+    {
         return await _table.GetAsync(partitionKey, key);
     }
 
@@ -43,5 +53,10 @@ public class TradingProfilesRepository : IRepository<ITradingProfile>
     public async Task DeleteAsync(string key)
     {
         await _table.DeleteAsync(TradingProfileMyNoSqlEntity.GeneratePartitionKey(), key);
+    }
+
+    public async Task DeleteAsync(ITradingProfile item)
+    {
+        await DeleteAsync(item.Id);
     }
 }

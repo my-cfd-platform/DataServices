@@ -42,6 +42,11 @@ public class LivePriceCache : ICache<ILivePrice>
     public IEnumerable<ILivePrice> GetAll()
     {
         var partitionKey = LivePriceEntity.GeneratePartitionKey();
+        return GetAll(partitionKey);
+    }
+
+    public IEnumerable<ILivePrice> GetAll(string partitionKey)
+    {
         return _readRepository.Get(partitionKey);
     }
 
@@ -49,7 +54,12 @@ public class LivePriceCache : ICache<ILivePrice>
     {
         var partitionKey = LivePriceEntity.GeneratePartitionKey();
         var rowKey = LivePriceEntity.GenerateRowKey(id);
-        return _readRepository.Get(partitionKey, rowKey);
+        return Get(rowKey, partitionKey);
+    }
+
+    public ILivePrice Get(string id, string partitionKey)
+    {
+        return _readRepository.Get(partitionKey, id);
     }
 
     public void SubscribeOnChanges(Type type, Action<IReadOnlyList<ILivePrice>> priceChanges)

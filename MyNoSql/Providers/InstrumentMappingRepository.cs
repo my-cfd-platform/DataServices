@@ -23,12 +23,22 @@ public class InstrumentMappingRepository : IRepository<IProviderInstrumentMap>
     public async Task<IEnumerable<IProviderInstrumentMap>> GetAllAsync()
     {
         var partitionKey = ProviderInstrumentEntity.GeneratePartitionKey();
+        return await GetAllAsync(partitionKey);
+    }
+
+    public async Task<IEnumerable<IProviderInstrumentMap>> GetAllAsync(string partitionKey)
+    {
         return await _table.GetAsync(partitionKey);
     }
 
     public async Task<IProviderInstrumentMap> GetAsync(string key)
     {
         var partitionKey = ProviderInstrumentEntity.GeneratePartitionKey();
+        return await GetAsync(partitionKey, key);
+    }
+
+    public async Task<IProviderInstrumentMap> GetAsync(string key, string partitionKey)
+    {
         return await _table.GetAsync(partitionKey, key);
     }
 
@@ -41,5 +51,10 @@ public class InstrumentMappingRepository : IRepository<IProviderInstrumentMap>
     public async Task DeleteAsync(string key)
     {
         await _table.DeleteAsync(ProviderInstrumentEntity.GeneratePartitionKey(), key);
+    }
+
+    public async Task DeleteAsync(IProviderInstrumentMap item)
+    {
+        await DeleteAsync(item.Id);
     }
 }

@@ -23,12 +23,22 @@ public class BackOfficeAutoOwnersRepository : IRepository<IBackofficeAutoOwner>
     public async Task<IEnumerable<IBackofficeAutoOwner>> GetAllAsync()
     {
         var partitionKey = BackofficeAutoOwnerMyNoSqlEntity.GeneratePartitionKey();
+        return await GetAllAsync(partitionKey);
+    }
+
+    public async Task<IEnumerable<IBackofficeAutoOwner>> GetAllAsync(string partitionKey)
+    {
         return await _table.GetAsync(partitionKey);
     }
 
     public async Task<IBackofficeAutoOwner> GetAsync(string key)
     {
         var partitionKey = BackofficeAutoOwnerMyNoSqlEntity.GeneratePartitionKey();
+        return await GetAsync(partitionKey, key);
+    }
+
+    public async Task<IBackofficeAutoOwner> GetAsync(string key, string partitionKey)
+    {
         return await _table.GetAsync(partitionKey, key);
     }
 
@@ -41,5 +51,10 @@ public class BackOfficeAutoOwnersRepository : IRepository<IBackofficeAutoOwner>
     public async Task DeleteAsync(string key)
     {
         await _table.DeleteAsync(BackofficeAutoOwnerMyNoSqlEntity.GeneratePartitionKey(), key);
+    }
+    
+    public async Task DeleteAsync(IBackofficeAutoOwner item)
+    {
+        await DeleteAsync(item.Id);
     }
 }

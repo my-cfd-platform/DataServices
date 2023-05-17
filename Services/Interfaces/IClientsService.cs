@@ -11,6 +11,8 @@ public interface IClientsService
 {
     Task<List<TraderBrandModel>> SearchTraderBrandsAsync(string searchValue);
     Task<List<TradingAccountModel>> GetTraderAccountsAsync(string traderId);
+    Task<TradingAccountModel> GetTraderAccountAsync(string traderId, string accountId);
+
     public Task<string> GetClientRedirectUrl(string clientId);
 
     Task<AccountsManagerOperationResult> SetTraderAccountDisabledAsync(string accountId, string traderId,
@@ -29,7 +31,7 @@ public interface IClientsService
     Task<List<InvestmentPositionModel>> GetHistoryPositionsAsync(string accountId, DateTime from, DateTime to);
     Task<List<TradeLogItem>> GetTradeLog(string accountId, string traderId, DateTime from, DateTime to);
     Task SetTraderPersonalData(PersonalDataModel model, string traderId);
-    Task<PersonalDataModel> GetTraderPersonalDataGrpc(TraderBrandModel traderBrand);
+    Task<PersonalDataModel> GetTraderPersonalDataAsync(TraderBrandModel traderBrand);
     Task<List<GetKeyValueGrpcResponseModel>> GetClientKeyValues(string clientId);
     Task SetClientKeyValue(string clientId, string key, string value);
 }
