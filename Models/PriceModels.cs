@@ -38,7 +38,9 @@ public static class PriceModels
 
     public static BidAskModel ToBidAskModel(this ILivePrice livePrice)
     {
-        var date = livePrice.UnixTimestampWithMilis.EpochMilToDateTime();
+        var date = livePrice.UnixTimestampWithMilis > 10000000000000L ?
+            livePrice.UnixTimestampWithMilis.EpochMicToDateTime() :
+            livePrice.UnixTimestampWithMilis.EpochMilToDateTime();
         return new BidAskModel
         {
             Id = livePrice.Id,
