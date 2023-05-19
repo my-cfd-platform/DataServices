@@ -34,7 +34,7 @@ public class ClientsService : IClientsService
     //private readonly IRepository<IStatus> _statusRepository;
     //private readonly ICache<IStatus> _statusCache;
 
-    public ClientsService(DataServicesSettings settings, IMyNoSqlSubscriber tcpConnection)
+    public ClientsService(DataServicesSettings settings)
     {
         if (settings.KeyValueGrpcServiceUrl.IsNotNullOrEmpty())
         {
