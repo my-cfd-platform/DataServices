@@ -32,6 +32,7 @@
     <Protobuf Include="ProtoFiles\proto\TraderCredentialsGrpcService.proto" GrpcServices="Client" />
     <Protobuf Include="ProtoFiles\proto\KeyValueFlows.proto" GrpcServices="Client" />
     <Protobuf Include="ProtoFiles\proto\StatusFlows.proto" GrpcServices="Client" />
+    <Protobuf Include="ProtoFiles\proto\CommentFlows.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>

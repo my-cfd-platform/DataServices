@@ -13,6 +13,7 @@ public class DataServicesSettings
     public string TradeLogGrpcServiceUrl { get; set; } = null!;
     public string PersonalDataGrpcServiceUrl { get; set; } = null!;
     public string StatusGrpcServiceUrl { get; set; } = null!;
+    public string CommentGrpcServiceUrl { get; set; } = null!;
     public string KeyValueGrpcServiceUrl { get; set; } = null!;
     public string WriteDbConnectionString { get; set; } = null!;
     public string ReadDbConnectionString { get; set; } = null!;

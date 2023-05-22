@@ -90,7 +90,7 @@ public class ClientsService : IClientsService
 
     public async Task<List<TradeLogItem>> GetTradeLog(string accountId, string traderId, DateTime from, DateTime to)
     {
-        var tradeLogStream = _tradeLogClient.Read(new()
+        var tradeLogStream = _tradeLogClient!.Read(new()
         {
             AccountId = accountId,
             TraderId = traderId,
