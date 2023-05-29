@@ -33,6 +33,14 @@ public class InvestmentPositionModel
     public ReportsFlowsClosePositionReason CloseReason { get; set; }
     public double Profit { get; set; }
 
+    public string Base { get; set; }
+    public string Quote { get; set; }
+    public string Collateral { get; set; }
+    public double CollateralBaseOpenPrice { get; set; }
+    public double CollateralQuoteOpenPrice { get; set; }
+    public BidAskModel CollateralBaseOpenBidAsk { get; set; }
+    public BidAskModel CollateralQuoteCloseBidAsk { get; set; }
+
     public static InvestmentPositionModel FromGrpc(ReportsFlowsActivePositionGrpcModel src)
     {
         return new InvestmentPositionModel
@@ -52,6 +60,13 @@ public class InvestmentPositionModel
             OpenBidAsk = src.OpenBidAsk.ToBidAskModel(),
             OpenProcessId = src.OpenProcessId,
             OpenDate = src.OpenDate.EpochMicToDateTime(),
+            Base = src.Base,
+            Quote = src.Quote,
+            Collateral = src.Collateral,
+            CollateralBaseOpenPrice = src.CollateralBaseOpenPrice,
+            CollateralQuoteOpenPrice = src.CollateralQuoteClosePrice,
+            CollateralBaseOpenBidAsk = src.CollateralBaseOpenBidAsk?.ToBidAskModel()!,
+            CollateralQuoteCloseBidAsk = src.CollateralQuoteCloseBidAsk?.ToBidAskModel()!,
             OpenPrice = src.OpenPrice,
             TpInProfit = src.TpInProfit,
             SlInProfit = src.SlInProfit,
@@ -91,7 +106,14 @@ public class InvestmentPositionModel
             SlInProfit = src.SlInProfit,
             TakeProfitInAssetPrice = src.TpInAssetPrice,
             StopLossInAssetPrice = src.SlInAssetPrice,
-            StopOutPercent = src.StopOutPercent
+            StopOutPercent = src.StopOutPercent,
+            Base = src.Base,
+            Quote = src.Quote,
+            Collateral = src.Collateral,
+            CollateralBaseOpenPrice = src.CollateralBaseOpenPrice,
+            CollateralQuoteOpenPrice = src.CollateralQuoteClosePrice,
+            CollateralBaseOpenBidAsk = src.CollateralBaseOpenBidAsk?.ToBidAskModel()!,
+            CollateralQuoteCloseBidAsk = src.CollateralQuoteCloseBidAsk?.ToBidAskModel()!,
         };
     }
 }

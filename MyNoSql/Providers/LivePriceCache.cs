@@ -9,6 +9,7 @@ public class LivePriceCache : ICache<ILivePrice>
 {
     private readonly IMyNoSqlServerDataReader<LivePriceEntity> _readRepository;
     private readonly Dictionary<Type, List<Action<IReadOnlyList<ILivePrice>>>> _subscribersOnChanges = new();
+    // ReSharper disable once CollectionNeverUpdated.Local
     private readonly List<Action<IReadOnlyList<ILivePrice>>> _subscribersOnDelete = new();
 
     private const string TableName = "bidask-snapshots";
