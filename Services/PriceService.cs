@@ -1,7 +1,6 @@
 ﻿using DataServices.Models;
 using DataServices.Models.Clients;
 using DataServices.MyNoSql.Interfaces;
-using DataServices.MyNoSql.Providers;
 using DataServices.Utils;
 using ReportGrpc;
 
@@ -34,7 +33,6 @@ public class PriceService : IPriceService
         }
         else
         {
-
             UpdateUnrealisedCollateralProfit(order, currentPrice);
         }
     }
@@ -50,14 +48,14 @@ public class PriceService : IPriceService
         var investmentSize = order.InvestAmount * order.Leverage;
 
         var investmentVolume = invertedInstrument ?
-            investmentSize : 
+            investmentSize :
             investmentSize / order.OpenPrice;
 
         var priceChange = nowPrice - order.OpenPrice;
 
         var instrumentProfit = investmentVolume * priceChange;
 
-        var accountCurrencyProfit = invertedInstrument ? 
+        var accountCurrencyProfit = invertedInstrument ?
             instrumentProfit / nowPrice :
             instrumentProfit;
 
@@ -78,15 +76,15 @@ public class PriceService : IPriceService
 
         // the side of collateral base open price must be the same as the order side
         var collateralSide = order.Side;
-        
-        
+
+
         var collateralOpenPrice = PriceUtils.GetOrderPrice(collateralSide, order.CollateralBaseOpenBidAsk);
 
         var investmentBaseSize = invertedBaseInstrument ?
-            investmentSize * collateralOpenPrice: 
+            investmentSize * collateralOpenPrice :
             investmentSize / collateralOpenPrice;
 
-        
+
         var currentPrice = PriceUtils.GetOrderPrice(order.Side, bidAsk);
         var priceChange = currentPrice - order.OpenPrice;
 
@@ -105,13 +103,13 @@ public class PriceService : IPriceService
         var collateralQuoteBidAsk = _priceCache.Get(quoteInstrument.Id).ToBidAskModel();
 
         var quoteInstrumentPrice = PriceUtils.GetOrderPrice(quoteInstrumentSide, collateralQuoteBidAsk);
-        
-        var accountCurrencyProfit = invertedQuoteInstrument ? 
-            baseInstrumentProfit / quoteInstrumentPrice:
+
+        var accountCurrencyProfit = invertedQuoteInstrument ?
+            baseInstrumentProfit / quoteInstrumentPrice :
             baseInstrumentProfit * quoteInstrumentPrice;
 
         #endregion
-        
+
         var sideCoefficient = order.Side == ReportsFlowsPositionSide.Buy ? 1 : -1;
         order.Profit = accountCurrencyProfit * sideCoefficient;
     }
