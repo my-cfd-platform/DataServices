@@ -1,18 +1,15 @@
-using System.Text.Json.Nodes;
 using AccountsManager;
 using AuthenticationIntegration;
 using DataServices.Extensions;
 using DataServices.Models;
 using DataServices.Models.Clients;
 using DataServices.MyNoSql.Interfaces;
-using DataServices.MyNoSql.Providers;
 using DataServices.Services.Interfaces;
 using DataServices.Utils;
 using DotNetCoreDecorators;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Keyvalue;
-using MyNoSqlServer.DataReader;
 using Newtonsoft.Json;
 using Pd;
 using ReportGrpc;
@@ -31,11 +28,11 @@ public class ClientsService : IClientsService
     private readonly TradeLogGrpcService.TradeLogGrpcServiceClient? _tradeLogClient;
     private readonly KeyValueFlowsGrpcService.KeyValueFlowsGrpcServiceClient? _keyValueClient;
 
-    //private readonly IRepository<IStatus> _statusRepository;
-    //private readonly ICache<IStatus> _statusCache;
+    private IPriceService _priceService;
 
-    public ClientsService(DataServicesSettings settings)
+    public ClientsService(DataServicesSettings settings, IPriceService priceService)
     {
+        _priceService = priceService;
         if (settings.KeyValueGrpcServiceUrl.IsNotNullOrEmpty())
         {
             _keyValueClient = new KeyValueFlowsGrpcService.KeyValueFlowsGrpcServiceClient(
@@ -78,9 +75,6 @@ public class ClientsService : IClientsService
             (
                 GrpcChannel.ForAddress(settings.AccountsManagerGrpcUrl));
         }
-
-        //_statusRepository = new StatusesRepository(settings.MyNoSqlServerWriterUrl);
-        //_statusCache = new StatusesCache(tcpConnection);
     }
 
     private string GetProcessId()
@@ -249,7 +243,8 @@ public class ClientsService : IClientsService
         return res;
     }
 
-    public async Task<List<ReportOperationHistoryItem>> GetOperationsHistoryAsync(string accountId, DateTime from, DateTime to) {
+    public async Task<List<ReportOperationHistoryItem>> GetOperationsHistoryAsync(string accountId, DateTime from, DateTime to)
+    {
         var request = new ReportFlowsOperationsGetInDateRangeGrpcRequest
         {
             AccountId = accountId
@@ -257,8 +252,8 @@ public class ClientsService : IClientsService
         if (from != DateTime.MinValue)
         {
             request.DateFrom = (ulong)from.UnixTime();
-        } 
-        if(to != DateTime.MinValue)
+        }
+        if (to != DateTime.MinValue)
         {
             request.DateTo = (ulong)to.UnixTime();
         }
@@ -335,7 +330,9 @@ public class ClientsService : IClientsService
         var positions = new List<InvestmentPositionModel>();
         while (await activePositionsStream.MoveNext())
         {
-            positions.Add(InvestmentPositionModel.FromGrpc(activePositionsStream.Current));
+            var order = InvestmentPositionModel.FromGrpc(activePositionsStream.Current);
+            _priceService.UpdateOrderProfit(order);
+            positions.Add(order);
         }
         return positions;
     }

@@ -17,6 +17,12 @@ public class PriceService : IPriceService
         _priceCache = priceCache;
     }
 
+    public void UpdateOrderProfit(InvestmentPositionModel order)
+    {
+        var instrumentCurrentTick = _priceCache.Get(order.Instrument).ToBidAskModel();
+        UpdateOrderProfit(order, instrumentCurrentTick);
+    }
+
     public void UpdateOrderProfit(InvestmentPositionModel order, BidAskModel currentPrice)
     {
         var accountCurrency = order.Collateral;
