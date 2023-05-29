@@ -4,11 +4,11 @@ public interface ITradingInstrument
 {
 #nullable disable
     string Id { get; }
-    string Name { get; }
-    int Digits { get; }
-    string Base { get; }
-    string Quote { get; }
-    double TickSize { get; }
+    string Name { get; set; }
+    int Digits { get; set; }
+    string Base { get; set; }
+    string Quote { get; set; }
+    double TickSize { get; set; }
     string SwapScheduleId { get; }
 
 #nullable enable
