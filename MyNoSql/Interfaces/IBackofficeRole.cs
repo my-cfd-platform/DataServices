@@ -1,4 +1,4 @@
-﻿using MyCrm.Auth.Common.Permissions;
+﻿using DataServices.Models.Auth.Permissions;
 
 namespace DataServices.MyNoSql.Interfaces;
 

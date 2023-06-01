@@ -1,5 +1,7 @@
 ﻿// ReSharper disable PropertyCanBeMadeInitOnly.Global
 
+using System.Reflection;
+
 namespace DataServices.Models;
 
 public class DataServicesSettings
@@ -15,6 +17,17 @@ public class DataServicesSettings
     public string StatusGrpcServiceUrl { get; set; } = null!;
     public string CommentGrpcServiceUrl { get; set; } = null!;
     public string KeyValueGrpcServiceUrl { get; set; } = null!;
-    public string WriteDbConnectionString { get; set; } = null!;
-    public string ReadDbConnectionString { get; set; } = null!;
+
+    public DataServicesSettings(object settings)
+    {
+        var availableFields = this.GetType().GetProperties().ToDictionary(p => p.Name);
+        var type = settings.GetType();
+        foreach (var declaredField in type.GetProperties())
+        {
+            if(!availableFields.ContainsKey(declaredField.Name))
+                continue;
+            var value = declaredField.GetValue(settings);
+            availableFields[declaredField.Name].SetValue(this, value);
+        }
+    } 
 }

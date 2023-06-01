@@ -1,6 +1,6 @@
-﻿using DataServices.MyNoSql.Interfaces;
-using MyCrm.Auth.Common.Permissions;
-using MyCrm.Auth.Common.Roles;
+﻿using DataServices.Models.Auth.Permissions;
+using DataServices.Models.Auth.Roles;
+using DataServices.MyNoSql.Interfaces;
 using MyNoSqlServer.Abstractions;
 
 namespace DataServices.MyNoSql.Models;

@@ -15,7 +15,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="MyCrm.Auth.Common" Version="1.0.42" />
     <PackageReference Include="MyNoSqlServer.DataReader" Version="1.8.13" />
     <PackageReference Include="MyNoSqlServer.DataWriter" Version="1.8.13" />
     <PackageReference Include="MyPostgreSQL" Version="1.0.10" />

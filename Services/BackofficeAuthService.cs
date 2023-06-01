@@ -1,11 +1,11 @@
 ﻿using DataServices.Extensions;
 using DataServices.Models;
+using DataServices.Models.Auth.Roles;
+using DataServices.Models.Auth.Users;
 using DataServices.MyNoSql.Interfaces;
 using DataServices.MyNoSql.Models;
 using DataServices.MyNoSql.Providers;
 using DataServices.Services.Interfaces;
-using MyCrm.Auth.Common.Roles;
-using MyCrm.Auth.Common.Users;
 using MyNoSqlServer.DataReader;
 
 namespace DataServices.Services;
