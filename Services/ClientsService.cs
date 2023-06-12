@@ -206,6 +206,23 @@ public class ClientsService : IClientsService
         {
             Phrase = searchValue
         });
+
+        if (traderIds.CalculateSize() == 0)
+        {
+            var traderIdByAccountIdRes = await _accountsManagerClient.GetTraderIdByAccountIdAsync(new AccountManagerGetTraderIdByAccountIdGrpcRequest()
+            {
+                AccountId = searchValue
+            });
+            if (traderIdByAccountIdRes.HasTraderId)
+            {
+                traderIds = await _traderCredentialsClient!.SearchByIdOrEmailAsync(new()
+                {
+                    Phrase = traderIdByAccountIdRes.TraderId
+                });
+            }
+
+        }
+
         return traderIds.Ids.Count == 0 ?
             new() :
             traderIds.Ids.Select(TraderBrandModel.FromGrpc).ToList();

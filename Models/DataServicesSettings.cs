@@ -29,5 +29,5 @@ public class DataServicesSettings
             var value = declaredField.GetValue(settings);
             availableFields[declaredField.Name].SetValue(this, value);
         }
-    } 
+    }
 }
