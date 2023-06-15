@@ -1,7 +1,5 @@
-﻿// ReSharper disable PropertyCanBeMadeInitOnly.Global
-
-using System.Reflection;
-
+﻿// ReSharper disable AutoPropertyCanBeMadeGetOnly.Global
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
 namespace DataServices.Models;
 
 public class DataServicesSettings
@@ -17,6 +15,7 @@ public class DataServicesSettings
     public string StatusGrpcServiceUrl { get; set; } = null!;
     public string CommentGrpcServiceUrl { get; set; } = null!;
     public string KeyValueGrpcServiceUrl { get; set; } = null!;
+    public string ManagerAccessGrpcServiceUrl { get; set; } = null!;
 
     public DataServicesSettings(object settings)
     {
@@ -24,7 +23,7 @@ public class DataServicesSettings
         var type = settings.GetType();
         foreach (var declaredField in type.GetProperties())
         {
-            if(!availableFields.ContainsKey(declaredField.Name))
+            if (!availableFields.ContainsKey(declaredField.Name))
                 continue;
             var value = declaredField.GetValue(settings);
             availableFields[declaredField.Name].SetValue(this, value);

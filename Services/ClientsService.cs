@@ -2,6 +2,7 @@ using AccountsManager;
 using AuthenticationIntegration;
 using DataServices.Extensions;
 using DataServices.Models;
+using DataServices.Models.Auth.Users;
 using DataServices.Models.Clients;
 using DataServices.MyNoSql.Interfaces;
 using DataServices.Services.Interfaces;
@@ -10,7 +11,7 @@ using DotNetCoreDecorators;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Keyvalue;
-using Newtonsoft.Json;
+using ManagerAccessFlows;
 using Pd;
 using ReportGrpc;
 using TradeLog;
@@ -27,6 +28,7 @@ public class ClientsService : IClientsService
     private readonly AccountsManagerGrpcService.AccountsManagerGrpcServiceClient? _accountsManagerClient;
     private readonly TradeLogGrpcService.TradeLogGrpcServiceClient? _tradeLogClient;
     private readonly KeyValueFlowsGrpcService.KeyValueFlowsGrpcServiceClient? _keyValueClient;
+    private readonly ManagerAccessService.ManagerAccessServiceClient? _managerAccessClient;
 
     private IPriceService _priceService;
 
@@ -71,102 +73,56 @@ public class ClientsService : IClientsService
 
         if (settings.AccountsManagerGrpcUrl.IsNotNullOrEmpty())
         {
-            _accountsManagerClient = new AccountsManagerGrpcService.AccountsManagerGrpcServiceClient
-            (
+            _accountsManagerClient = new AccountsManagerGrpcService.AccountsManagerGrpcServiceClient(
                 GrpcChannel.ForAddress(settings.AccountsManagerGrpcUrl));
         }
-    }
 
-    private string GetProcessId()
-    {
-        return $"Dealing-Admin-{FormatUtils.DateTimeNamedWithMsFormat(DateTime.UtcNow)}";
-    }
-
-    public async Task<List<TradeLogItem>> GetTradeLog(string accountId, string traderId, DateTime from, DateTime to)
-    {
-        var tradeLogStream = _tradeLogClient!.Read(new()
+        if (settings.ManagerAccessGrpcServiceUrl.IsNotNullOrEmpty())
         {
-            AccountId = accountId,
-            TraderId = traderId,
-            DateFromMicros = from.ToEpochMic(),
-            DateToMicros = to.ToEpochMic()
-        }).ResponseStream;
-        var logItems = new List<TradeLogItem>();
-        while (await tradeLogStream.MoveNext())
-        {
-            logItems.Add(tradeLogStream.Current);
+            _managerAccessClient = new ManagerAccessService.ManagerAccessServiceClient(
+                GrpcChannel.ForAddress(settings.ManagerAccessGrpcServiceUrl));
         }
-        return logItems;
     }
-
-    public async Task<string> GetClientRedirectUrl(string clientId)
-    {
-        var redirectUrl = await _authServiceClient.GeneratePlatformRedirectUrlAsync(new GeneratePlatformRedirectUrlGrpcRequest
-        {
-            TraderId = clientId
-        });
-
-        return redirectUrl.RedirectUrl;
-    }
-
-    #region KeyValue Service
-
-    public async Task<List<GetKeyValueGrpcResponseModel>> GetClientKeyValues(string clientId)
-    {
-        var keyValuesList = new List<GetKeyValueGrpcResponseModel>();
-        var keyValuesStream = _keyValueClient
-            .GetAllByUser(new()
-            {
-                ClientId = clientId
-            })
-            .ResponseStream;
-        while (await keyValuesStream.MoveNext())
-        {
-            keyValuesList.Add(keyValuesStream.Current);
-        }
-
-        return keyValuesList;
-    }
-
-    public async Task SetClientKeyValue(string clientId, string key, string value)
-    {
-        var call = _keyValueClient.Set();
-        await call.RequestStream.WriteAsync(new SetKeyValueGrpcRequestModel
-        {
-            ClientId = clientId,
-            Key = key,
-            Value = value,
-
-        });
-        await call.RequestStream.CompleteAsync();
-    }
-
-
-    #endregion
-
-    #region Personal Data
-
-    public async Task<PersonalDataModel> GetTraderPersonalDataAsync(TraderBrandModel traderBrand)
-    {
-        var request = new GetPersonalDataRequest { Id = traderBrand.TraderId };
-        var clientData = await _personalDataClient!.GetAsync(request);
-        return clientData.PersonalDataModel;
-    }
-
-    public async Task SetTraderPersonalData(PersonalDataModel model, string traderId)
-    {
-        var request = new SetPersonalDataRequest
-        {
-            Id = traderId,
-            PersonalDataModel = model
-        };
-        var a = JsonConvert.SerializeObject(request);
-        await _personalDataClient!.SetAsync(request);
-    }
-
-    #endregion
 
     #region Trader and Account
+
+    public async Task<List<TraderBrandModel>> SearchTraderBrandsAsync(string searchValue)
+    {
+        var traderIds = await _traderCredentialsClient!.SearchByIdOrEmailAsync(new()
+        {
+            Phrase = searchValue
+        });
+
+        if (traderIds.CalculateSize() == 0)
+        {
+            var traderIdByAccountIdRes = await _accountsManagerClient!.GetTraderIdByAccountIdAsync(new AccountManagerGetTraderIdByAccountIdGrpcRequest()
+            {
+                AccountId = searchValue
+            });
+            if (traderIdByAccountIdRes.HasTraderId)
+            {
+                traderIds = await _traderCredentialsClient!.SearchByIdOrEmailAsync(new()
+                {
+                    Phrase = traderIdByAccountIdRes.TraderId
+                });
+            }
+        }
+
+        return traderIds.Ids.Count == 0 ?
+            new() :
+            traderIds.Ids.Select(TraderBrandModel.FromGrpc).ToList();
+    }
+
+    public async Task<List<TraderBrandModel>> SearchTraderBrandsAsync(string searchValue, IBackOfficeUser user)
+    {
+        var allTraderBrands = await SearchTraderBrandsAsync(searchValue);
+
+        return (from model in allTraderBrands
+                let canAccess = _managerAccessClient!.CanAccess(new()
+                { ManagerId = user.Id, TraderId = model.TraderId })
+                where canAccess.Value
+                select model).ToList();
+    }
 
     public async Task<List<TradingAccountModel>> GetTraderAccountsAsync(string traderId)
     {
@@ -200,34 +156,6 @@ public class ClientsService : IClientsService
         return default!;
     }
 
-    public async Task<List<TraderBrandModel>> SearchTraderBrandsAsync(string searchValue)
-    {
-        var traderIds = await _traderCredentialsClient!.SearchByIdOrEmailAsync(new()
-        {
-            Phrase = searchValue
-        });
-
-        if (traderIds.CalculateSize() == 0)
-        {
-            var traderIdByAccountIdRes = await _accountsManagerClient.GetTraderIdByAccountIdAsync(new AccountManagerGetTraderIdByAccountIdGrpcRequest()
-            {
-                AccountId = searchValue
-            });
-            if (traderIdByAccountIdRes.HasTraderId)
-            {
-                traderIds = await _traderCredentialsClient!.SearchByIdOrEmailAsync(new()
-                {
-                    Phrase = traderIdByAccountIdRes.TraderId
-                });
-            }
-
-        }
-
-        return traderIds.Ids.Count == 0 ?
-            new() :
-            traderIds.Ids.Select(TraderBrandModel.FromGrpc).ToList();
-    }
-
     public async Task<AccountsManagerOperationResult> SetTraderAccountDisabledAsync(string accountId, string traderId, bool disabled)
     {
         var res = await _accountsManagerClient!.UpdateAccountTradingDisabledAsync(new()
@@ -238,6 +166,106 @@ public class ClientsService : IClientsService
             TradingDisabled = disabled
         });
         return res.Result;
+    }
+
+    #endregion
+
+    #region KeyValue Service
+
+    public async Task<List<GetKeyValueGrpcResponseModel>> GetClientKeyValues(string clientId)
+    {
+        var keyValuesList = new List<GetKeyValueGrpcResponseModel>();
+        var keyValuesStream = _keyValueClient
+            .GetAllByUser(new()
+            {
+                ClientId = clientId
+            })
+            .ResponseStream;
+        while (await keyValuesStream.MoveNext())
+        {
+            keyValuesList.Add(keyValuesStream.Current);
+        }
+
+        return keyValuesList;
+    }
+
+    public async Task SetClientKeyValue(string clientId, string key, string value)
+    {
+        var call = _keyValueClient.Set();
+        await call.RequestStream.WriteAsync(new SetKeyValueGrpcRequestModel
+        {
+            ClientId = clientId,
+            Key = key,
+            Value = value,
+
+        });
+        await call.RequestStream.CompleteAsync();
+    }
+
+    #endregion
+
+    #region Manager Access
+
+    public async Task<bool> CanManagerAccess(string managerId, string traderId)
+    {
+        var res = await _managerAccessClient!.CanAccessAsync(new() { ManagerId = managerId, TraderId = traderId });
+        return res.Value;
+    }
+
+    public async Task SetManagerAccess(TraderAccessModel access)
+    {
+        await _managerAccessClient!.SetAccessAsync(access);
+    }
+
+    public async Task<List<TraderAccessModel>> GetManagerAccess(string managerId)
+    {
+        var dataStream =
+            _managerAccessClient!
+                .GetManagerAccess(new() { ManagerId = managerId })
+                .ResponseStream;
+
+        var data = new List<TraderAccessModel>();
+        while (await dataStream.MoveNext())
+        {
+            data.Add(dataStream.Current);
+        }
+        return data;
+    }
+
+    public async Task<TraderManagers> GetTraderManagersLookup(string traderId)
+    {
+        var dataStream =
+            _managerAccessClient!
+                .GetTraderManagers(new() { TraderId = traderId })
+                .ResponseStream;
+
+        var data = new TraderManagers();
+        while (await dataStream.MoveNext())
+        {
+            data.Add(dataStream.Current.ManagerType, dataStream.Current.ManagerId);
+        }
+        return data;
+    }
+
+    #endregion
+
+    #region Personal Data
+
+    public async Task<PersonalDataModel> GetTraderPersonalDataAsync(TraderBrandModel traderBrand)
+    {
+        var request = new GetPersonalDataRequest { Id = traderBrand.TraderId };
+        var clientData = await _personalDataClient!.GetAsync(request);
+        return clientData.PersonalDataModel;
+    }
+
+    public async Task SetTraderPersonalData(PersonalDataModel model, string traderId)
+    {
+        var request = new SetPersonalDataRequest
+        {
+            Id = traderId,
+            PersonalDataModel = model
+        };
+        await _personalDataClient!.SetAsync(request);
     }
 
     #endregion
@@ -396,4 +424,37 @@ public class ClientsService : IClientsService
     }
 
     #endregion
+
+    private string GetProcessId()
+    {
+        return $"Backoffice-{FormatUtils.DateTimeNamedWithMsFormat(DateTime.UtcNow)}";
+    }
+
+    public async Task<List<TradeLogItem>> GetTradeLog(string accountId, string traderId, DateTime from, DateTime to)
+    {
+        var tradeLogStream = _tradeLogClient!.Read(new()
+        {
+            AccountId = accountId,
+            TraderId = traderId,
+            DateFromMicros = from.ToEpochMic(),
+            DateToMicros = to.ToEpochMic()
+        }).ResponseStream;
+        var logItems = new List<TradeLogItem>();
+        while (await tradeLogStream.MoveNext())
+        {
+            logItems.Add(tradeLogStream.Current);
+        }
+        return logItems;
+    }
+
+    public async Task<string> GetClientRedirectUrl(string clientId)
+    {
+        var redirectUrl = await _authServiceClient.GeneratePlatformRedirectUrlAsync(new GeneratePlatformRedirectUrlGrpcRequest
+        {
+            TraderId = clientId
+        });
+
+        return redirectUrl.RedirectUrl;
+    }
+
 }
