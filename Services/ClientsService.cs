@@ -302,7 +302,7 @@ public class ClientsService : IClientsService
         {
             request.DateTo = (ulong)to.UnixTime();
         }
-        var responseStream = _reportClient.GetOperationsHistoryInDateRange(request).ResponseStream;
+        var responseStream = _reportClient!.GetOperationsHistoryInDateRange(request).ResponseStream;
         var operations = new List<ReportOperationHistoryItem>();
         while (await responseStream.MoveNext())
         {
