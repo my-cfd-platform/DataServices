@@ -3,6 +3,7 @@ using DataServices.Models;
 using DataServices.Models.Clients;
 using DataServices.MyNoSql.Interfaces;
 using DataServices.Services.Interfaces;
+using Grpc.Core;
 using Grpc.Net.Client;
 using Pd;
 using StatusFlows;
@@ -39,7 +40,21 @@ public class StatusesService : IStatusesService
         return status == null! ? null! : status.Name;
     }
 
+    public async Task<Dictionary<string, Dictionary<string,StatusGrpcModel>>> SearchTraderStatusesAsync(SearchStatus search)
+    {
+        var dataStream =
+            _statusClient!.Search(search).ResponseStream;
 
+        var data = new Dictionary<string, Dictionary<string,StatusGrpcModel>>();
+        while (await dataStream.MoveNext())
+        {
+            var traderId = dataStream.Current.Id!;
+            data.TryAdd(traderId, new ());
+            data[traderId].TryAdd(dataStream.Current.Name, dataStream.Current);
+        }
+        return data;
+
+    }
 
     #region Trader Statuses
     

@@ -2,6 +2,7 @@ using CommentFlows;
 using DataServices.Extensions;
 using DataServices.Models;
 using DataServices.Services.Interfaces;
+using Grpc.Core;
 using Grpc.Net.Client;
 
 namespace DataServices.Services;
@@ -30,6 +31,22 @@ public class CommentsService : ICommentsService
                 new RequestByCategory { Category = category }
             ))
             .Data?.ToList()!;
+    }
+
+    public async Task<Dictionary<string, List<CommentGrpcModel>>> SearchCommentsAsync(SearchComments search)
+    {
+        var dataStream =
+            _commentClient!.Search(search).ResponseStream;
+
+        var data = new Dictionary<string, List<CommentGrpcModel>>();
+        while (await dataStream.MoveNext())
+        {
+            var traderId = dataStream.Current.Category!;
+            data.TryAdd(traderId, new ()); 
+            data[traderId].Add(dataStream.Current);
+        }
+        return data;
+
     }
 
 }

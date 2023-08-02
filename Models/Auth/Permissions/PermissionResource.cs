@@ -9,8 +9,136 @@
     {
         [PermissionResourceInfo("Client View")]
         ClientView,
-        [PermissionResourceInfo("Logs")]
-        Logs,
+
+        #region ClientsList
+
+        [PermissionResourceInfo("Clients List")]
+        ClientsList,
+        [PermissionResourceInfo(ClientsList, "Filter")]
+        ClientsListFilter,
+        [PermissionResourceInfo(ClientsList, "Table")]
+        ClientsListTable,
+        [PermissionResourceInfo(ClientsList, "Multi actions")]
+        ClientsListMultiActions,
+        [PermissionResourceInfo(ClientsList, "Download data", PermissionActions.Edit)]
+        ClientsListDownloadData,
+        [PermissionResourceInfo(ClientsListFilter, "Brand id")]
+        ClientsListFilterBrandId,
+        [PermissionResourceInfo(ClientsListFilter, "Country of registration")]
+        ClientsListFilterCountryOfRegistration,
+        [PermissionResourceInfo(ClientsListFilter, "Backoffice user id")]
+        ClientsListFilterBackofficeUserId,
+        [PermissionResourceInfo(ClientsListFilter, "Retention manager id ")]
+        ClientsListFilterRetentionManagerId,
+        [PermissionResourceInfo(ClientsListFilter, "Trading status")]
+        ClientsListFilterTradingStatus,
+        [PermissionResourceInfo(ClientsListFilter, "CRM status")]
+        ClientsListFilterCrmStatus,
+        [PermissionResourceInfo(ClientsListFilter, "Activation date")]
+        ClientsListFilterActivationDate,
+        [PermissionResourceInfo(ClientsListFilter, "Utm campaign")]
+        ClientsListFilterUtmCampaign,
+        [PermissionResourceInfo(ClientsListFilter, "Aff id")]
+        ClientsListFilterAffId,
+        [PermissionResourceInfo(ClientsListFilter, "Owner")]
+        ClientsListFilterOwner,
+        [PermissionResourceInfo(ClientsListFilter, "Next call date")]
+        ClientsListFilterNextCallDate,
+        [PermissionResourceInfo(ClientsListFilter, "Last contact date")]
+        ClientsListFilterLastContactDate,
+        [PermissionResourceInfo(ClientsListFilter, "Is internal")]
+        ClientsListFilterIsInternal,
+        [PermissionResourceInfo(ClientsListTable, "Registered")]
+        ClientsListTableRegistered,
+        [PermissionResourceInfo(ClientsListTable, "Full name")]
+        ClientsListTableFullName,
+        [PermissionResourceInfo(ClientsListTable, "Phone")]
+        ClientsListTablePhone,
+        [PermissionResourceInfo(ClientsListTable, "Brand Id")]
+        ClientsListTableBrandId,
+        [PermissionResourceInfo(ClientsListTable, "Office")]
+        ClientsListTableOffice,
+        [PermissionResourceInfo(ClientsListTable, "Next call date")]
+        ClientsListTableNextCallDate,
+        [PermissionResourceInfo(ClientsListTable, "Balance")]
+        ClientsListTableBalance,
+        [PermissionResourceInfo(ClientsListTable, "CRM status")]
+        ClientsListTableCrmStatus,
+        [PermissionResourceInfo(ClientsListTable, "Trading status")]
+        ClientsListTableTradingStatus,
+        [PermissionResourceInfo(ClientsListTable, "Utm campaign")]
+        ClientsListTableUtmCampaign,
+        [PermissionResourceInfo(ClientsListTable, "Activation date")]
+        ClientsListTableActivationDate,
+        [PermissionResourceInfo(ClientsListTable, "Last contact date")]
+        ClientsListTableLastContactDate,
+        [PermissionResourceInfo(ClientsListTable, "Aff id")]
+        ClientsListTableAffId,
+        [PermissionResourceInfo(ClientsListTable, "Last comment")]
+        ClientsListTableLastComment,
+        [PermissionResourceInfo(ClientsListTable, "Email")]
+        ClientsListTableEmail,
+        [PermissionResourceInfo(ClientsListTable, "Landing page")]
+        ClientsListTableLandingPage,
+        [PermissionResourceInfo(ClientsListMultiActions, "Change crm status")]
+        ClientsListMultiActionsChangeCrmStatus,
+        [PermissionResourceInfo(ClientsListMultiActions, "Change trading status")]
+        ClientsListMultiActionsChangeTradingStatus,
+        [PermissionResourceInfo(ClientsListMultiActions, "Change office")]
+        ClientsListMultiActionsChangeOffice,
+        [PermissionResourceInfo(ClientsListMultiActions, "Change Retention manager")]
+        ClientsListMultiActionsChangeRetentionManager,
+        [PermissionResourceInfo(ClientsListMultiActions, "Change Conversion manager")]
+        ClientsListMultiActionsChangeConversionManager,
+        [PermissionResourceInfo(ClientsListTable, "Retention manager")]
+        ClientsListRetentionManager,
+        [PermissionResourceInfo(ClientsListTable, "Conversion manager")]
+        ClientsListTableConversionManager,
+        [PermissionResourceInfo(ClientsListTable, "Country")]
+        ClientsListTableCountry,
+        [PermissionResourceInfo(ClientsListTable, "Id")]
+        ClientsListTableId,
+        [PermissionResourceInfo(ClientsListTable, "Device")]
+        ClientsListTableDevice,
+        [PermissionResourceInfo(ClientsListTable, "Redirected from")]
+        ClientsListTableRedirectedFrom,
+        [PermissionResourceInfo(ClientsListTable, "Ip")]
+        ClientsListTableIp,
+        [PermissionResourceInfo(ClientsListTable, "Process id")]
+        ClientsListTableProcessId,
+        [PermissionResourceInfo(ClientsListTable, "Cxd token")]
+        ClientsListTableCxdToken,
+        [PermissionResourceInfo(ClientsListTable, "Is internal")]
+        ClientsListTableIsInternal,
+        [PermissionResourceInfo(ClientsListFilter, "Registered")]
+        ClientsListFilterRegistered,
+        [PermissionResourceInfo(ClientsListTable, "CRM status label")]
+        ClientsListTableCrmStatusLabel,
+        [PermissionResourceInfo(ClientsListFilter, "CRM status label")]
+        ClientsListFilterCrmStatusLabel,
+        [PermissionResourceInfo(ClientsListTable, "Is Archived")]
+        ClientsListTableIsArchived,
+        [PermissionResourceInfo(ClientsListMultiActions, "Change Is Archived", PermissionActions.Edit)]
+        ClientsListMultiActionsChangeIsArchived,
+        [PermissionResourceInfo(ClientsListTable, "Multi Registration")]
+        ClientsListTableIsMultiRegistration,
+        [PermissionResourceInfo(ClientsListTable, "Sex")]
+        LogsTableSex,
+        [PermissionResourceInfo(ClientsListTable, "Age")]
+        LogsTableAgeCategory,
+        [PermissionResourceInfo(ClientsListTable, "Occupation")]
+        LogsTableOccupationType,
+        [PermissionResourceInfo(ClientsListTable, "Experience")]
+        LogsTableExperienceType,
+        [PermissionResourceInfo(ClientsListTable, "First deposit amount")]
+        LogsTableFirstDepositAmount,
+        [PermissionResourceInfo(ClientsListTable, "Redeposit potential")]
+        LogsTableDepositPotentialType,
+        [PermissionResourceInfo(ClientsListTable, "Expected Deposit")]
+        LogsTableExpectedDepositAmount,
+        #endregion
+
+
         [PermissionResourceInfo("Kyc")]
         Kyc,
         [PermissionResourceInfo("Traders Online")]
@@ -33,18 +161,11 @@
         Brands,
         [PermissionResourceInfo("System Audit Logs", PermissionActions.View)]
         SystemAuditLogs,
-
-        [PermissionResourceInfo(Logs, "Filter")]
-        LogsFilter,
-        [PermissionResourceInfo(Logs, "Table")]
-        LogsTable,
-        [PermissionResourceInfo(Logs, "Multi actions")]
-        LogsMultiActions,
         [PermissionResourceInfo(ClientView, "Statuses")]
         ClientViewStatuses,
         [PermissionResourceInfo(ClientView, "Personal data")]
         ClientViewPersonalData,
-        [PermissionResourceInfo(ClientView, "Crm data")]
+        [PermissionResourceInfo(ClientView, "CRM data")]
         ClientViewCrmData,
         [PermissionResourceInfo(ClientView, "Ownership", PermissionActions.View)]
         ClientViewOwnership,
@@ -71,48 +192,6 @@
         [PermissionResourceInfo(ClientView, "Audit logs")]
         ClientViewAuditLogs,
 
-        [PermissionResourceInfo(LogsTable, "Registered")]
-        LogsTableRegistered,
-        [PermissionResourceInfo(LogsTable, "Full name")]
-        LogsTableFullName,
-        [PermissionResourceInfo(LogsTable, "Phone")]
-        LogsTablePhone,
-        [PermissionResourceInfo(LogsTable, "Brand Id")]
-        LogsTableBrandId,
-        [PermissionResourceInfo(LogsTable, "Office")]
-        LogsTableOffice,
-        [PermissionResourceInfo(LogsTable, "Next call date")]
-        LogsTableNextCallDate,
-        [PermissionResourceInfo(LogsTable, "Balance")]
-        LogsTableBalance,
-        [PermissionResourceInfo(LogsTable, "Crm status")]
-        LogsTableCrmStatus,
-        [PermissionResourceInfo(LogsTable, "Trading status")]
-        LogsTableTradingStatus,
-        [PermissionResourceInfo(LogsTable, "Utm campaign")]
-        LogsTableUtmCampaign,
-        [PermissionResourceInfo(LogsTable, "Activation date")]
-        LogsTableActivationDate,
-        [PermissionResourceInfo(LogsTable, "Last contact date")]
-        LogsTableLastContactDate,
-        [PermissionResourceInfo(LogsTable, "Aff id")]
-        LogsTableAffId,
-        [PermissionResourceInfo(LogsTable, "Last comment")]
-        LogsTableLastComment,
-        [PermissionResourceInfo(LogsTable, "Email")]
-        LogsTableEmail,
-        [PermissionResourceInfo(LogsTable, "Landing page")]
-        LogsTableLandingPage,
-        [PermissionResourceInfo(LogsMultiActions, "Change crm status")]
-        LogsMultiActionsChangeCrmStatus,
-        [PermissionResourceInfo(LogsMultiActions, "Change trading status")]
-        LogsMultiActionsChangeTradingStatus,
-        [PermissionResourceInfo(LogsMultiActions, "Change office")]
-        LogsMultiActionsChangeOffice,
-        [PermissionResourceInfo(LogsMultiActions, "Change Retention manager")]
-        LogsMultiActionsChangeRetentionManager,
-        [PermissionResourceInfo(LogsMultiActions, "Change Conversion manager")]
-        LogsMultiActionsChangeConversionManager,
         [PermissionResourceInfo(Kyc, "Documents", PermissionActions.View, PermissionActions.Edit, PermissionActions.Delete)]
         KycDocuments,
         [PermissionResourceInfo(Kyc, "Personal data", PermissionActions.View, PermissionActions.Edit)]
@@ -132,7 +211,7 @@
         
         [PermissionResourceInfo(ClientViewStatuses, "Achievement status", PermissionActions.View, PermissionActions.Edit)]
         ClientViewStatusesAchievementStatus,
-        [PermissionResourceInfo(ClientViewStatuses, "Crm status", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewStatuses, "CRM status", PermissionActions.View, PermissionActions.Edit)]
         ClientViewStatusesCrmStatus,
         [PermissionResourceInfo(ClientViewStatuses, "Trading status", PermissionActions.View, PermissionActions.Edit)]
         ClientViewStatusesTradingStatus,
@@ -160,37 +239,6 @@
         ClientViewPersonalDataCity,
         [PermissionResourceInfo(ClientViewCrmData, "Next call date", PermissionActions.View, PermissionActions.Edit)]
         ClientViewCrmDataNextCallDate,
-        [PermissionResourceInfo(Logs, "Download data", PermissionActions.Edit)]
-        LogsDownloadData,
-        [Obsolete]
-        [PermissionResourceInfo(Logs, "Order by last contact date")]
-        LogsOrderByLastContactDate,
-        [PermissionResourceInfo(LogsFilter, "Brand id")]
-        LogsFilterBrandId,
-        [PermissionResourceInfo(LogsFilter, "Country of registration")]
-        LogsFilterCountryOfRegistration,
-        [PermissionResourceInfo(LogsFilter, "Backoffice user id")]
-        LogsFilterBackofficeUserId,
-        [PermissionResourceInfo(LogsFilter, "Retention manager id ")]
-        LogsFilterRetentionManagerId,
-        [PermissionResourceInfo(LogsFilter, "Trading status")]
-        LogsFilterTradingStatus,
-        [PermissionResourceInfo(LogsFilter, "Crm status")]
-        LogsFilterCrmStatus,
-        [PermissionResourceInfo(LogsFilter, "Activation date")]
-        LogsFilterActivationDate,
-        [PermissionResourceInfo(LogsFilter, "Utm campaign")]
-        LogsFilterUtmCampaing,
-        [PermissionResourceInfo(LogsFilter, "Aff id")]
-        LogsFilterAffId,
-        [PermissionResourceInfo(LogsFilter, "Owner")]
-        LogsFilterOwner,
-        [PermissionResourceInfo(LogsFilter, "Next call date")]
-        LogsFilterNextCallDate,
-        [PermissionResourceInfo(LogsFilter, "Last contact date")]
-        LogsFilterLastContactDate,
-        [PermissionResourceInfo(LogsFilter, "Is internal")]
-        LogsFilterIsInternal,
         [PermissionResourceInfo(ClientView, "Is internal/real", PermissionActions.View,  PermissionActions.Edit)]
         ClientViewIsInternal,
         [PermissionResourceInfo(ClientView, "Is withdrawal active/disabled", PermissionActions.View,  PermissionActions.Edit)]
@@ -247,9 +295,6 @@
         TransactionsReportTableFirstName,
         [PermissionResourceInfo(TransactionsReportTable, "Last name")]
         TransactionsReportTableLastName,
-        [Obsolete]
-        [PermissionResourceInfo(TransactionsReportTable, "Country")]
-        TransactionsReportTableCountry,
         [PermissionResourceInfo(TransactionsReportTable, "Country of citizenship")]
         TransactionsReportTableCountryOfCitizenship,
         [PermissionResourceInfo(TransactionsReportTable, "Country of residence")]
@@ -258,9 +303,6 @@
         TransactionsReportTableCountryOfRegistration,
         [PermissionResourceInfo(TransactionsReportTable, "Office")]
         TransactionsReportTableOffice,
-        [Obsolete]
-        [PermissionResourceInfo(TransactionsReportTable, "Account manager when created")]
-        TransactionsReportTableAccountManagerWhenCreated,
         [PermissionResourceInfo(TransactionsReportTable, "Retention manager")]
         TransactionsReportTableRetentionManager,
         [PermissionResourceInfo(TransactionsReportTable, "Is internal")]
@@ -275,32 +317,6 @@
         TransactionsReportTableConversionStatus,
         [PermissionResourceInfo(TransactionsReport, "Download data", PermissionActions.Edit)]
         TransactionsReportDownloadData,
-        [PermissionResourceInfo(LogsTable, "Retention manager")]
-        LogsTableRetentionManager,
-        [PermissionResourceInfo(LogsTable, "Conversion manager")]
-        LogsTableConversionManager,
-        [PermissionResourceInfo(LogsTable, "Country")]
-        LogsTableCountry,
-        [PermissionResourceInfo(LogsTable, "Id")]
-        LogsTableId,
-        [PermissionResourceInfo(LogsTable, "Device")]
-        LogsTableDevice,
-        [PermissionResourceInfo(LogsTable, "Redirected from")]
-        LogsTableRedirectedFrom,
-        [PermissionResourceInfo(LogsTable, "Ip")]
-        LogsTableIp,
-        [PermissionResourceInfo(LogsTable, "Process id")]
-        LogsTableProcessId,
-        [PermissionResourceInfo(LogsTable, "Cxd token")]
-        LogsTableCxdToken,
-        [PermissionResourceInfo(LogsTable, "Is internal")]
-        LogsTableIsInternal,
-        [PermissionResourceInfo(LogsFilter, "Registered")]
-        LogsFilterRegistered,
-        [PermissionResourceInfo(LogsTable, "Crm status label")]
-        LogsTableCrmStatusLabel,
-        [PermissionResourceInfo(LogsFilter, "Crm status label")]
-        LogsFilterCrmStatusLabel,
         [PermissionResourceInfo(ClientView, "KeyValue", PermissionActions.View, PermissionActions.Edit)]
         ClientViewKeyValueData,
         [PermissionResourceInfo("Auto dialer")]
@@ -313,10 +329,6 @@
         AutoDialerStatistic,
         [PermissionResourceInfo(ClientViewCrmData, "Is Archived", PermissionActions.View, PermissionActions.Edit)]
         ClientViewCrmDataIsArchived,
-        [PermissionResourceInfo(LogsTable, "Is Archived")]
-        LogsTableIsArchived,
-        [PermissionResourceInfo(LogsMultiActions, "Change Is Archived", PermissionActions.Edit)]
-        LogsMultiActionsChangeIsArchived,
         [PermissionResourceInfo(AutoDialer, "Users", PermissionActions.View, PermissionActions.Edit)]
         AutoDialerUsersOnline,
         [PermissionResourceInfo(AutoDialer, "Calls")]
@@ -329,8 +341,7 @@
         ColdLeadsTableEmail,
         [PermissionResourceInfo(ColdLeadsTable, "Phone")]
         ColdLeadsTablePhone,
-        [PermissionResourceInfo(LogsTable, "Multi Registration")]
-        LogsTableIsMultiRegistration,
+
         [PermissionResourceInfo("Welcome Bonuses", PermissionActions.View, PermissionActions.Edit)]
         WelcomeBonuses,
         [PermissionResourceInfo("AB Splits", PermissionActions.View, PermissionActions.Edit)]
@@ -373,20 +384,7 @@
         ClientViewQuestionaryTabRedepositPotential,
         [PermissionResourceInfo(ClientViewQuestionaryTab, "Expected Deposit", PermissionActions.View, PermissionActions.Edit)]
         ClientViewQuestionaryTabExpectedDeposit,
-        [PermissionResourceInfo(LogsTable, "Sex")]
-        LogsTableSex,
-        [PermissionResourceInfo(LogsTable, "Age")]
-        LogsTableAgeCategory,
-        [PermissionResourceInfo(LogsTable, "Occupation")]
-        LogsTableOccupationType,
-        [PermissionResourceInfo(LogsTable, "Experience")]
-        LogsTableExperienceType,
-        [PermissionResourceInfo(LogsTable, "First deposit amount")]
-        LogsTableFirstDepositAmount,
-        [PermissionResourceInfo(LogsTable, "Redeposit potential")]
-        LogsTableDepositPotentialType,
-        [PermissionResourceInfo(LogsTable, "Expected Deposit")]
-        LogsTableExpectedDepositAmount,
+
         [PermissionResourceInfo(ClientView, "AB Split", PermissionActions.View, PermissionActions.Edit)]
         ClientViewABSplit,
         [PermissionResourceInfo("Account types", PermissionActions.View, PermissionActions.Edit)]

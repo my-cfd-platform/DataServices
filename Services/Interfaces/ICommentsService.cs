@@ -6,5 +6,6 @@ namespace DataServices.Services.Interfaces
     {
         Task PostCommentAsync(CommentGrpcModel model);
         Task<IEnumerable<CommentGrpcModel>> GetCommentsAsync(string categoryId);
+        Task<Dictionary<string, List<CommentGrpcModel>>> SearchCommentsAsync(SearchComments search);
     }
 }

@@ -124,6 +124,23 @@ public class ClientsService : IClientsService
                 select model).ToList();
     }
 
+    private async Task<List<TradingAccountModel>> ProcessAccountsStream(IAsyncStreamReader<AccountGrpcModel> stream)
+    {
+        var accounts = new List<TradingAccountModel>();
+        while (await stream.MoveNext())
+        {
+            accounts.Add(TradingAccountModel.FromGrpc(stream.Current));
+        }
+        return accounts;
+    }
+
+    public async Task<List<TradingAccountModel>> SearchTraderAccountsAsync(SearchAccounts search)
+    {
+        var traderAccountsStream = _accountsManagerClient!.Search(search).ResponseStream;
+
+        return await ProcessAccountsStream(traderAccountsStream);
+    }
+
     public async Task<List<TradingAccountModel>> GetTraderAccountsAsync(string traderId)
     {
         var traderAccountsStream =
@@ -131,12 +148,7 @@ public class ClientsService : IClientsService
                 .GetClientAccounts(new() { TraderId = traderId })
                 .ResponseStream;
 
-        var accounts = new List<TradingAccountModel>();
-        while (await traderAccountsStream.MoveNext())
-        {
-            accounts.Add(TradingAccountModel.FromGrpc(traderAccountsStream.Current));
-        }
-        return accounts;
+        return await ProcessAccountsStream(traderAccountsStream);
     }
 
     public async Task<TradingAccountModel> GetTraderAccountAsync(string traderId, string accountId)
@@ -247,13 +259,43 @@ public class ClientsService : IClientsService
         return data;
     }
 
+    public async Task<Dictionary<string, TraderManagers>> SearchTraderManagersAsync(SearchManager search)
+    {
+
+
+        var dataStream =
+            _managerAccessClient!.Search(search).ResponseStream;
+
+        var data = new Dictionary<string, TraderManagers>();
+        while (await dataStream.MoveNext())
+        {
+            var traderId = dataStream.Current.TraderId!;
+            data.TryAdd(dataStream.Current.TraderId, new ());
+            data[traderId].Add(dataStream.Current.ManagerType, dataStream.Current.ManagerId);
+        }
+        return data;
+
+    }
+
     #endregion
 
     #region Personal Data
 
-    public async Task<PersonalDataModel> GetTraderPersonalDataAsync(TraderBrandModel traderBrand)
+    public async Task<List<PersonalDataModel>> SearchPersonalDataAsync(SearchPersonal search)
     {
-        var request = new GetPersonalDataRequest { Id = traderBrand.TraderId };
+        var stream = _personalDataClient!.Search(search).ResponseStream;
+        var data = new List<PersonalDataModel>();
+        while (await stream.MoveNext())
+        {
+            data.Add(stream.Current);
+        }
+        return data;
+
+    }
+
+    public async Task<PersonalDataModel> GetTraderPersonalDataAsync(string traderId)
+    {
+        var request = new GetPersonalDataRequest { Id = traderId };
         var clientData = await _personalDataClient!.GetAsync(request);
         return clientData.PersonalDataModel;
     }
@@ -309,6 +351,24 @@ public class ClientsService : IClientsService
             operations.Add(responseStream.Current);
         }
         return operations;
+    }
+
+    public async Task<Dictionary<string, Dictionary<string,List<ReportOperationHistoryItem>>>> SearchOperationsHistoryAsync(SearchHistory search)
+    {
+        var dataStream =
+            _reportClient!.SearchHistoryPositions(search).ResponseStream;
+
+        var data = new Dictionary<string, Dictionary<string,List<ReportOperationHistoryItem>>>();
+        while (await dataStream.MoveNext())
+        {
+            var traderId = dataStream.Current.TraderId!;
+            var accountId = dataStream.Current.AccountId!;
+            data.TryAdd(traderId, new ()); 
+            data[traderId].TryAdd(accountId,new());
+            data[traderId][accountId].Add(dataStream.Current);
+        }
+        return data;
+
     }
 
     public async Task<List<AccountBalanceModel>> GetBalanceHistoryAsync(string accountId)
@@ -425,10 +485,24 @@ public class ClientsService : IClientsService
 
     #endregion
 
+    #region Helper Functions
+
     private string GetProcessId()
     {
         return $"Backoffice-{FormatUtils.DateTimeNamedWithMsFormat(DateTime.UtcNow)}";
     }
+
+    public async Task<string> GetClientRedirectUrl(string clientId)
+    {
+        var redirectUrl = await _authServiceClient.GeneratePlatformRedirectUrlAsync(new GeneratePlatformRedirectUrlGrpcRequest
+        {
+            TraderId = clientId
+        });
+
+        return redirectUrl.RedirectUrl;
+    }
+
+    #endregion
 
     public async Task<List<TradeLogItem>> GetTradeLog(string accountId, string traderId, DateTime from, DateTime to)
     {
@@ -445,16 +519,6 @@ public class ClientsService : IClientsService
             logItems.Add(tradeLogStream.Current);
         }
         return logItems;
-    }
-
-    public async Task<string> GetClientRedirectUrl(string clientId)
-    {
-        var redirectUrl = await _authServiceClient.GeneratePlatformRedirectUrlAsync(new GeneratePlatformRedirectUrlGrpcRequest
-        {
-            TraderId = clientId
-        });
-
-        return redirectUrl.RedirectUrl;
     }
 
 }

@@ -20,6 +20,7 @@ public interface IClientsService
     Task<List<TraderBrandModel>> SearchTraderBrandsAsync(string searchValue);
     Task<List<TraderBrandModel>> SearchTraderBrandsAsync(string searchValue, IBackOfficeUser user);
     Task<List<TradingAccountModel>> GetTraderAccountsAsync(string traderId);
+    Task<List<TradingAccountModel>> SearchTraderAccountsAsync(SearchAccounts search);
     Task<TradingAccountModel> GetTraderAccountAsync(string traderId, string accountId);
     Task<AccountsManagerOperationResult> SetTraderAccountDisabledAsync(string accountId, string traderId,
         bool disabled);
@@ -45,7 +46,7 @@ public interface IClientsService
     Task<AccountManagerUpdateAccountBalanceGrpcResponse> UpdateAccountBalanceAsync(UpdateBalanceModel requestModel);
     Task<List<AccountBalanceModel>> GetBalanceHistoryAsync(string accountId);
     Task<List<ReportOperationHistoryItem>> GetOperationsHistoryAsync(string accountId, DateTime from, DateTime to);
-
+    Task<Dictionary<string, Dictionary<string, List<ReportOperationHistoryItem>>>> SearchOperationsHistoryAsync(SearchHistory search);
     Task<ReportFlowsOperationsGetHistoryPaginatedGrpcResponse> GetBalanceHistoryPageAsync(string accountId,
         int page, int size = 100);
 
@@ -54,8 +55,9 @@ public interface IClientsService
     #region Personal Data
 
     Task SetTraderPersonalData(PersonalDataModel model, string traderId);
-    Task<PersonalDataModel> GetTraderPersonalDataAsync(TraderBrandModel traderBrand);
+    Task<PersonalDataModel> GetTraderPersonalDataAsync(string traderId);
 
+    Task<List<PersonalDataModel>> SearchPersonalDataAsync(SearchPersonal search);
     #endregion
 
     #region KeyValue Service
@@ -71,6 +73,7 @@ public interface IClientsService
     Task SetManagerAccess(TraderAccessModel access);
     Task<List<TraderAccessModel>> GetManagerAccess(string managerId);
     Task<TraderManagers> GetTraderManagersLookup(string traderId);
+    Task<Dictionary<string, TraderManagers>> SearchTraderManagersAsync(SearchManager search);
 
     #endregion
 }
