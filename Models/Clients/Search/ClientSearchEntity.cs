@@ -10,7 +10,7 @@ using StatusFlows;
 
 namespace DataServices.Models.Clients.Search;
 
-public class ClientSearchModel
+public class ClientSearchEntity
 {
     public string SearchAccounts { get; set; }
     public string SearchPersonal { get; set; }
@@ -22,12 +22,12 @@ public class ClientSearchModel
     public List<string> SearchOrder { get; set; } = new();
 
 
-    public ClientSearchModel()
+    public ClientSearchEntity()
     {
 
     }
 
-    public ClientSearchModel(Dictionary<Type, dynamic> data)
+    public ClientSearchEntity(Dictionary<Type, dynamic> data)
     {
         foreach (var (type, item) in data)
         {
@@ -37,7 +37,7 @@ public class ClientSearchModel
         }
     }
 
-    public Dictionary<Type, dynamic> Get()
+    public Dictionary<Type, dynamic> GetAll()
     {
         var ordered = new Dictionary<Type, dynamic>();
         foreach (var searchModelName in SearchOrder)

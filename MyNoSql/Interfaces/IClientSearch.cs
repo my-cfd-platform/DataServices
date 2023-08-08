@@ -6,5 +6,5 @@ public interface IClientSearch
 {
     string Id { get; }
     string Name { get; set; }
-    ClientSearchModel Data { get; set; }
+    ClientSearchEntity Data { get; set; }
 }

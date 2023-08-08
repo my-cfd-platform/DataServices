@@ -10,7 +10,7 @@ public static class StatusesDefaultData
     public static readonly IReadOnlyDictionary<string, IReadOnlyList<IStatus>> Data =
         new Dictionary<string, IReadOnlyList<IStatus>>
         {
-            #region Statuses
+            #region Crm Statuses
             {
                 StatusType.CrmStatus, new List<IStatus>
                 {

@@ -14,7 +14,7 @@ public class ClientSearchMyNoSqlEntity : MyNoSqlDbEntity, IClientSearch
 
     public string Id => RowKey;
     public string Name { get; set; }
-    public ClientSearchModel Data { get; set; }
+    public ClientSearchEntity Data { get; set; }
     //public Dictionary<string,string> Data { get; set; }
     public static ClientSearchMyNoSqlEntity Create(IClientSearch src)
     {
