@@ -54,7 +54,7 @@ public interface IClientsService
 
     #region Personal Data
 
-    Task SetTraderPersonalData(PersonalDataModel model, string traderId);
+    Task SetTraderPersonalData(PersonalDataModel model);
     Task<PersonalDataModel> GetTraderPersonalDataAsync(string traderId);
 
     Task<List<PersonalDataModel>> SearchPersonalDataAsync(SearchPersonal search);

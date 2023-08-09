@@ -300,11 +300,10 @@ public class ClientsService : IClientsService
         return clientData.PersonalDataModel;
     }
 
-    public async Task SetTraderPersonalData(PersonalDataModel model, string traderId)
+    public async Task SetTraderPersonalData(PersonalDataModel model)
     {
         var request = new SetPersonalDataRequest
         {
-            Id = traderId,
             PersonalDataModel = model
         };
         await _personalDataClient!.SetAsync(request);
