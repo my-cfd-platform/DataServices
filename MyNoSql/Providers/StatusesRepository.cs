@@ -6,6 +6,7 @@ using MyNoSqlServer.DataWriter;
 
 namespace DataServices.MyNoSql.Providers;
 
+//to be used only via StatusesService
 public class StatusesRepository : IRepository<IStatus>
 {
     private IMyNoSqlServerDataWriter<StatusMyNoSqlEntity> _table = null!;
