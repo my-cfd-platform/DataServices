@@ -1,10 +1,13 @@
 ﻿using AccountsManager;
 using DataServices.Models.Auth.Users;
 using DataServices.Models.Clients;
+using Docs;
 using Keyvalue;
+using Kyc;
 using ManagerAccessFlows;
 using Pd;
 using ReportGrpc;
+using System.Threading.Tasks;
 using TradeLog;
 
 namespace DataServices.Services.Interfaces;
@@ -58,6 +61,16 @@ public interface IClientsService
     Task<PersonalDataModel> GetTraderPersonalDataAsync(string traderId);
 
     Task<List<PersonalDataModel>> SearchPersonalDataAsync(SearchPersonal search);
+    #endregion
+
+    #region KYC
+
+    Task<KycStatus> GetClientKycStatusAsync(string clientId);
+    Task<List<DocumentItemModel>> GetClientDocumentsList(string clientId);
+    void UpdateDocumentComment(string id, string comment, string authorId, string traderId);
+    Task UpdateDocumentStatus(string id, DocumentStatus status, DocumentRejectReason reason, string authorId, string traderId);
+
+    Task<DocumentModel> GetClientDocument(string clientId, string documentId);
     #endregion
 
     #region KeyValue Service

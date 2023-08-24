@@ -7,6 +7,7 @@ using DataServices.Models.Clients;
 using DataServices.MyNoSql.Interfaces;
 using DataServices.Services.Interfaces;
 using DataServices.Utils;
+using Docs;
 using DotNetCoreDecorators;
 using Grpc.Core;
 using Grpc.Net.Client;
@@ -16,6 +17,7 @@ using Pd;
 using ReportGrpc;
 using TradeLog;
 using TraderCredentials;
+using Kyc;
 
 namespace DataServices.Services;
 
@@ -29,8 +31,11 @@ public class ClientsService : IClientsService
     private readonly TradeLogGrpcService.TradeLogGrpcServiceClient? _tradeLogClient;
     private readonly KeyValueFlowsGrpcService.KeyValueFlowsGrpcServiceClient? _keyValueClient;
     private readonly ManagerAccessService.ManagerAccessServiceClient? _managerAccessClient;
+    private readonly KycStatusService.KycStatusServiceClient? _kycStatusClient;
+    private readonly DocumentsService.DocumentsServiceClient? _documentsClient;
 
-    private IPriceService _priceService;
+
+    private readonly IPriceService _priceService;
 
     public ClientsService(DataServicesSettings settings, IPriceService priceService)
     {
@@ -81,6 +86,18 @@ public class ClientsService : IClientsService
         {
             _managerAccessClient = new ManagerAccessService.ManagerAccessServiceClient(
                 GrpcChannel.ForAddress(settings.ManagerAccessGrpcServiceUrl));
+        }
+        
+        if (settings.KycStatusGrpcServiceUrl.IsNotNullOrEmpty())
+        {
+            _kycStatusClient = new KycStatusService.KycStatusServiceClient(
+                GrpcChannel.ForAddress(settings.KycStatusGrpcServiceUrl));
+        }
+
+        if (settings.DocumentsGrpcServiceUrl.IsNotNullOrEmpty())
+        {
+            _documentsClient = new DocumentsService.DocumentsServiceClient(
+                GrpcChannel.ForAddress(settings.DocumentsGrpcServiceUrl));
         }
     }
 
@@ -307,6 +324,72 @@ public class ClientsService : IClientsService
             PersonalDataModel = model
         };
         await _personalDataClient!.SetAsync(request);
+    }
+
+    #endregion
+
+    #region KYC
+
+    public async Task<KycStatus> GetClientKycStatusAsync(string clientId)
+    {
+        var request = new GetStatusRequest { ClientId = clientId};
+        var clientData = await _kycStatusClient!.GetAsync(request);
+        return clientData.Status;
+    }
+
+    public async Task<List<DocumentItemModel>> GetClientDocumentsList(string clientId)
+    {
+        var request = new GetDocumentsListRequest { ClientId = clientId };
+        var stream = _documentsClient!.GetDocumentsList(request).ResponseStream;
+        var data = new List<DocumentItemModel>();
+        while (await stream.MoveNext())
+        {
+            data.Add(stream.Current);
+        }
+        return data;
+    }
+
+    public async Task<DocumentModel> GetClientDocument(string clientId, string documentId)
+    {
+        var request = new GetDocumentsRequest()
+        {
+            ClientId = clientId,
+            DocIds = { documentId }
+        };
+        var stream = _documentsClient!.Get(request).ResponseStream;
+        await stream.MoveNext();
+        return stream.Current;
+    }
+
+    public void UpdateDocumentComment(string id, string comment, string authorId, string traderId)
+    {
+        var request = new UpdateCommentRequest
+        {
+            ClientId = traderId,
+            DocId = id,
+            Comment = comment,
+            Who = authorId
+        };
+        _documentsClient!.UpdateComment(request);
+    }
+
+    public async Task UpdateDocumentStatus(string id, DocumentStatus status,
+        DocumentRejectReason reason, string authorId, string traderId)
+    {
+        if (status != DocumentStatus.Rejected)
+        {
+            reason = DocumentRejectReason.NotSet;
+        }
+        var request = new UpdateDocumentStatusRequest
+        {
+            ClientId = traderId,
+            DocId = id,
+            Status = status,
+            RejectReason = reason,
+            Who = authorId
+        };
+        await _documentsClient!.UpdateStatusAsync(request);
+
     }
 
     #endregion

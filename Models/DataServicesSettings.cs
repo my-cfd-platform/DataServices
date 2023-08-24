@@ -16,6 +16,8 @@ public class DataServicesSettings
     public string CommentGrpcServiceUrl { get; set; } = null!;
     public string KeyValueGrpcServiceUrl { get; set; } = null!;
     public string ManagerAccessGrpcServiceUrl { get; set; } = null!;
+    public string KycStatusGrpcServiceUrl { get; set; } = null!;
+    public string DocumentsGrpcServiceUrl { get; set; } = null!;
 
     public DataServicesSettings(object settings)
     {

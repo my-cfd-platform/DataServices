@@ -7,8 +7,43 @@
     /// </summary>
     public enum PermissionResource
     {
+        #region ClientView
+
         [PermissionResourceInfo("Client View")]
         ClientView,
+        [PermissionResourceInfo(ClientView, "Statuses")]
+        ClientViewStatuses,
+        [PermissionResourceInfo(ClientView, "Personal data")]
+        ClientViewPersonalData,
+        [PermissionResourceInfo(ClientView, "CRM data")]
+        ClientViewCrmData,
+        [PermissionResourceInfo(ClientView, "Ownership", PermissionActions.View)]
+        ClientViewOwnership,
+        [PermissionResourceInfo(ClientView, "Additional phones", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewAdditionalPhones,
+        [PermissionResourceInfo(ClientView, "External Data ", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewExternalData,
+        [PermissionResourceInfo(ClientView, "Utm's", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewUtm,
+        [PermissionResourceInfo(ClientView, "Comments", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewComments,
+        [PermissionResourceInfo(ClientView, "Accounts", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewAccounts,
+        [PermissionResourceInfo(ClientView, "Dealing info")]
+        ClientViewDealingInfo,
+        [PermissionResourceInfo(ClientView, "Deposits", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewDeposits,
+        [PermissionResourceInfo(ClientView, "Transactions")]
+        ClientViewTransactions,
+        [PermissionResourceInfo(ClientView, "Active deals")]
+        ClientViewActiveDeals,
+        [PermissionResourceInfo(ClientView, "Auth logs")]
+        ClientViewAuthLogs,
+        [PermissionResourceInfo(ClientView, "Audit logs")]
+        ClientViewAuditLogs,
+        [PermissionResourceInfo(ClientView, "Documents")]
+        ClientViewDocuments,
+        #endregion
 
         #region ClientsList
 
@@ -138,9 +173,17 @@
         LogsTableExpectedDepositAmount,
         #endregion
 
+        #region KYC
 
         [PermissionResourceInfo("Kyc")]
         Kyc,
+        [PermissionResourceInfo(Kyc, "Documents", PermissionActions.View, PermissionActions.Edit, PermissionActions.Delete)]
+        KycDocuments,
+        [PermissionResourceInfo(Kyc, "Personal data", PermissionActions.View, PermissionActions.Edit)]
+        KycPersonalData,
+
+        #endregion
+
         [PermissionResourceInfo("Traders Online")]
         TradersOnline,
         [PermissionResourceInfo("Deposits")]
@@ -161,41 +204,6 @@
         Brands,
         [PermissionResourceInfo("System Audit Logs", PermissionActions.View)]
         SystemAuditLogs,
-        [PermissionResourceInfo(ClientView, "Statuses")]
-        ClientViewStatuses,
-        [PermissionResourceInfo(ClientView, "Personal data")]
-        ClientViewPersonalData,
-        [PermissionResourceInfo(ClientView, "CRM data")]
-        ClientViewCrmData,
-        [PermissionResourceInfo(ClientView, "Ownership", PermissionActions.View)]
-        ClientViewOwnership,
-        [PermissionResourceInfo(ClientView, "Additional phones", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewAdditionalPhones,
-        [PermissionResourceInfo(ClientView, "External Data ", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewExternalData,
-        [PermissionResourceInfo(ClientView, "Utm's", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewUtm,
-        [PermissionResourceInfo(ClientView, "Comments", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewComments,
-        [PermissionResourceInfo(ClientView, "Accounts", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewAccounts,
-        [PermissionResourceInfo(ClientView, "Dealing info")]
-        ClientViewDealingInfo,
-        [PermissionResourceInfo(ClientView, "Deposits", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewDeposits,
-        [PermissionResourceInfo(ClientView, "Transactions")]
-        ClientViewTransactions,
-        [PermissionResourceInfo(ClientView, "Active deals")]
-        ClientViewActiveDeals,
-        [PermissionResourceInfo(ClientView, "Auth logs")]
-        ClientViewAuthLogs,
-        [PermissionResourceInfo(ClientView, "Audit logs")]
-        ClientViewAuditLogs,
-
-        [PermissionResourceInfo(Kyc, "Documents", PermissionActions.View, PermissionActions.Edit, PermissionActions.Delete)]
-        KycDocuments,
-        [PermissionResourceInfo(Kyc, "Personal data", PermissionActions.View, PermissionActions.Edit)]
-        KycPersonalData,
         [PermissionResourceInfo(Deposits, "Deposits", PermissionActions.View, PermissionActions.Edit)]
         DepositsDeposits,
         [PermissionResourceInfo(Deposits, "Fund account", PermissionActions.View, PermissionActions.Edit)]
