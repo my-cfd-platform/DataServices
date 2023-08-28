@@ -4,6 +4,7 @@ using DataServices.Models.Clients;
 using Docs;
 using Keyvalue;
 using Kyc;
+using Kyclog;
 using ManagerAccessFlows;
 using Pd;
 using ReportGrpc;
@@ -69,8 +70,10 @@ public interface IClientsService
     Task<List<DocumentItemModel>> GetClientDocumentsList(string clientId);
     void UpdateDocumentComment(string id, string comment, string authorId, string traderId);
     Task UpdateDocumentStatus(string id, DocumentStatus status, DocumentRejectReason reason, string authorId, string traderId);
-
+    Task<DocumentItemModel> UploadDocument(UploadDocumentRequest request);
+    Task<DocumentItemModel> UploadDocument(string authorId, string traderId, DocType docType, string content, string contentType, string comment);
     Task<DocumentModel> GetClientDocument(string clientId, string documentId);
+    Task<List<ChangeLog>> GetKycChangeLogs(string traderId);
     #endregion
 
     #region KeyValue Service

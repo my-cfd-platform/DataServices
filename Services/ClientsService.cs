@@ -1,3 +1,4 @@
+using System.Text;
 using AccountsManager;
 using AuthenticationIntegration;
 using DataServices.Extensions;
@@ -9,6 +10,7 @@ using DataServices.Services.Interfaces;
 using DataServices.Utils;
 using Docs;
 using DotNetCoreDecorators;
+using Google.Protobuf;
 using Grpc.Core;
 using Grpc.Net.Client;
 using Keyvalue;
@@ -18,6 +20,7 @@ using ReportGrpc;
 using TradeLog;
 using TraderCredentials;
 using Kyc;
+using Kyclog;
 
 namespace DataServices.Services;
 
@@ -33,6 +36,7 @@ public class ClientsService : IClientsService
     private readonly ManagerAccessService.ManagerAccessServiceClient? _managerAccessClient;
     private readonly KycStatusService.KycStatusServiceClient? _kycStatusClient;
     private readonly DocumentsService.DocumentsServiceClient? _documentsClient;
+    private readonly KycChangeLogsService.KycChangeLogsServiceClient? _kycChangeLogsClient;
 
 
     private readonly IPriceService _priceService;
@@ -98,6 +102,12 @@ public class ClientsService : IClientsService
         {
             _documentsClient = new DocumentsService.DocumentsServiceClient(
                 GrpcChannel.ForAddress(settings.DocumentsGrpcServiceUrl));
+        }
+
+        if (settings.KycChangeLogsGrpcServiceUrl.IsNotNullOrEmpty())
+        {
+            _kycChangeLogsClient = new KycChangeLogsService.KycChangeLogsServiceClient(
+                GrpcChannel.ForAddress(settings.KycChangeLogsGrpcServiceUrl));
         }
     }
 
@@ -390,6 +400,38 @@ public class ClientsService : IClientsService
         };
         await _documentsClient!.UpdateStatusAsync(request);
 
+    }
+
+    public async Task<DocumentItemModel> UploadDocument(string authorId, string traderId, DocType docType,
+        string content, string contentType, string comment)
+    {
+        var request = new UploadDocumentRequest
+        {
+            ClientId = traderId,
+            DocType = docType,
+            ContentType = contentType,
+            Content = ByteString.FromBase64(content),
+            Who = authorId,
+            Expires = 0,
+            Comment = comment
+        };
+        return await _documentsClient!.UploadAsync(request);
+    }
+
+    public async Task<DocumentItemModel> UploadDocument(UploadDocumentRequest request)
+    {
+        return await _documentsClient!.UploadAsync(request);
+    }
+
+    public async Task<List<ChangeLog>> GetKycChangeLogs(string traderId)
+    {
+        var stream = _kycChangeLogsClient!.Get(new GetChangeLogRequest { ClientId = traderId }).ResponseStream;
+        var data = new List<ChangeLog>();
+        while (await stream.MoveNext())
+        {
+            data.Add(stream.Current);
+        }
+        return data;
     }
 
     #endregion

@@ -20,4 +20,10 @@ public static class StringExtension
     {
         return string.Join(separator, strArray);
     }
+
+    public static string ToBase64(this string plainText) 
+    {
+        var plainTextBytes = System.Text.Encoding.UTF32.GetBytes(plainText);
+        return System.Convert.ToBase64String(plainTextBytes);
+    }
 }
