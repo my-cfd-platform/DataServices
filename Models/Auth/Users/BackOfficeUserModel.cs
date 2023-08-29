@@ -1,3 +1,4 @@
+using DataServices.Extensions;
 using DataServices.Models.Auth.Permissions;
 using DataServices.Models.Auth.Roles;
 
@@ -37,6 +38,11 @@ namespace DataServices.Models.Auth.Users
             }
 
             return Roles.Any(x => x.HasViewPermission(resource));
+        }
+
+        public string GetMaskString(string str, PermissionResource resource, bool full = false)
+        {
+            return CanView(resource) ? str : str.MaskString(full);
         }
 
         public IEnumerable<Permission> GetPermissionsLinkedTo(PermissionResource resource)

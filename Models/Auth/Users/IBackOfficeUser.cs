@@ -20,6 +20,7 @@ namespace DataServices.Models.Auth.Users
         public Dictionary<int, string> PhoneNumberIds { get; set; }
 
         public bool CanView(PermissionResource resource);
+        string GetMaskString(string str, PermissionResource resource, bool full = false);
         public IEnumerable<Permission> GetPermissionsLinkedTo(PermissionResource resource);
         public bool CanEdit(PermissionResource resource);
         public bool CanDelete(PermissionResource resource);
