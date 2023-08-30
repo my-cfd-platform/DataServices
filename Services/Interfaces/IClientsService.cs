@@ -79,6 +79,7 @@ public interface IClientsService
     #region KeyValue Service
 
     Task<List<GetKeyValueGrpcResponseModel>> GetClientKeyValues(string clientId);
+    Task<GetKeyValueGrpcResponseModel> GetClientKeyValue(string clientId, string key);
     Task SetClientKeyValue(string clientId, string key, string value);
 
     #endregion

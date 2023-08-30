@@ -21,6 +21,7 @@ using TradeLog;
 using TraderCredentials;
 using Kyc;
 using Kyclog;
+using Google.Protobuf.WellKnownTypes;
 
 namespace DataServices.Services;
 
@@ -214,7 +215,7 @@ public class ClientsService : IClientsService
     public async Task<List<GetKeyValueGrpcResponseModel>> GetClientKeyValues(string clientId)
     {
         var keyValuesList = new List<GetKeyValueGrpcResponseModel>();
-        var keyValuesStream = _keyValueClient
+        var keyValuesStream = _keyValueClient!
             .GetAllByUser(new()
             {
                 ClientId = clientId
@@ -226,6 +227,24 @@ public class ClientsService : IClientsService
         }
 
         return keyValuesList;
+    }
+
+    public async Task<GetKeyValueGrpcResponseModel> GetClientKeyValue(string clientId, string key)
+    {
+        var call = _keyValueClient!.Get();
+        
+        await call.RequestStream.WriteAsync(new GetKeyValueGrpcRequestModel
+        {
+            ClientId = clientId,
+            Key = key
+
+        });
+        await call.RequestStream.CompleteAsync();
+        var stream = call.ResponseStream;
+
+        await stream.MoveNext();
+
+        return stream.Current;
     }
 
     public async Task SetClientKeyValue(string clientId, string key, string value)
