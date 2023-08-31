@@ -5,6 +5,7 @@
     /// - new permission must be added to the end of file
     /// - old permission must be marked by [Obsolete] attribute (that will remove them from UI)
     /// </summary>
+    /// todo Change permissions saving as parsing it via it's name rather than it's value, this will allow better permission file management
     public enum PermissionResource
     {
         #region ClientView
@@ -181,7 +182,8 @@
         KycDocuments,
         [PermissionResourceInfo(Kyc, "Personal data", PermissionActions.View, PermissionActions.Edit)]
         KycPersonalData,
-
+        [PermissionResourceInfo(Kyc, "KYC Status", PermissionActions.View, PermissionActions.Edit)]
+        KycStatus,
         #endregion
 
         [PermissionResourceInfo("Traders Online")]

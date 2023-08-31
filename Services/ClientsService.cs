@@ -359,6 +359,17 @@ public class ClientsService : IClientsService
 
     #region KYC
 
+    public async Task SetClientKycStatusAsync(string clientId, KycStatus status, string agentId)
+    {
+        var request = new UpdateStatusRequest
+        {
+            ClientId = clientId,
+            Status = status,
+            Who = agentId
+        };
+        await _kycStatusClient!.UpdateAsync(request);
+    }
+
     public async Task<KycStatus> GetClientKycStatusAsync(string clientId)
     {
         var request = new GetStatusRequest { ClientId = clientId};

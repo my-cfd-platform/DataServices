@@ -66,6 +66,7 @@ public interface IClientsService
 
     #region KYC
 
+    Task SetClientKycStatusAsync(string clientId, KycStatus status, string agentId);
     Task<KycStatus> GetClientKycStatusAsync(string clientId);
     Task<List<DocumentItemModel>> GetClientDocumentsList(string clientId);
     void UpdateDocumentComment(string id, string comment, string authorId, string traderId);
