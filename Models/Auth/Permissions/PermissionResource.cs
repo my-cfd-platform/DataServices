@@ -44,6 +44,28 @@
         ClientViewAuditLogs,
         [PermissionResourceInfo(ClientView, "Documents")]
         ClientViewDocuments,
+
+        #region Personal Data
+
+        [PermissionResourceInfo(ClientViewPersonalData, "Email", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewPersonalDataEmail,
+        [PermissionResourceInfo(ClientViewPersonalData, "Phone", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewPersonalDataPhone,
+        [PermissionResourceInfo(ClientViewPersonalData, "FullName", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewPersonalDataFullName,
+        [PermissionResourceInfo(ClientViewPersonalData, "Birthday", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewPersonalDataBirthday,
+        [PermissionResourceInfo(ClientViewPersonalData, "Country Of Residence", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewPersonalDataCountryOfResidence,
+        [PermissionResourceInfo(ClientViewPersonalData, "Country Of Citizenship", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewPersonalDataCountryOfCitizenship,
+        [PermissionResourceInfo(ClientViewPersonalData, "Address", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewPersonalDataAddress,
+        [PermissionResourceInfo(ClientViewPersonalData, "Sex", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewPersonalDataSex,
+        
+        #endregion
+
         #endregion
 
         #region ClientsList
@@ -231,22 +253,6 @@
         ClientViewOwnershipConversionManager,
         [PermissionResourceInfo(ClientViewOwnership, "Retention manager",PermissionActions.View, PermissionActions.Edit)]
         ClientViewOwnershipRetentionManager,
-        [PermissionResourceInfo(ClientViewPersonalData, "Email", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewPersonalDataEmail,
-        [PermissionResourceInfo(ClientViewPersonalData, "Phone", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewPersonalDataPhone,
-        [PermissionResourceInfo(ClientViewPersonalData, "FullName", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewPersonalDataFullName,
-        [PermissionResourceInfo(ClientViewPersonalData, "Birthday", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewPersonalDataBirthday,
-        [PermissionResourceInfo(ClientViewPersonalData, "Country Of Residence", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewPersonalDataCountryOfResidence,
-        [PermissionResourceInfo(ClientViewPersonalData, "Country Of Citizenship", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewPersonalDataCountryOfCitizenship,
-        [PermissionResourceInfo(ClientViewPersonalData, "Address", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewPersonalDataAddress,
-        [PermissionResourceInfo(ClientViewPersonalData, "City", PermissionActions.View, PermissionActions.Edit)]
-        ClientViewPersonalDataCity,
         [PermissionResourceInfo(ClientViewCrmData, "Next call date", PermissionActions.View, PermissionActions.Edit)]
         ClientViewCrmDataNextCallDate,
         [PermissionResourceInfo(ClientView, "Is internal/real", PermissionActions.View,  PermissionActions.Edit)]
