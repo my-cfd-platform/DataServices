@@ -484,11 +484,12 @@ public class ClientsService : IClientsService
         return res;
     }
 
-    public async Task<List<ReportOperationHistoryItem>> GetOperationsHistoryAsync(string accountId, DateTime from, DateTime to)
+    public async Task<List<ReportOperationHistoryItem>> GetOperationsHistoryAsync(string accountId, string traderId, DateTime from, DateTime to)
     {
         var request = new ReportFlowsOperationsGetInDateRangeGrpcRequest
         {
-            AccountId = accountId
+            AccountId = accountId,
+            TraderId = traderId,
         };
         if (from != DateTime.MinValue)
         {
@@ -524,17 +525,16 @@ public class ClientsService : IClientsService
         return data;
 
     }
-
-    public async Task<List<AccountBalanceModel>> GetBalanceHistoryAsync(string accountId)
+    public async Task<List<AccountBalanceModel>> GetBalanceHistoryAsync(string accountId, string traderId)
     {
         var page = 1;
         var size = 100;
-        var initResult = await GetBalanceHistoryPageAsync(accountId, page, size);
+        var initResult = await GetBalanceHistoryPageAsync(accountId, traderId, page, size);
         var items = initResult.History;
         while (items.Count < (int)initResult.TotalItems)
         {
             page++;
-            var res = await GetBalanceHistoryPageAsync(accountId, page, size);
+            var res = await GetBalanceHistoryPageAsync(accountId, traderId, page, size);
             items.AddRange(res.History);
         }
 
@@ -542,11 +542,12 @@ public class ClientsService : IClientsService
     }
 
     public async Task<ReportFlowsOperationsGetHistoryPaginatedGrpcResponse> GetBalanceHistoryPageAsync(
-        string accountId, int page, int size = 100)
+        string accountId, string traderId, int page, int size = 100)
     {
         var res = await _reportClient!.GetHistoryPaginatedAsync(new()
         {
             AccountId = accountId,
+            TraderId = traderId,
             Page = page,
             Size = size
         });
@@ -559,11 +560,12 @@ public class ClientsService : IClientsService
 
     #region Active Positions
 
-    public async Task<List<InvestmentPositionModel>> GetActivePositionsAsync(string accountId, DateTime from, DateTime to)
+    public async Task<List<InvestmentPositionModel>> GetActivePositionsAsync(string accountId, string traderId, DateTime from, DateTime to)
     {
         var request = new ReportFlowsOperationsGetInDateRangeGrpcRequest
         {
-            AccountId = accountId
+            AccountId = accountId,
+            TraderId = traderId
         };
         if (from == DateTime.MinValue || from == DateTime.MinValue)
             return await GetActivePositionsAsync(request);
@@ -600,11 +602,12 @@ public class ClientsService : IClientsService
 
     #region Closed Positions
 
-    public async Task<List<InvestmentPositionModel>> GetHistoryPositionsAsync(string accountId, DateTime from, DateTime to)
+    public async Task<List<InvestmentPositionModel>> GetHistoryPositionsAsync(string accountId, string traderId, DateTime from, DateTime to)
     {
         var request = new ReportFlowsOperationsGetInDateRangeGrpcRequest
         {
-            AccountId = accountId
+            AccountId = accountId,
+            TraderId = traderId,
         };
         if (from != DateTime.MinValue && from != DateTime.MinValue)
         {
@@ -631,7 +634,7 @@ public class ClientsService : IClientsService
         var positions = new List<InvestmentPositionModel>();
         while (await activePositionsStream.MoveNext())
         {
-            var a = activePositionsStream.Current;
+            //var a = activePositionsStream.Current;
             positions.Add(InvestmentPositionModel.FromGrpc(activePositionsStream.Current));
         }
         return positions;
@@ -658,6 +661,8 @@ public class ClientsService : IClientsService
 
     #endregion
 
+    #region Trade Log
+
     public async Task<List<TradeLogItem>> GetTradeLog(string accountId, string traderId, DateTime from, DateTime to)
     {
         var tradeLogStream = _tradeLogClient!.Read(new()
@@ -674,5 +679,8 @@ public class ClientsService : IClientsService
         }
         return logItems;
     }
+
+
+    #endregion
 
 }

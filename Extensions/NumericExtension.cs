@@ -34,4 +34,9 @@ public static class NumericExtension
     {
         return dateTime.UnixTime() * 1000 ;
     }
+
+    public static long ToEpochMic(this DateTime? dateTime )
+    {
+        return dateTime is null ? 0 : dateTime.UnixTime() * 1000;
+    }
 }

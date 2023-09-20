@@ -34,25 +34,24 @@ public interface IClientsService
     #region Closed Positions
 
     Task<List<InvestmentPositionModel>> GetAllHistoryPositionsAsync(DateTime from, DateTime to);
-    Task<List<InvestmentPositionModel>> GetHistoryPositionsAsync(string accountId, DateTime from, DateTime to);
+    Task<List<InvestmentPositionModel>> GetHistoryPositionsAsync(string accountId, string traderId, DateTime from, DateTime to);
 
     #endregion
 
     #region Active Positions
 
     Task<List<InvestmentPositionModel>> GetAllActivePositionsAsync(DateTime from, DateTime to);
-    Task<List<InvestmentPositionModel>> GetActivePositionsAsync(string accountId, DateTime from, DateTime to);
+    Task<List<InvestmentPositionModel>> GetActivePositionsAsync(string accountId, string traderId, DateTime from, DateTime to);
 
     #endregion
 
     #region Balance
 
     Task<AccountManagerUpdateAccountBalanceGrpcResponse> UpdateAccountBalanceAsync(UpdateBalanceModel requestModel);
-    Task<List<AccountBalanceModel>> GetBalanceHistoryAsync(string accountId);
-    Task<List<ReportOperationHistoryItem>> GetOperationsHistoryAsync(string accountId, DateTime from, DateTime to);
+    Task<List<AccountBalanceModel>> GetBalanceHistoryAsync(string accountId, string traderId);
+    Task<List<ReportOperationHistoryItem>> GetOperationsHistoryAsync(string accountId, string traderId, DateTime from, DateTime to);
     Task<Dictionary<string, Dictionary<string, List<ReportOperationHistoryItem>>>> SearchOperationsHistoryAsync(SearchHistory search);
-    Task<ReportFlowsOperationsGetHistoryPaginatedGrpcResponse> GetBalanceHistoryPageAsync(string accountId,
-        int page, int size = 100);
+    Task<ReportFlowsOperationsGetHistoryPaginatedGrpcResponse> GetBalanceHistoryPageAsync(string accountId, string traderId, int page, int size = 100);
 
     #endregion
 
