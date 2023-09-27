@@ -25,6 +25,7 @@ public interface IClientsService
     Task<List<TraderBrandModel>> SearchTraderBrandsAsync(string searchValue, IBackOfficeUser user);
     Task<List<TradingAccountModel>> GetTraderAccountsAsync(string traderId);
     Task<List<TradingAccountModel>> SearchTraderAccountsAsync(SearchAccounts search);
+    Task<List<TraderBrandModel>> GetTradersByIds(IEnumerable<string> ids);
     Task<TradingAccountModel> GetTraderAccountAsync(string traderId, string accountId);
     Task<AccountsManagerOperationResult> SetTraderAccountDisabledAsync(string accountId, string traderId,
         bool disabled);

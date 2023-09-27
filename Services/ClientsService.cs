@@ -114,6 +114,20 @@ public class ClientsService : IClientsService
 
     #region Trader and Account
 
+    public async Task<List<TraderBrandModel>> GetTradersByIds(IEnumerable<string> ids)
+    {
+        var request = new GetTradersRequest();
+        request.TraderIds.AddRange(ids);
+        var stream = _traderCredentialsClient!.GetTraders(request).ResponseStream;
+
+        var data = new List<TraderBrandModel>();
+       while (await stream.MoveNext())
+       {
+           data.Add(TraderBrandModel.FromGrpc(stream.Current));
+       }
+       return data;
+    }
+
     public async Task<List<TraderBrandModel>> SearchTraderBrandsAsync(string searchValue)
     {
         var traderIds = await _traderCredentialsClient!.SearchByIdOrEmailAsync(new()
