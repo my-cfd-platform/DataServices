@@ -21,7 +21,7 @@ using TradeLog;
 using TraderCredentials;
 using Kyc;
 using Kyclog;
-using Google.Protobuf.WellKnownTypes;
+using WithdrawalsFlows;
 
 namespace DataServices.Services;
 
@@ -38,6 +38,8 @@ public class ClientsService : IClientsService
     private readonly KycStatusService.KycStatusServiceClient? _kycStatusClient;
     private readonly DocumentsService.DocumentsServiceClient? _documentsClient;
     private readonly KycChangeLogsService.KycChangeLogsServiceClient? _kycChangeLogsClient;
+    private readonly WithdrawalFlowsService.WithdrawalFlowsServiceClient? _withdwaralsClient;
+
 
 
     private readonly IPriceService _priceService;
@@ -109,6 +111,12 @@ public class ClientsService : IClientsService
         {
             _kycChangeLogsClient = new KycChangeLogsService.KycChangeLogsServiceClient(
                 GrpcChannel.ForAddress(settings.KycChangeLogsGrpcServiceUrl));
+        }
+
+        if (settings.WithdrawalsGrpcServiceUrl.IsNotNullOrEmpty())
+        {
+            _withdwaralsClient = new WithdrawalFlowsService.WithdrawalFlowsServiceClient(
+                GrpcChannel.ForAddress(settings.WithdrawalsGrpcServiceUrl));
         }
     }
 
@@ -667,25 +675,6 @@ public class ClientsService : IClientsService
 
     #endregion
 
-    #region Helper Functions
-
-    private string GetProcessId()
-    {
-        return $"Backoffice-{FormatUtils.DateTimeNamedWithMsFormat(DateTime.UtcNow)}";
-    }
-
-    public async Task<string> GetClientRedirectUrl(string clientId)
-    {
-        var redirectUrl = await _authServiceClient.GeneratePlatformRedirectUrlAsync(new GeneratePlatformRedirectUrlGrpcRequest
-        {
-            TraderId = clientId
-        });
-
-        return redirectUrl.RedirectUrl;
-    }
-
-    #endregion
-
     #region Trade Log
 
     public async Task<List<TradeLogItem>> GetTradeLog(string accountId, string traderId, DateTime from, DateTime to)
@@ -708,4 +697,66 @@ public class ClientsService : IClientsService
 
     #endregion
 
+    #region Withdrawals service
+
+    public async Task<List<WithdrawalGrpcModel>> GetActiveWithdrawalRequestsAsync()
+    {
+        var stream = _withdwaralsClient!.GetActiveWithdrawals(new()).ResponseStream;
+        return await GetItemsList<WithdrawalGrpcModel>(stream);
+    }
+
+    public async Task ApproveWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId)
+    {
+        await _withdwaralsClient!.ProcessActiveWithdrawalAsync(new ProcessActiveWithdrawalRequest
+        {
+            ProcessId = GetProcessId(),
+            TraderId = traderId,
+            AccountId = accountId,
+            Id = id,
+            Who = agentId
+        });
+    }
+
+    public async Task DenyWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId)
+    {
+        await _withdwaralsClient!.CancelActiveWithdrawalAsync(new CancelActiveWithdrawalRequest
+        {
+            ProcessId = GetProcessId(),
+            TraderId = traderId,
+            AccountId = accountId,
+            Id = id,
+            Who = agentId
+        });
+    }
+
+    #endregion
+
+    #region Helper Functions
+
+    private async Task<List<T>> GetItemsList<T>(IAsyncStreamReader<T> stream) where T : class
+    {
+        var items = new List<T>();
+        while (await stream.MoveNext())
+        {
+            items.Add(stream.Current);
+        }
+        return items;
+    }
+
+    private string GetProcessId()
+    {
+        return $"Backoffice-{FormatUtils.DateTimeNamedWithMsFormat(DateTime.UtcNow)}";
+    }
+
+    public async Task<string> GetClientRedirectUrl(string clientId)
+    {
+        var redirectUrl = await _authServiceClient.GeneratePlatformRedirectUrlAsync(new GeneratePlatformRedirectUrlGrpcRequest
+        {
+            TraderId = clientId
+        });
+
+        return redirectUrl.RedirectUrl;
+    }
+
+    #endregion
 }

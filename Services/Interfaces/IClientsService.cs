@@ -10,6 +10,7 @@ using Pd;
 using ReportGrpc;
 using System.Threading.Tasks;
 using TradeLog;
+using WithdrawalsFlows;
 
 namespace DataServices.Services.Interfaces;
 
@@ -93,6 +94,14 @@ public interface IClientsService
     Task<List<TraderAccessModel>> GetManagerAccess(string managerId);
     Task<TraderManagers> GetTraderManagersLookup(string traderId);
     Task<Dictionary<string, TraderManagers>> SearchTraderManagersAsync(SearchManager search);
+
+    #endregion
+
+    #region Withdrawals
+
+    Task<List<WithdrawalGrpcModel>> GetActiveWithdrawalRequestsAsync();
+    Task ApproveWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId);
+    Task DenyWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId);
 
     #endregion
 }
