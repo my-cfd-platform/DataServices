@@ -29,6 +29,7 @@ public interface IClientsService
     Task<TradingAccountModel> GetTraderAccountAsync(string traderId, string accountId);
     Task<AccountsManagerOperationResult> SetTraderAccountDisabledAsync(string accountId, string traderId,
         bool disabled);
+    Task UpdateTraderGroup(string accountId, string traderId, string group);
 
     #endregion
 

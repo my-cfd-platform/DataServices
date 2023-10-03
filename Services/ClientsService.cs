@@ -222,6 +222,17 @@ public class ClientsService : IClientsService
         return res.Result;
     }
 
+    public async Task UpdateTraderGroup(string accountId, string traderId, string group)
+    {
+        await _accountsManagerClient!.UpdateAccountTradingGroupAsync(new AccountManagerUpdateTradingGroupGrpcRequest
+        {
+            TraderId = traderId,
+            AccountId = accountId,
+            NewTradingGroup = group,
+            ProcessId = GetProcessId()
+        });
+    }
+
     #endregion
 
     #region KeyValue Service
