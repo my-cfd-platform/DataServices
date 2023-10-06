@@ -33,7 +33,7 @@ namespace DataServices.Models.Clients
                 TradingGroup = src.TradingGroup,
                 Balance = src.Balance,
                 //Bonus = src.Bonus,
-                TimeStamp = src.LastUpdateDate.EpochMilToDateTime(),
+                TimeStamp = src.CreateDate.EpochMilToDateTime(),
                 TradingDisabled = src.TradingDisabled,
             };
         }
