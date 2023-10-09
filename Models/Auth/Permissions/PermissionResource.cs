@@ -34,6 +34,8 @@
         ClientViewDealingInfo,
         [PermissionResourceInfo(ClientView, "Deposits", PermissionActions.View, PermissionActions.Edit)]
         ClientViewDeposits,
+        [PermissionResourceInfo(ClientView, "Withdrawals", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewWithdrawals,
         [PermissionResourceInfo(ClientView, "Transactions")]
         ClientViewTransactions,
         [PermissionResourceInfo(ClientView, "Active deals")]

@@ -99,7 +99,7 @@ public interface IClientsService
 
     #region Withdrawals
 
-    Task<List<WithdrawalGrpcModel>> GetActiveWithdrawalRequestsAsync();
+    Task<List<WithdrawalGrpcModel>> GetActiveWithdrawalRequestsAsync(string? traderId = null);
     Task ApproveWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId);
     Task DenyWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId);
 

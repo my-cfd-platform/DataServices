@@ -699,9 +699,12 @@ public class ClientsService : IClientsService
 
     #region Withdrawals service
 
-    public async Task<List<WithdrawalGrpcModel>> GetActiveWithdrawalRequestsAsync()
+    public async Task<List<WithdrawalGrpcModel>> GetActiveWithdrawalRequestsAsync(string? traderId)
     {
-        var stream = _withdwaralsClient!.GetActiveWithdrawals(new()).ResponseStream;
+        var request = traderId is null
+            ? new GetActiveWithdrawalsRequest()
+            : new GetActiveWithdrawalsRequest { TraderId = traderId };
+        var stream = _withdwaralsClient!.GetActiveWithdrawals(request).ResponseStream;
         return await GetItemsList<WithdrawalGrpcModel>(stream);
     }
 
