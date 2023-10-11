@@ -20,6 +20,12 @@ public interface IClientsService
 
     Task<List<TradeLogItem>> GetTradeLog(string accountId, string traderId, DateTime from, DateTime to);
 
+    #region PositionManager
+
+    Task ChargeSwap(string positionId, string accountId, double amount);
+
+    #endregion
+
     #region Trader and Account
 
     Task<List<TraderBrandModel>> SearchTraderBrandsAsync(string searchValue);

@@ -36,6 +36,7 @@
     <Protobuf Include="ProtoFiles\proto\KycChangeLog.proto" GrpcServices="Client" />
     <Protobuf Include="ProtoFiles\proto\DocumentsFlows.proto" GrpcServices="Client" />
     <Protobuf Include="ProtoFiles\proto\WithdrawalsFlowsService.proto" GrpcServices="Client" />
+    <Protobuf Include="ProtoFiles\proto\PositionsManager.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>

@@ -20,6 +20,7 @@ public class DataServicesSettings
     public string KycChangeLogsGrpcServiceUrl { get; set; } = null!;
     public string DocumentsGrpcServiceUrl { get; set; } = null!;
     public string WithdrawalsGrpcServiceUrl { get; set; } = null!;
+    public string PositionsManagerServiceUrl { get; set; } = null!;
 
     public DataServicesSettings(object settings)
     {

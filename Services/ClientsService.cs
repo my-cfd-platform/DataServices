@@ -21,6 +21,7 @@ using TradeLog;
 using TraderCredentials;
 using Kyc;
 using Kyclog;
+using PositionManager;
 using WithdrawalsFlows;
 
 namespace DataServices.Services;
@@ -38,9 +39,8 @@ public class ClientsService : IClientsService
     private readonly KycStatusService.KycStatusServiceClient? _kycStatusClient;
     private readonly DocumentsService.DocumentsServiceClient? _documentsClient;
     private readonly KycChangeLogsService.KycChangeLogsServiceClient? _kycChangeLogsClient;
-    private readonly WithdrawalFlowsService.WithdrawalFlowsServiceClient? _withdwaralsClient;
-
-
+    private readonly WithdrawalFlowsService.WithdrawalFlowsServiceClient? _withdrawalsClient;
+    private readonly PositionManagerGrpcService.PositionManagerGrpcServiceClient? _positionManagerClient;
 
     private readonly IPriceService _priceService;
 
@@ -115,10 +115,30 @@ public class ClientsService : IClientsService
 
         if (settings.WithdrawalsGrpcServiceUrl.IsNotNullOrEmpty())
         {
-            _withdwaralsClient = new WithdrawalFlowsService.WithdrawalFlowsServiceClient(
+            _withdrawalsClient = new WithdrawalFlowsService.WithdrawalFlowsServiceClient(
                 GrpcChannel.ForAddress(settings.WithdrawalsGrpcServiceUrl));
         }
+        
+        if (settings.PositionsManagerServiceUrl.IsNotNullOrEmpty())
+        {
+            _positionManagerClient = new(
+                GrpcChannel.ForAddress(settings.PositionsManagerServiceUrl));
+        }
     }
+
+    #region Position Manager
+
+    public async Task ChargeSwap(string positionId, string accountId, double amount)
+    {
+        await _positionManagerClient!.ChargeSwapAsync(new ()
+        {
+            PositionId = positionId,
+            AccountId = accountId,
+            SwapAmount = amount
+        });
+    }
+
+    #endregion
 
     #region Trader and Account
 
@@ -704,13 +724,13 @@ public class ClientsService : IClientsService
         var request = traderId is null
             ? new GetActiveWithdrawalsRequest()
             : new GetActiveWithdrawalsRequest { TraderId = traderId };
-        var stream = _withdwaralsClient!.GetActiveWithdrawals(request).ResponseStream;
+        var stream = _withdrawalsClient!.GetActiveWithdrawals(request).ResponseStream;
         return await GetItemsList<WithdrawalGrpcModel>(stream);
     }
 
     public async Task ApproveWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId)
     {
-        await _withdwaralsClient!.ProcessActiveWithdrawalAsync(new ProcessActiveWithdrawalRequest
+        await _withdrawalsClient!.ProcessActiveWithdrawalAsync(new ProcessActiveWithdrawalRequest
         {
             ProcessId = GetProcessId(),
             TraderId = traderId,
@@ -722,7 +742,7 @@ public class ClientsService : IClientsService
 
     public async Task DenyWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId)
     {
-        await _withdwaralsClient!.CancelActiveWithdrawalAsync(new CancelActiveWithdrawalRequest
+        await _withdrawalsClient!.CancelActiveWithdrawalAsync(new CancelActiveWithdrawalRequest
         {
             ProcessId = GetProcessId(),
             TraderId = traderId,
