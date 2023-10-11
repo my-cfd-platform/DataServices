@@ -8,9 +8,10 @@ namespace DataServices.Services;
 
 public class PriceService : IPriceService
 {
-    private readonly ICache<ITradingInstrument> _instrumentsCache;
+    private readonly IInstrumentCache _instrumentsCache;
     private readonly ICache<ILivePrice> _priceCache;
-    public PriceService(ICache<ITradingInstrument> instrumentsCache, ICache<ILivePrice> priceCache)
+
+    public PriceService(IInstrumentCache instrumentsCache, ICache<ILivePrice> priceCache)
     {
         _instrumentsCache = instrumentsCache;
         _priceCache = priceCache;
@@ -58,8 +59,8 @@ public class PriceService : IPriceService
         var accountCurrencyProfit = invertedInstrument ?
             instrumentProfit / nowPrice :
             instrumentProfit;
-
-        order.Profit = accountCurrencyProfit * sideCoefficient;
+        var orderSwaps = order.Swaps.Sum(a => a.Amount);
+        order.Profit = accountCurrencyProfit * sideCoefficient - orderSwaps;
     }
 
     // order = order to update, bidAsk = current order instrument price
@@ -94,8 +95,8 @@ public class PriceService : IPriceService
 
         #region Profit in account currency
 
-        var quoteInstrument = _instrumentsCache.Get(order.CollateralQuoteCloseBidAsk.Id);
-        var invertedQuoteInstrument = quoteInstrument.Quote != accountCurrency;
+        var quoteInstrument = _instrumentsCache.FindByCurrency(order.Base, order.Quote);
+        var invertedQuoteInstrument = quoteInstrument!.Quote != accountCurrency;
 
         // the side of collateral quote close/current price must be the same as the order side
         var quoteInstrumentSide = PriceUtils.InvertSide(order.Side);
@@ -111,6 +112,7 @@ public class PriceService : IPriceService
         #endregion
 
         var sideCoefficient = order.Side == ReportsFlowsPositionSide.Buy ? 1 : -1;
-        order.Profit = accountCurrencyProfit * sideCoefficient;
+        var orderSwaps = order.Swaps.Sum(a => a.Amount);
+        order.Profit = accountCurrencyProfit * sideCoefficient - orderSwaps;
     }
 }

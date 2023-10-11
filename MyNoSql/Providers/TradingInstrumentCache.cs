@@ -5,16 +5,51 @@ using MyNoSqlServer.DataReader;
 
 namespace DataServices.MyNoSql.Providers;
 
-    public class TradingInstrumentCache : ICache<ITradingInstrument>
+    public class TradingInstrumentCache : IInstrumentCache
     {
         private readonly IMyNoSqlServerDataReader<TradingInstrumentMyNoSqlEntity> _readRepository;
         private const string TableName = "instruments";
+        private readonly List<ITradingInstrument> _instrumentLocalCache;
 
         public TradingInstrumentCache(IMyNoSqlSubscriber tcpConnection)
         {
             var readRepository =
                 new MyNoSqlReadRepository<TradingInstrumentMyNoSqlEntity>(tcpConnection, TableName);
             _readRepository = readRepository;
+
+            _instrumentLocalCache = GetAll().ToList();
+            _readRepository.SubscribeToUpdateEvents(
+                items =>
+                {
+                    lock (_instrumentLocalCache)
+                    {
+                        foreach (var entity in items)
+                        {
+                            var existingInstrument = _instrumentLocalCache.FirstOrDefault(i => i.Id == entity.Id);
+                            if (existingInstrument != null)
+                            {
+                                _instrumentLocalCache.Remove(existingInstrument);
+                            }
+
+                            _instrumentLocalCache.Add(entity);
+                        }
+                    }
+                },
+                items =>
+                {
+                    lock (_instrumentLocalCache)
+                    {
+                        foreach (var entity in items)
+                        {
+                            var existingInstrument = _instrumentLocalCache.FirstOrDefault(i => i.Id == entity.Id);
+                            if (existingInstrument != null)
+                            {
+                                _instrumentLocalCache.Remove(existingInstrument);
+                            }
+                        }
+                    }
+                });
+
         }
 
         public IEnumerable<ITradingInstrument> GetAll()
@@ -38,6 +73,16 @@ namespace DataServices.MyNoSql.Providers;
         public ITradingInstrument Get(string id, string partitionKey)
         {
             return _readRepository.Get(partitionKey, id);
+        }
+
+        public ITradingInstrument? FindByCurrency(string first, string second)
+        {
+            lock (_instrumentLocalCache)
+            {
+                return _instrumentLocalCache
+                    .FirstOrDefault(i => i.Base == first && i.Quote == second ||
+                                         i.Base == second && i.Quote == first);
+            }
         }
 
         public void SubscribeOnChanges(Type type, Action<IReadOnlyList<ITradingInstrument>> changes)

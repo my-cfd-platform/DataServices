@@ -41,6 +41,8 @@ public class InvestmentPositionModel
     public BidAskModel CollateralBaseOpenBidAsk { get; set; }
     public BidAskModel CollateralQuoteCloseBidAsk { get; set; }
 
+    public List<PositionSwap> Swaps { get; set; }
+
     public static InvestmentPositionModel FromGrpc(ReportsFlowsActivePositionGrpcModel src)
     {
         return new InvestmentPositionModel
@@ -64,15 +66,16 @@ public class InvestmentPositionModel
             Quote = src.Quote,
             Collateral = src.Collateral,
             CollateralBaseOpenPrice = src.CollateralBaseOpenPrice,
-            CollateralQuoteOpenPrice = src.CollateralQuoteClosePrice,
+            //CollateralQuoteOpenPrice = src.CollateralQuoteClosePrice,
             CollateralBaseOpenBidAsk = src.CollateralBaseOpenBidAsk?.ToBidAskModel()!,
-            CollateralQuoteCloseBidAsk = src.CollateralQuoteCloseBidAsk?.ToBidAskModel()!,
+            //CollateralQuoteCloseBidAsk = src.CollateralQuoteCloseBidAsk?.ToBidAskModel()!,
             OpenPrice = src.OpenPrice,
             TpInProfit = src.TpInProfit,
             SlInProfit = src.SlInProfit,
             TakeProfitInAssetPrice = src.TpInAssetPrice,
             StopLossInAssetPrice = src.SlInAssetPrice,
-            StopOutPercent = src.StopOutPercent
+            StopOutPercent = src.StopOutPercent,
+            Swaps = src.Swaps.Select(PositionSwap.FromPositionSwapModel).ToList(),
         };
     }
 
@@ -114,6 +117,22 @@ public class InvestmentPositionModel
             CollateralQuoteOpenPrice = src.CollateralQuoteClosePrice,
             CollateralBaseOpenBidAsk = src.CollateralBaseOpenBidAsk?.ToBidAskModel()!,
             CollateralQuoteCloseBidAsk = src.CollateralQuoteCloseBidAsk?.ToBidAskModel()!,
+        };
+    }
+}
+
+public class PositionSwap
+{
+    public double Amount { get; set; }
+    public DateTime Date { get; set; }
+
+    public static PositionSwap FromPositionSwapModel( PositionSwapGrpcModel model)
+    {
+        
+        return new ()
+        {
+            Amount = model.Amount,
+            Date = model.Date.EpochMicToDateTime()
         };
     }
 }
