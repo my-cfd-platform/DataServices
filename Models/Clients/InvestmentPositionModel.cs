@@ -124,7 +124,7 @@ public class InvestmentPositionModel
 public class PositionSwap
 {
     public double Amount { get; set; }
-    public DateTime Date { get; set; }
+    public DateTime Date { get; set; } = DateTime.UtcNow;
 
     public static PositionSwap FromPositionSwapModel( PositionSwapGrpcModel model)
     {

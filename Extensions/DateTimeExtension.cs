@@ -2,7 +2,7 @@
 
 namespace DataServices.Extensions;
 
-public static class NumericExtension
+public static class DateTimeExtension
 {
     public static DateTime EpochMilToDateTime(this long milliseconds )
     {
@@ -38,5 +38,10 @@ public static class NumericExtension
     public static long ToEpochMic(this DateTime? dateTime )
     {
         return dateTime is null ? 0 : dateTime.UnixTime() * 1000;
+    }
+
+    public static string ToFormattedString(this DateTime src)
+    {
+        return src.ToString("g");
     }
 }
