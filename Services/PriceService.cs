@@ -60,7 +60,7 @@ public class PriceService : IPriceService
             instrumentProfit / nowPrice :
             instrumentProfit;
         var orderSwaps = order.Swaps.Sum(a => a.Amount);
-        order.Profit = accountCurrencyProfit * sideCoefficient - orderSwaps;
+        order.Profit = accountCurrencyProfit * sideCoefficient + orderSwaps;
     }
 
     // order = order to update, bidAsk = current order instrument price
@@ -113,6 +113,6 @@ public class PriceService : IPriceService
 
         var sideCoefficient = order.Side == ReportsFlowsPositionSide.Buy ? 1 : -1;
         var orderSwaps = order.Swaps.Sum(a => a.Amount);
-        order.Profit = accountCurrencyProfit * sideCoefficient - orderSwaps;
+        order.Profit = accountCurrencyProfit * sideCoefficient + orderSwaps;
     }
 }
