@@ -36,8 +36,9 @@ public class InvestmentPositionModel
     public string Base { get; set; }
     public string Quote { get; set; }
     public string Collateral { get; set; }
+    public bool SimpleInstrument { get; set; } = true;
     public double CollateralBaseOpenPrice { get; set; }
-    public double CollateralQuoteOpenPrice { get; set; }
+    public double CollateralQuoteClosePrice { get; set; }
     public BidAskModel CollateralBaseOpenBidAsk { get; set; }
     public BidAskModel CollateralQuoteCloseBidAsk { get; set; }
 
@@ -66,9 +67,7 @@ public class InvestmentPositionModel
             Quote = src.Quote,
             Collateral = src.Collateral,
             CollateralBaseOpenPrice = src.CollateralBaseOpenPrice,
-            //CollateralQuoteOpenPrice = src.CollateralQuoteClosePrice,
             CollateralBaseOpenBidAsk = src.CollateralBaseOpenBidAsk?.ToBidAskModel()!,
-            //CollateralQuoteCloseBidAsk = src.CollateralQuoteCloseBidAsk?.ToBidAskModel()!,
             OpenPrice = src.OpenPrice,
             TpInProfit = src.TpInProfit,
             SlInProfit = src.SlInProfit,
@@ -114,7 +113,7 @@ public class InvestmentPositionModel
             Quote = src.Quote,
             Collateral = src.Collateral,
             CollateralBaseOpenPrice = src.CollateralBaseOpenPrice,
-            CollateralQuoteOpenPrice = src.CollateralQuoteClosePrice,
+            CollateralQuoteClosePrice = src.CollateralQuoteClosePrice,
             CollateralBaseOpenBidAsk = src.CollateralBaseOpenBidAsk?.ToBidAskModel()!,
             CollateralQuoteCloseBidAsk = src.CollateralQuoteCloseBidAsk?.ToBidAskModel()!,
         };

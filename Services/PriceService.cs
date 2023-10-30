@@ -28,6 +28,7 @@ public class PriceService : IPriceService
         var accountCurrency = order.Collateral;
 
         var simpleInstrument = order.Base == accountCurrency || order.Quote == accountCurrency;
+        order.SimpleInstrument = simpleInstrument;
         if (simpleInstrument)
         {
             UpdateUnrealisedProfit(order, currentPrice);
@@ -95,16 +96,16 @@ public class PriceService : IPriceService
 
         #region Profit in account currency
 
-        var quoteInstrument = _instrumentsCache.FindByCurrency(order.Base, order.Quote);
+        var quoteInstrument = _instrumentsCache.FindByCurrency(accountCurrency, order.Quote);
         var invertedQuoteInstrument = quoteInstrument!.Quote != accountCurrency;
 
         // the side of collateral quote close/current price must be the same as the order side
         var quoteInstrumentSide = PriceUtils.InvertSide(order.Side);
 
         var collateralQuoteBidAsk = _priceCache.Get(quoteInstrument.Id).ToBidAskModel();
-
+        order.CollateralQuoteCloseBidAsk = collateralQuoteBidAsk;
         var quoteInstrumentPrice = PriceUtils.GetOrderPrice(quoteInstrumentSide, collateralQuoteBidAsk);
-
+        order.CollateralQuoteClosePrice = quoteInstrumentPrice;
         var accountCurrencyProfit = invertedQuoteInstrument ?
             baseInstrumentProfit / quoteInstrumentPrice :
             baseInstrumentProfit * quoteInstrumentPrice;
