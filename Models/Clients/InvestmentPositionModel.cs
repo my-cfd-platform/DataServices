@@ -116,6 +116,7 @@ public class InvestmentPositionModel
             CollateralQuoteClosePrice = src.CollateralQuoteClosePrice,
             CollateralBaseOpenBidAsk = src.CollateralBaseOpenBidAsk?.ToBidAskModel()!,
             CollateralQuoteCloseBidAsk = src.CollateralQuoteCloseBidAsk?.ToBidAskModel()!,
+            Swaps = src.Swaps.Select(PositionSwap.FromPositionSwapModel).ToList(),
         };
     }
 }
