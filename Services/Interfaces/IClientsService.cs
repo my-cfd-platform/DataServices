@@ -10,6 +10,7 @@ using Pd;
 using ReportGrpc;
 using System.Threading.Tasks;
 using TradeLog;
+using TraderFtd;
 using WithdrawalsFlows;
 
 namespace DataServices.Services.Interfaces;
@@ -85,10 +86,17 @@ public interface IClientsService
     Task<List<ChangeLog>> GetKycChangeLogs(string traderId);
     #endregion
 
+    #region Trader FTD
+
+    Task<List<GetTraderFtdModel>> GetClientsFtd(List<string> traders);
+
+    #endregion
+
     #region KeyValue Service
 
     Task<List<GetKeyValueGrpcResponseModel>> GetClientKeyValues(string clientId);
     Task<GetKeyValueGrpcResponseModel> GetClientKeyValue(string clientId, string key);
+    Task<List<GetKeyValueGrpcResponseModel>> GetClientsWithKey(List<string> clients, string key);
     Task SetClientKeyValue(string clientId, string key, string value);
 
     #endregion

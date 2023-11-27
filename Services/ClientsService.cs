@@ -22,7 +22,9 @@ using TraderCredentials;
 using Kyc;
 using Kyclog;
 using PositionManager;
+using TraderFtd;
 using WithdrawalsFlows;
+using GetTradersRequest = TraderCredentials.GetTradersRequest;
 
 namespace DataServices.Services;
 
@@ -41,6 +43,7 @@ public class ClientsService : IClientsService
     private readonly KycChangeLogsService.KycChangeLogsServiceClient? _kycChangeLogsClient;
     private readonly WithdrawalFlowsService.WithdrawalFlowsServiceClient? _withdrawalsClient;
     private readonly PositionManagerGrpcService.PositionManagerGrpcServiceClient? _positionManagerClient;
+    private readonly TraderFtdGrpcService.TraderFtdGrpcServiceClient? _traderFtdClient;
 
     private readonly IPriceService _priceService;
 
@@ -124,7 +127,42 @@ public class ClientsService : IClientsService
             _positionManagerClient = new(
                 GrpcChannel.ForAddress(settings.PositionsManagerServiceUrl));
         }
+        if (settings.TraderFtdFlowsGrpcServiceUrl.IsNotNullOrEmpty())
+        {
+            _traderFtdClient = new(
+                GrpcChannel.ForAddress(settings.TraderFtdFlowsGrpcServiceUrl));
+        }
     }
+
+    #region TraderFtd
+
+    public async Task<List<GetTraderFtdModel>> GetClientsFtd(List<string> traders)
+    {
+        var result = new List<GetTraderFtdModel>();
+        var call = _traderFtdClient!.Get();
+        foreach (var traderId in traders)
+        {
+            await call.RequestStream.WriteAsync(new ()
+            {
+                TraderId = traderId
+
+            });
+        }
+        await call.RequestStream.CompleteAsync();
+
+        while (await call.ResponseStream.MoveNext())
+        {
+            var ftdModel = call.ResponseStream.Current;
+
+            result.Add(ftdModel);
+        }
+
+        return result;
+
+    }
+    
+
+    #endregion
 
     #region Position Manager
 
@@ -280,6 +318,32 @@ public class ClientsService : IClientsService
         }
 
         return keyValuesList;
+    }
+
+    public async Task<List<GetKeyValueGrpcResponseModel>> GetClientsWithKey(List<string> clients, string key)
+    {
+        var result = new List<GetKeyValueGrpcResponseModel>();
+        var call = _keyValueClient!.Get();
+        foreach (var clientId in clients)
+        {
+            await call.RequestStream.WriteAsync(new GetKeyValueGrpcRequestModel
+            {
+                ClientId = clientId,
+                Key = key
+
+            });
+        }
+        await call.RequestStream.CompleteAsync();
+
+        while (await call.ResponseStream.MoveNext())
+        {
+            var keyValue = call.ResponseStream.Current;
+            if(!keyValue.HasValue)
+                continue;
+            result.Add(keyValue);
+        }
+
+        return result;
     }
 
     public async Task<GetKeyValueGrpcResponseModel> GetClientKeyValue(string clientId, string key)
