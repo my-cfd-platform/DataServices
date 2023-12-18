@@ -14,7 +14,7 @@ public class BackofficeRoleMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeRole
     public string Id => this.RowKey;
 
     public string Name { get; set; }
-    public IEnumerable<Permission> Permissions { get; set; }
+    public IEnumerable<PermissionEntity> Permissions { get; set; }
 
     public static BackofficeRoleMyNoSqlEntity Create(IBackofficeRole src)
     {
@@ -34,7 +34,12 @@ public class BackofficeRoleMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeRole
             PartitionKey = GeneratePartitionKey(),
             RowKey = GenerateRowKey(src.Name),
             Name = src.Name,
-            Permissions = src.Permissions,
+            Permissions = src.Permissions
+                .Select(p=>new PermissionEntity
+                {
+                    Resource = p.Resource.ToString(),
+                    Action = p.Actions
+                }),
         };
     }
 
@@ -44,7 +49,17 @@ public class BackofficeRoleMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeRole
         {
             Id = src.Id,
             Name = src.Name,
-            Permissions = src.Permissions,
+            Permissions = src.Permissions
+                .Select(p=>
+                {
+                    return new Permission(Enum.Parse<PermissionResource>(p.Resource), p.Action);
+                }),
         };
     }
+}
+
+public class PermissionEntity
+{
+    public string Resource { get; set; }
+    public PermissionActions Action { get; set; }
 }

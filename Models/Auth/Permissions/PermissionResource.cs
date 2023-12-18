@@ -2,10 +2,8 @@
 {
     /// <summary>
     /// Rules for changes:
-    /// - new permission must be added to the end of file
-    /// - old permission must be marked by [Obsolete] attribute (that will remove them from UI)
+    /// Delete or add in any order, do not rename when permission is in use
     /// </summary>
-    /// todo Change permissions saving as parsing it via it's name rather than it's value, this will allow better permission file management
     public enum PermissionResource
     {
         #region ClientView
@@ -44,9 +42,11 @@
         ClientViewAuthLogs,
         [PermissionResourceInfo(ClientView, "Audit logs")]
         ClientViewAuditLogs,
-        [PermissionResourceInfo(ClientView, "Documents")]
+        [PermissionResourceInfo(ClientView, "Documents", PermissionActions.View, PermissionActions.Add, PermissionActions.Edit)]
         ClientViewDocuments,
-
+        [PermissionResourceInfo(ClientView, "KYC Status", PermissionActions.View, PermissionActions.Edit)]
+        ClientViewKycStatus,
+        #endregion
         #region Personal Data
 
         [PermissionResourceInfo(ClientViewPersonalData, "Email", PermissionActions.View, PermissionActions.Edit)]
@@ -66,8 +66,6 @@
         [PermissionResourceInfo(ClientViewPersonalData, "Sex", PermissionActions.View, PermissionActions.Edit)]
         ClientViewPersonalDataSex,
         
-        #endregion
-
         #endregion
 
         #region ClientsList
@@ -253,8 +251,12 @@
         ClientViewOwnershipOffice,
         [PermissionResourceInfo(ClientViewOwnership, "Conversion manager",PermissionActions.View, PermissionActions.Edit)]
         ClientViewOwnershipConversionManager,
+        [PermissionResourceInfo(ClientViewOwnershipConversionManager, "View all managers")]
+        ClientViewOwnershipAllConversionManagers,
         [PermissionResourceInfo(ClientViewOwnership, "Retention manager",PermissionActions.View, PermissionActions.Edit)]
         ClientViewOwnershipRetentionManager,
+        [PermissionResourceInfo(ClientViewOwnershipRetentionManager, "View all managers")]
+        ClientViewOwnershipAllRetentionManagers,
         [PermissionResourceInfo(ClientViewCrmData, "Next call date", PermissionActions.View, PermissionActions.Edit)]
         ClientViewCrmDataNextCallDate,
         [PermissionResourceInfo(ClientView, "Is internal/real", PermissionActions.View,  PermissionActions.Edit)]
