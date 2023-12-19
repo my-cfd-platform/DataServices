@@ -24,7 +24,7 @@
         ClientViewExternalData,
         [PermissionResourceInfo(ClientView, "Utm's", PermissionActions.View, PermissionActions.Edit)]
         ClientViewUtm,
-        [PermissionResourceInfo(ClientView, "Comments", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientView, "Comments", PermissionActions.View, PermissionActions.Add)]
         ClientViewComments,
         [PermissionResourceInfo(ClientView, "Accounts", PermissionActions.View, PermissionActions.Edit)]
         ClientViewAccounts,
