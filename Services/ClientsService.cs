@@ -224,7 +224,10 @@ public class ClientsService : IClientsService
     public async Task<List<TraderBrandModel>> SearchTraderBrandsAsync(string searchValue, IBackOfficeUser user)
     {
         var allTraderBrands = await SearchTraderBrandsAsync(searchValue);
-
+        if (user is { IsAdmin: true, IsBlocked: false })
+        {
+            return allTraderBrands;
+        }
         return (from model in allTraderBrands
                 let canAccess = _managerAccessClient!.CanAccess(new()
                 { ManagerId = user.Id, TraderId = model.TraderId })

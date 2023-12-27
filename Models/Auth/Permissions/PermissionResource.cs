@@ -47,6 +47,7 @@
         [PermissionResourceInfo(ClientView, "KYC Status", PermissionActions.View, PermissionActions.Edit)]
         ClientViewKycStatus,
         #endregion
+        
         #region Personal Data
 
         [PermissionResourceInfo(ClientViewPersonalData, "Email", PermissionActions.View, PermissionActions.Edit)]
