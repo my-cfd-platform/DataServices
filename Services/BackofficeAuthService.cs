@@ -105,6 +105,11 @@ public class BackofficeAuthService : IBackofficeAuthService
         await _rolesRepository.UpdateAsync(BackofficeRoleMyNoSqlEntity.Create(backOfficeRole));
     }
 
+    public async Task DeleteRoleAsync(string key)
+    {
+        await _rolesRepository.DeleteAsync(key);
+    }
+
     #endregion
 
     #region Teams

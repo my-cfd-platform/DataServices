@@ -20,7 +20,7 @@ public interface IBackofficeAuthService
 
     Task AddUpdateRoleAsync(BackofficeRoleModel backOfficeRole);
     BackofficeRoleModel GetRoleById(string id);
-
+    Task DeleteRoleAsync(string key);
     #endregion
 
     #region Teams

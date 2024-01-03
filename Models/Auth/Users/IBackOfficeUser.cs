@@ -14,7 +14,7 @@ namespace DataServices.Models.Auth.Users
         public IEnumerable<BackofficeRoleModel> Roles { get; set; }
         public IEnumerable<string> CertAliases { get; set; }
         public IEnumerable<string> AssignedPhonePoolIds { get; set; }
-        public string TeamId { get; set; }
+        public string? TeamId { get; set; }
         public UserDataAccessRules DataAccessRules { get; set; }
         public UserSkillLevel? SkillLevel { get; set; }
         public Dictionary<int, string> PhoneNumberIds { get; set; }
