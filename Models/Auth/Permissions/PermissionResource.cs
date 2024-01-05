@@ -42,7 +42,7 @@
         ClientViewAuthLogs,
         [PermissionResourceInfo(ClientView, "Audit logs")]
         ClientViewAuditLogs,
-        [PermissionResourceInfo(ClientView, "Documents", PermissionActions.View, PermissionActions.Add, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientView, "Documents", PermissionActions.View, PermissionActions.Add, PermissionActions.Edit, PermissionActions.Download)]
         ClientViewDocuments,
         [PermissionResourceInfo(ClientView, "KYC Status", PermissionActions.View, PermissionActions.Edit)]
         ClientViewKycStatus,
