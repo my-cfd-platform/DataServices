@@ -492,7 +492,7 @@ namespace DataServices.Models.Auth.Permissions
         ClientViewCrmDataChangePasswordSet,
         [PermissionResourceInfo(ClientViewCrmDataChangePassword, "Generate random")]
         ClientViewCrmDataChangePasswordGenerate,
-        [PermissionResourceInfo(ClientViewCrmData, "Change Password")]
+        [PermissionResourceInfo(ClientViewCrmData, "Change Password", Demo = true)]
         ClientViewCrmDataChangePassword,
         [PermissionResourceInfo(ClientView, "Communication", PermissionActions.View, PermissionActions.Add, PermissionActions.Import, Demo = true)]
         ClientViewClientCommunication,
