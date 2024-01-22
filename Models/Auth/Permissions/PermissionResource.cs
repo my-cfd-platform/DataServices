@@ -75,13 +75,13 @@ namespace DataServices.Models.Auth.Permissions
 
         [PermissionResourceInfo("Clients List")]
         ClientsList,
-        [PermissionResourceInfo(ClientsList, "Filter")]
+        [PermissionResourceInfo(ClientsList, "Filter", Demo = true)]
         ClientsListFilter,
-        [PermissionResourceInfo(ClientsList, "Table")]
+        [PermissionResourceInfo(ClientsList, "Table", Demo = true)]
         ClientsListTable,
-        [PermissionResourceInfo(ClientsList, "Multi actions")]
+        [PermissionResourceInfo(ClientsList, "Multi actions", Demo = true)]
         ClientsListMultiActions,
-        [PermissionResourceInfo(ClientsList, "Download data", PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientsList, "Download data", PermissionActions.Edit, Demo = true)]
         ClientsListDownloadData,
         [PermissionResourceInfo(ClientsListFilter, "Brand id")]
         ClientsListFilterBrandId,
