@@ -1,4 +1,6 @@
-﻿namespace DataServices.Models.Auth.Permissions
+﻿using System.Diagnostics;
+
+namespace DataServices.Models.Auth.Permissions
 {
     /// <summary>
     /// Rules for changes:
@@ -38,9 +40,9 @@
         ClientViewTransactions,
         [PermissionResourceInfo(ClientView, "Active deals")]
         ClientViewActiveDeals,
-        [PermissionResourceInfo(ClientView, "Auth logs")]
+        [PermissionResourceInfo(ClientView, "Auth logs", Demo = true)]
         ClientViewAuthLogs,
-        [PermissionResourceInfo(ClientView, "Audit logs")]
+        [PermissionResourceInfo(ClientView, "Audit logs", Demo = true)]
         ClientViewAuditLogs,
         [PermissionResourceInfo(ClientView, "Documents", PermissionActions.View, PermissionActions.Add, PermissionActions.Edit, PermissionActions.Download)]
         ClientViewDocuments,
@@ -209,6 +211,8 @@
         KycStatus,
         #endregion
 
+        #region Other
+
         [PermissionResourceInfo("Traders Online", Demo = true)]
         TradersOnline,
         [PermissionResourceInfo("Deposits", Demo = true)]
@@ -248,7 +252,7 @@
         ClientViewStatusesCrmStatus,
         [PermissionResourceInfo(ClientViewStatuses, "Trading status", PermissionActions.View, PermissionActions.Edit)]
         ClientViewStatusesTradingStatus,
-        [PermissionResourceInfo(ClientViewOwnership, "Office",PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewOwnership, "Office", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewOwnershipOffice,
         [PermissionResourceInfo(ClientViewOwnership, "Conversion manager",PermissionActions.View, PermissionActions.Edit)]
         ClientViewOwnershipConversionManager,
@@ -383,30 +387,30 @@
         PermissionsTeams,
         [PermissionResourceInfo(Permissions, "Roles", PermissionActions.View, PermissionActions.Edit)]
         PermissionsRoles,
-        [PermissionResourceInfo(Permissions, "Offices", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(Permissions, "Offices", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         PermissionsOffices,
-        [PermissionResourceInfo(Permissions, "Auto owner", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(Permissions, "Auto owner", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         PermissionsAutoOwner,
         [PermissionResourceInfo(ClientViewCrmData, "Activation date", PermissionActions.View, PermissionActions.Edit)]
         ClientViewCrmDataActivationDate,
         [PermissionResourceInfo(ClientView, "Questionary tab")]
         ClientViewQuestionaryTab,
-        [PermissionResourceInfo(ClientViewQuestionaryTab, "Age", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewQuestionaryTab, "Age", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewQuestionaryTabAge,
-        [PermissionResourceInfo(ClientViewQuestionaryTab, "Sex", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewQuestionaryTab, "Sex", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewQuestionaryTabSex,
-        [PermissionResourceInfo(ClientViewQuestionaryTab, "Occupation", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewQuestionaryTab, "Occupation", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewQuestionaryTabOccupation,
-        [PermissionResourceInfo(ClientViewQuestionaryTab, "Experience", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewQuestionaryTab, "Experience", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewQuestionaryTabExperience,
         [PermissionResourceInfo(ClientViewCrmData, "First deposit amount")]
         ClientViewCrmDataFirstDepositAmount,
-        [PermissionResourceInfo(ClientViewQuestionaryTab, "Redeposit potential", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewQuestionaryTab, "Redeposit potential", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewQuestionaryTabRedepositPotential,
-        [PermissionResourceInfo(ClientViewQuestionaryTab, "Expected Deposit", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewQuestionaryTab, "Expected Deposit", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewQuestionaryTabExpectedDeposit,
 
-        [PermissionResourceInfo(ClientView, "AB Split", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientView, "AB Split", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewABSplit,
         [PermissionResourceInfo("Account types", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         AccountTypes,
@@ -456,7 +460,7 @@
         RequestsCenterBonusDeposit,
         [PermissionResourceInfo(RequestsCenter, "Bonus Withdrawal")]
         RequestsCenterBonusWithdrawal,
-        [PermissionResourceInfo(ClientView, "Requests", PermissionActions.View, PermissionActions.Edit, PermissionActions.Add)]
+        [PermissionResourceInfo(ClientView, "Requests", PermissionActions.View, PermissionActions.Edit, PermissionActions.Add, Demo = true)]
         ClientViewRequests,
         [PermissionResourceInfo(ClientViewRequests, "Verification", PermissionActions.View, PermissionActions.Edit, PermissionActions.Add)]
         ClientViewRequestsVerification,
@@ -490,13 +494,13 @@
         ClientViewCrmDataChangePasswordGenerate,
         [PermissionResourceInfo(ClientViewCrmData, "Change Password")]
         ClientViewCrmDataChangePassword,
-        [PermissionResourceInfo(PermissionResource.ClientView, "Communication", PermissionActions.View, PermissionActions.Add, PermissionActions.Import)]
+        [PermissionResourceInfo(ClientView, "Communication", PermissionActions.View, PermissionActions.Add, PermissionActions.Import, Demo = true)]
         ClientViewClientCommunication,
         [PermissionResourceInfo(PhonePools, "Whatsapp", PermissionActions.View, PermissionActions.Edit, PermissionActions.Add, PermissionActions.Delete)]
         PhonePoolsWhatsapp,
         [PermissionResourceInfo(Notifications, "Client message received")]
         NotificationsClientMessageReceived,
-        [PermissionResourceInfo(PermissionResource.ClientViewClientCommunication, "Phone selection")]
+        [PermissionResourceInfo(ClientViewClientCommunication, "Phone selection")]
         ClientViewClientCommunicationPhoneSelection,
         [PermissionResourceInfo("Inactivity fee", Demo = true)]
         InactivityFee,
@@ -506,11 +510,14 @@
         InactivityFeeHistory,
         [PermissionResourceInfo("System messages", PermissionActions.View, PermissionActions.Add, PermissionActions.Edit, PermissionActions.Delete, Demo = true)]
         SystemMessages,
-        [PermissionResourceInfo(ClientView, "Sessions", PermissionActions.View, PermissionActions.Delete)]
+        [PermissionResourceInfo(ClientView, "Sessions", PermissionActions.View, PermissionActions.Delete, Demo = true)]
         ClientViewSessions,
-        [PermissionResourceInfo(ClientView, "Wallets", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientView, "Wallets", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewWallets,
         [PermissionResourceInfo("Voiso Integration", PermissionActions.View, PermissionActions.Edit, PermissionActions.Delete)]
         VoisoIntegration,
+                
+
+        #endregion
     }
 }
