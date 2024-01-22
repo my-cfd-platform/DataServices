@@ -2,10 +2,6 @@
 
 namespace DataServices.Models.Auth.Permissions
 {
-    /// <summary>
-    /// Rules for changes:
-    /// Delete or add in any order, do not rename when permission is in use
-    /// </summary>
     public enum PermissionResource
     {
         #region ClientView
@@ -30,9 +26,9 @@ namespace DataServices.Models.Auth.Permissions
         ClientViewComments,
         [PermissionResourceInfo(ClientView, "Accounts", PermissionActions.View, PermissionActions.Edit)]
         ClientViewAccounts,
-        [PermissionResourceInfo(ClientView, "Dealing info")]
+        [PermissionResourceInfo(ClientView, "Dealing info", Demo = true)]
         ClientViewDealingInfo,
-        [PermissionResourceInfo(ClientView, "Deposits", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientView, "Deposits", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewDeposits,
         [PermissionResourceInfo(ClientView, "Withdrawals", PermissionActions.View, PermissionActions.Edit)]
         ClientViewWithdrawals,
@@ -246,7 +242,7 @@ namespace DataServices.Models.Auth.Permissions
         [PermissionResourceInfo(Deposits, "Payment systems settings", PermissionActions.View, PermissionActions.Edit)]
         DepositsPaymentSystemsSettings,
         
-        [PermissionResourceInfo(ClientViewStatuses, "Achievement status", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewStatuses, "Achievement status", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewStatusesAchievementStatus,
         [PermissionResourceInfo(ClientViewStatuses, "CRM status", PermissionActions.View, PermissionActions.Edit)]
         ClientViewStatusesCrmStatus,
@@ -262,7 +258,7 @@ namespace DataServices.Models.Auth.Permissions
         ClientViewOwnershipRetentionManager,
         [PermissionResourceInfo(ClientViewOwnershipRetentionManager, "View all managers")]
         ClientViewOwnershipAllRetentionManagers,
-        [PermissionResourceInfo(ClientViewCrmData, "Next call date", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewCrmData, "Next call date", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewCrmDataNextCallDate,
         [PermissionResourceInfo(ClientView, "Is internal/real", PermissionActions.View,  PermissionActions.Edit)]
         ClientViewIsInternal,
@@ -352,7 +348,7 @@ namespace DataServices.Models.Auth.Permissions
         AutoDialerCampaigns,
         [PermissionResourceInfo(AutoDialer, "Statistic")]
         AutoDialerStatistic,
-        [PermissionResourceInfo(ClientViewCrmData, "Is Archived", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewCrmData, "Is Archived", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewCrmDataIsArchived,
         [PermissionResourceInfo(AutoDialer, "Users", PermissionActions.View, PermissionActions.Edit)]
         AutoDialerUsersOnline,
@@ -391,7 +387,7 @@ namespace DataServices.Models.Auth.Permissions
         PermissionsOffices,
         [PermissionResourceInfo(Permissions, "Auto owner", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         PermissionsAutoOwner,
-        [PermissionResourceInfo(ClientViewCrmData, "Activation date", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewCrmData, "Activation date", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewCrmDataActivationDate,
         [PermissionResourceInfo(ClientView, "Questionary tab")]
         ClientViewQuestionaryTab,
@@ -403,7 +399,7 @@ namespace DataServices.Models.Auth.Permissions
         ClientViewQuestionaryTabOccupation,
         [PermissionResourceInfo(ClientViewQuestionaryTab, "Experience", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewQuestionaryTabExperience,
-        [PermissionResourceInfo(ClientViewCrmData, "First deposit amount")]
+        [PermissionResourceInfo(ClientViewCrmData, "First deposit amount", Demo = true)]
         ClientViewCrmDataFirstDepositAmount,
         [PermissionResourceInfo(ClientViewQuestionaryTab, "Redeposit potential", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewQuestionaryTabRedepositPotential,
@@ -414,7 +410,7 @@ namespace DataServices.Models.Auth.Permissions
         ClientViewABSplit,
         [PermissionResourceInfo("Account types", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         AccountTypes,
-        [PermissionResourceInfo(ClientViewCrmData, "Card Deposit Disabled", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewCrmData, "Card Deposit Disabled", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewCrmDataCardDepositDisabled,
         [PermissionResourceInfo("Notifications", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         Notifications,
@@ -430,9 +426,9 @@ namespace DataServices.Models.Auth.Permissions
         NotificationsTraderLoggedOn,
         [PermissionResourceInfo(Notifications, "Margin Call")]
         NotificationsMarginCall,
-        [PermissionResourceInfo(ClientViewCrmData, "Account type ID", PermissionActions.View)]
+        [PermissionResourceInfo(ClientViewCrmData, "Account type ID", PermissionActions.View, Demo = true)]
         ClientViewCrmDataAccountTypeId,
-        [PermissionResourceInfo(ClientViewCrmData, "Account type manual ID", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientViewCrmData, "Account type manual ID", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewCrmDataAccountTypeManualId,
         [PermissionResourceInfo("Calendar", PermissionActions.Edit, Demo = true)]
         Calendar,
