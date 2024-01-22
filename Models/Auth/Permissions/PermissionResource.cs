@@ -199,7 +199,7 @@
 
         #region KYC
 
-        [PermissionResourceInfo("Kyc")]
+        [PermissionResourceInfo("Kyc", Demo = true)]
         Kyc,
         [PermissionResourceInfo(Kyc, "Documents", PermissionActions.View, PermissionActions.Edit, PermissionActions.Delete)]
         KycDocuments,
@@ -209,25 +209,25 @@
         KycStatus,
         #endregion
 
-        [PermissionResourceInfo("Traders Online")]
+        [PermissionResourceInfo("Traders Online", Demo = true)]
         TradersOnline,
-        [PermissionResourceInfo("Deposits")]
+        [PermissionResourceInfo("Deposits", Demo = true)]
         Deposits,
         [PermissionResourceInfo("Withdrawals", PermissionActions.View, PermissionActions.Edit)]
         Withdrawals,
-        [PermissionResourceInfo("Transactions Report")]
+        [PermissionResourceInfo("Transactions Report", Demo = true)]
         TransactionsReport,
-        [PermissionResourceInfo("Affiliates", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo("Affiliates", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         Affiliates,
-        [PermissionResourceInfo("Phone Pools", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo("Phone Pools", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         PhonePools,
         [PermissionResourceInfo("Permissions")]
         Permissions,
-        [PermissionResourceInfo("Onboardings", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo("Onboardings", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         Onboardings,
-        [PermissionResourceInfo("Brands", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo("Brands", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         Brands,
-        [PermissionResourceInfo("System Audit Logs", PermissionActions.View)]
+        [PermissionResourceInfo("System Audit Logs", PermissionActions.View, Demo = true)]
         SystemAuditLogs,
         [PermissionResourceInfo(Deposits, "Deposits", PermissionActions.View, PermissionActions.Edit)]
         DepositsDeposits,
@@ -340,7 +340,7 @@
         TransactionsReportDownloadData,
         [PermissionResourceInfo(ClientView, "KeyValue", PermissionActions.View, PermissionActions.Edit)]
         ClientViewKeyValueData,
-        [PermissionResourceInfo("Auto dialer")]
+        [PermissionResourceInfo("Auto dialer", Demo = true)]
         AutoDialer,
         [PermissionResourceInfo(AutoDialer, "Personal area")]
         AutoDialerPersonalArea,
@@ -354,7 +354,7 @@
         AutoDialerUsersOnline,
         [PermissionResourceInfo(AutoDialer, "Calls")]
         AutoDialerCallLogs,
-        [PermissionResourceInfo("Cold Leads")]
+        [PermissionResourceInfo("Cold Leads", Demo = true)]
         ColdLeads,
         [PermissionResourceInfo(ColdLeads, "Table", PermissionActions.View, PermissionActions.Edit)]
         ColdLeadsTable,
@@ -363,19 +363,19 @@
         [PermissionResourceInfo(ColdLeadsTable, "Phone")]
         ColdLeadsTablePhone,
 
-        [PermissionResourceInfo("Welcome Bonuses", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo("Welcome Bonuses", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         WelcomeBonuses,
-        [PermissionResourceInfo("AB Splits", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo("AB Splits", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ABSplits,
         [PermissionResourceInfo(TransactionsReportTable, "Transaction Sub Type")]
         TransactionsReportTableTransactionSubType,
         [PermissionResourceInfo(TransactionsReportTable, "Conversion Manager")]
         TransactionsReportTableConversionManager,
-        [PermissionResourceInfo("Market Alerts", PermissionActions.View)]
+        [PermissionResourceInfo("Market Alerts", PermissionActions.View, Demo = true)]
         MarketAlerts,
         [PermissionResourceInfo(MarketAlerts, "Market Movement", PermissionActions.View, PermissionActions.Edit)]
         MarketAlertsMarketMovement,
-        [PermissionResourceInfo("Educations", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo("Educations", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         Educations,
         [PermissionResourceInfo(Permissions, "Users", PermissionActions.View, PermissionActions.Edit)]
         PermissionsUsers,
@@ -408,11 +408,11 @@
 
         [PermissionResourceInfo(ClientView, "AB Split", PermissionActions.View, PermissionActions.Edit)]
         ClientViewABSplit,
-        [PermissionResourceInfo("Account types", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo("Account types", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         AccountTypes,
         [PermissionResourceInfo(ClientViewCrmData, "Card Deposit Disabled", PermissionActions.View, PermissionActions.Edit)]
         ClientViewCrmDataCardDepositDisabled,
-        [PermissionResourceInfo("Notifications", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo("Notifications", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         Notifications,
         [PermissionResourceInfo(Notifications, "Deposit Failed")]
         NotificationsDepositFailed,
@@ -430,9 +430,9 @@
         ClientViewCrmDataAccountTypeId,
         [PermissionResourceInfo(ClientViewCrmData, "Account type manual ID", PermissionActions.View, PermissionActions.Edit)]
         ClientViewCrmDataAccountTypeManualId,
-        [PermissionResourceInfo("Calendar", PermissionActions.Edit)]
+        [PermissionResourceInfo("Calendar", PermissionActions.Edit, Demo = true)]
         Calendar,
-        [PermissionResourceInfo("Requests Center", PermissionActions.View, PermissionActions.Download)]
+        [PermissionResourceInfo("Requests Center", PermissionActions.View, PermissionActions.Download, Demo = true)]
         RequestsCenter,
         [PermissionResourceInfo(RequestsCenter, "Verification")]
         RequestsCenterVerification,
@@ -498,13 +498,13 @@
         NotificationsClientMessageReceived,
         [PermissionResourceInfo(PermissionResource.ClientViewClientCommunication, "Phone selection")]
         ClientViewClientCommunicationPhoneSelection,
-        [PermissionResourceInfo("Inactivity fee")]
+        [PermissionResourceInfo("Inactivity fee", Demo = true)]
         InactivityFee,
         [PermissionResourceInfo(InactivityFee, "Inactivity fee settings", PermissionActions.View, PermissionActions.Edit)]
         InactivityFeeSettings,
         [PermissionResourceInfo(InactivityFee, "Inactivity fee history")]
         InactivityFeeHistory,
-        [PermissionResourceInfo("System messages", PermissionActions.View, PermissionActions.Add, PermissionActions.Edit, PermissionActions.Delete)]
+        [PermissionResourceInfo("System messages", PermissionActions.View, PermissionActions.Add, PermissionActions.Edit, PermissionActions.Delete, Demo = true)]
         SystemMessages,
         [PermissionResourceInfo(ClientView, "Sessions", PermissionActions.View, PermissionActions.Delete)]
         ClientViewSessions,

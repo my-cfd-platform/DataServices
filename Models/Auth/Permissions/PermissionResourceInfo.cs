@@ -5,6 +5,7 @@
         public string Name { get; private set; }
         public PermissionResource? LinkedTo { get; private set; }
         public PermissionActions[] SupportedLevels { get; set; }
+        public bool Demo { get; set; }
 
         public PermissionResourceInfo(PermissionResource linkedTo, string name)
         {
