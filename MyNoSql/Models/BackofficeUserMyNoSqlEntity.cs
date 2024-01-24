@@ -1,4 +1,5 @@
-﻿using DataServices.Models.Auth.Roles;
+﻿using DataServices.Extensions;
+using DataServices.Models.Auth.Roles;
 using DataServices.Models.Auth.Users;
 using DataServices.MyNoSql.Enums;
 using DataServices.MyNoSql.Interfaces;
@@ -80,7 +81,7 @@ public class BackofficeUserMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeUser
             Id = src.Id,
             Registered = src.Registered,
             IsBlocked = src.IsBlocked,
-            PersonalName = src.PersonalName,
+            PersonalName = src.PersonalName.IsNotNullOrEmpty() ? src.PersonalName : src.Id,
             IsAdmin = src.IsAdmin,
             ReferralLink = src.ReferralLink,
             CertAliases = src.CertAliases,
