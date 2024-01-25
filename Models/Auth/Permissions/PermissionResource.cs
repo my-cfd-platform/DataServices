@@ -12,15 +12,15 @@ namespace DataServices.Models.Auth.Permissions
         ClientViewStatuses,
         [PermissionResourceInfo(ClientView, "Personal data")]
         ClientViewPersonalData,
-        [PermissionResourceInfo(ClientView, "CRM data")]
+        [PermissionResourceInfo(ClientView, "CRM data", PermissionActions.View, PermissionActions.Edit)]
         ClientViewCrmData,
         [PermissionResourceInfo(ClientView, "Ownership", PermissionActions.View)]
         ClientViewOwnership,
-        [PermissionResourceInfo(ClientView, "Additional phones", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientView, "Additional phones", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewAdditionalPhones,
-        [PermissionResourceInfo(ClientView, "External Data ", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientView, "External Data ", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewExternalData,
-        [PermissionResourceInfo(ClientView, "Utm's", PermissionActions.View, PermissionActions.Edit)]
+        [PermissionResourceInfo(ClientView, "Utm's", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewUtm,
         [PermissionResourceInfo(ClientView, "Comments", PermissionActions.View, PermissionActions.Add)]
         ClientViewComments,
@@ -510,7 +510,7 @@ namespace DataServices.Models.Auth.Permissions
         ClientViewSessions,
         [PermissionResourceInfo(ClientView, "Wallets", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         ClientViewWallets,
-        [PermissionResourceInfo("Voiso Integration", PermissionActions.View, PermissionActions.Edit, PermissionActions.Delete)]
+        [PermissionResourceInfo("Voiso Integration", PermissionActions.View)]
         VoisoIntegration,
                 
 

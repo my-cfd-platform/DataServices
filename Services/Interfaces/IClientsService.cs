@@ -103,7 +103,7 @@ public interface IClientsService
 
     #region Manager Access
 
-    Task<bool> CanManagerAccess(string managerId, string traderId);
+    Task<bool> CanManagerAccessAsync(string managerId, string traderId);
     Task SetManagerAccess(TraderAccessModel access);
     Task<List<TraderAccessModel>> GetManagerAccess(string managerId);
     Task<TraderManagers> GetTraderManagersLookup(string traderId);

@@ -229,9 +229,7 @@ public class ClientsService : IClientsService
             return allTraderBrands;
         }
         return (from model in allTraderBrands
-                let canAccess = _managerAccessClient!.CanAccess(new()
-                { ManagerId = user.Id, TraderId = model.TraderId })
-                where canAccess.Value
+                where CanManagerAccess(user, model.TraderId)
                 select model).ToList();
     }
 
@@ -383,8 +381,15 @@ public class ClientsService : IClientsService
     #endregion
 
     #region Manager Access
+    
+    private bool CanManagerAccess(IBackOfficeUser manager, string traderId)
+    {
+        var res = _managerAccessClient!.CanAccess(new() { ManagerId = manager.Id, TraderId = traderId });
+        return res.Value;
+    }
 
-    public async Task<bool> CanManagerAccess(string managerId, string traderId)
+
+    public async Task<bool> CanManagerAccessAsync(string managerId, string traderId)
     {
         var res = await _managerAccessClient!.CanAccessAsync(new() { ManagerId = managerId, TraderId = traderId });
         return res.Value;
