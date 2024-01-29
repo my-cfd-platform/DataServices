@@ -8,6 +8,8 @@ public class TeamModel : IBackofficeTeam
     public string Id { get; set; }
     public string Name { get; set; }
     public IEnumerable<string> OfficeIds { get; set; } = new List<string>();
-    public string TeamLeadId { get; set; }
+    //public string TeamLeadId { get; set; }
+    public IEnumerable<string> Managers { get; set; } = new List<string>();
+
     public TeamType Type { get; set; }
 }

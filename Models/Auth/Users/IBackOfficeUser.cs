@@ -1,4 +1,5 @@
-﻿using DataServices.Models.Auth.Permissions;
+﻿using DataServices.Extensions;
+using DataServices.Models.Auth.Permissions;
 using DataServices.Models.Auth.Roles;
 
 namespace DataServices.Models.Auth.Users
@@ -15,6 +16,8 @@ namespace DataServices.Models.Auth.Users
         public IEnumerable<string> CertAliases { get; set; }
         public IEnumerable<string> AssignedPhonePoolIds { get; set; }
         public string? TeamId { get; set; }
+        public bool HasTeam => TeamId?.IsNotNullOrEmpty() is true;
+
         public UserDataAccessRules DataAccessRules { get; set; }
         public UserSkillLevel? SkillLevel { get; set; }
         public Dictionary<int, string> PhoneNumberIds { get; set; }

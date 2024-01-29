@@ -19,8 +19,9 @@ public class BackofficeTeamMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeTeam
 
     public string Name { get; set; }
     public IEnumerable<string> OfficeIds { get; set; }
-    public string TeamLeadId { get; set; }
+    //public string TeamLeadId { get; set; }
     public TeamType Type { get; set; }
+    public IEnumerable<string> Managers { get; set; }
 
     public static BackofficeTeamMyNoSqlEntity Create(IBackofficeTeam src)
     {
@@ -32,7 +33,8 @@ public class BackofficeTeamMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeTeam
             RowKey = GenerateRowKey(src.Id),
             Name = src.Name,
             OfficeIds = src.OfficeIds,
-            TeamLeadId = src.TeamLeadId,
+            //TeamLeadId = src.TeamLeadId,
+            Managers = src.Managers,
             Type = src.Type,
         };
     }
