@@ -114,6 +114,8 @@ public interface IClientsService
     #region Withdrawals
 
     Task<List<WithdrawalGrpcModel>> GetActiveWithdrawalRequestsAsync(string? traderId = null);
+    Task<List<WithdrawalGrpcModel>> GetProcessedWithdrawalRequestsAsync(string? traderId = null);
+    Task<List<WithdrawalGrpcModel>> GetCanceledWithdrawalRequestsAsync(string? traderId = null);
     Task ApproveWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId);
     Task DenyWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId);
 

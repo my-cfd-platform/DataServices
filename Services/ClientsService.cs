@@ -794,9 +794,27 @@ public class ClientsService : IClientsService
     public async Task<List<WithdrawalGrpcModel>> GetActiveWithdrawalRequestsAsync(string? traderId)
     {
         var request = traderId is null
-            ? new GetActiveWithdrawalsRequest()
-            : new GetActiveWithdrawalsRequest { TraderId = traderId };
+            ? new GetWithdrawalsRequest()
+            : new GetWithdrawalsRequest { TraderId = traderId };
         var stream = _withdrawalsClient!.GetActiveWithdrawals(request).ResponseStream;
+        return await GetItemsList<WithdrawalGrpcModel>(stream);
+    }
+
+    public async Task<List<WithdrawalGrpcModel>> GetProcessedWithdrawalRequestsAsync(string? traderId)
+    {
+        var request = traderId is null
+            ? new GetWithdrawalsRequest()
+            : new GetWithdrawalsRequest { TraderId = traderId };
+        var stream = _withdrawalsClient!.GetProcessedWithdrawals(request).ResponseStream;
+        return await GetItemsList<WithdrawalGrpcModel>(stream);
+    }
+
+    public async Task<List<WithdrawalGrpcModel>> GetCanceledWithdrawalRequestsAsync(string? traderId)
+    {
+        var request = traderId is null
+            ? new GetWithdrawalsRequest()
+            : new GetWithdrawalsRequest { TraderId = traderId };
+        var stream = _withdrawalsClient!.GetCanceledWithdrawals(request).ResponseStream;
         return await GetItemsList<WithdrawalGrpcModel>(stream);
     }
 
