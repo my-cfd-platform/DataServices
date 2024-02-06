@@ -119,5 +119,7 @@ public interface IClientsService
     Task ApproveWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId);
     Task DenyWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId);
 
+    Task<List<WithdrawalGrpcModel>> SearchWithdrawals(IEnumerable<string> traderIds, WithdrawalStatus status);
+
     #endregion
 }

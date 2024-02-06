@@ -842,6 +842,17 @@ public class ClientsService : IClientsService
         });
     }
 
+    public async Task<List<WithdrawalGrpcModel>> SearchWithdrawals(IEnumerable<string> traderIds, WithdrawalStatus status)
+    {
+        var request = new SearchWithdrawalsRequest
+        {
+            Status = WithdrawalStatus.Pending
+        };
+        request.TraderIds.AddRange(traderIds);
+        var stream = _withdrawalsClient!.SearchWithdrawals(request).ResponseStream;
+        return await GetItemsList<WithdrawalGrpcModel>(stream);
+    }
+
     #endregion
 
     #region Helper Functions
