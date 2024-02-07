@@ -19,25 +19,6 @@ public class LivePriceCache : ICache<ILivePrice>
         var readRepository =
             new MyNoSqlReadRepository<LivePriceEntity>(tcpConnection, TableName);
         _readRepository = readRepository;
-        _readRepository.SubscribeToUpdateEvents(
-            items =>
-            {
-                lock (_subscribersOnChanges)
-                {
-                    foreach (var (_, subscribersOnChanges) in _subscribersOnChanges)
-                    foreach (var change in subscribersOnChanges)
-                    {
-                        change(items);
-                    }
-
-                }
-            },
-            items =>
-            {
-                foreach (var action in _subscribersOnDelete)
-                    action(items);
-            });
-
     }
 
     public IEnumerable<ILivePrice> GetAll()
@@ -73,6 +54,10 @@ public class LivePriceCache : ICache<ILivePrice>
             }
 
             _subscribersOnChanges[type].Add(priceChanges);
+            if (_subscribersOnChanges.Count == 1)
+            {
+                SubscribeCache();
+            }
         }
     }
 
@@ -85,5 +70,27 @@ public class LivePriceCache : ICache<ILivePrice>
                 _subscribersOnChanges.Remove(type);
             }
         }
+    }
+
+    private void SubscribeCache()
+    {
+        _readRepository.SubscribeToUpdateEvents(
+            items =>
+            {
+                lock (_subscribersOnChanges)
+                {
+                    foreach (var (_, subscribersOnChanges) in _subscribersOnChanges)
+                    foreach (var change in subscribersOnChanges)
+                    {
+                        change(items);
+                    }
+
+                }
+            },
+            items =>
+            {
+                foreach (var action in _subscribersOnDelete)
+                    action(items);
+            });
     }
 }
