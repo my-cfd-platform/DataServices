@@ -50,7 +50,17 @@ public class BackofficeAuthService : IBackofficeAuthService
 
     public IEnumerable<BackOfficeUserModel> GetAllUsers()
     {
-        var users = _usersCache.GetAll();
+        var users = _usersCache.GetAll().ToList();
+        if (!users.Any())
+        {
+            _ = AddUpdateUserAsync(new BackOfficeUserModel
+            {
+                Id = "admin",
+                PersonalName = "Global Admin",
+                IsAdmin = true,
+                IsBlocked = false
+            });
+        }
 
         var roles = GetAllRoles();
 
