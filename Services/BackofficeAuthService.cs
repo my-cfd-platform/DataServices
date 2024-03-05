@@ -14,6 +14,7 @@ public class BackofficeAuthService : IBackofficeAuthService
 {
     private readonly IRepository<IBackofficeUser> _usersRepository;
     private readonly ICache<IBackofficeUser> _usersCache;
+    private bool _usersInitialised;
 
     private readonly IRepository<IBackofficeRole> _rolesRepository;
     private readonly ICache<IBackofficeRole> _rolesCache;
@@ -31,7 +32,6 @@ public class BackofficeAuthService : IBackofficeAuthService
     {
         _usersRepository = new BackOfficeUsersRepository(settings.MyNoSqlServerWriterUrl);
         _usersCache = new BackOfficeUsersCache(tcpConnection);
-
         _rolesRepository = new BackOfficeRolesRepository(settings.MyNoSqlServerWriterUrl);
         _rolesCache = new BackOfficeRolesCache(tcpConnection);
 
@@ -48,19 +48,31 @@ public class BackofficeAuthService : IBackofficeAuthService
 
     #region Users
 
+    public async void InitUsers()
+    {
+        if (_usersInitialised)
+            return;
+        if (_usersCache.GetAll().Any())
+        {
+            _usersInitialised = true;
+            return;
+        };
+
+        await AddUpdateUserAsync(new BackOfficeUserModel
+        {
+            Id = "admin",
+            PersonalName = "Global Admin",
+            IsAdmin = true,
+            IsBlocked = false,
+            PhoneNumberIds = new()
+        });
+        _usersInitialised = true;
+    }
+
     public IEnumerable<BackOfficeUserModel> GetAllUsers()
     {
+        InitUsers();
         var users = _usersCache.GetAll().ToList();
-        if (!users.Any())
-        {
-            _ = AddUpdateUserAsync(new BackOfficeUserModel
-            {
-                Id = "admin",
-                PersonalName = "Global Admin",
-                IsAdmin = true,
-                IsBlocked = false
-            });
-        }
 
         var roles = GetAllRoles();
 
@@ -71,6 +83,7 @@ public class BackofficeAuthService : IBackofficeAuthService
 
     public IBackOfficeUser? GetUserById(string id)
     {
+        InitUsers();
         var user = _usersCache.Get(id);
         // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
         if (user == null)
