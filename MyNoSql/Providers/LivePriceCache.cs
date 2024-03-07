@@ -14,6 +14,8 @@ public class LivePriceCache : ICache<ILivePrice>
 
     private const string TableName = "bidask-snapshots";
 
+    private bool _subscribed;
+
     public LivePriceCache(IMyNoSqlSubscriber tcpConnection)
     {
         var readRepository =
@@ -54,10 +56,15 @@ public class LivePriceCache : ICache<ILivePrice>
             }
 
             _subscribersOnChanges[type].Add(priceChanges);
-            if (_subscribersOnChanges.Count == 1)
+            /*if (_subscribersOnChanges.Count == 1)
             {
                 SubscribeCache();
-            }
+            }*/
+        }
+
+        if (!_subscribed)
+        {
+            SubscribeCache();
         }
     }
 
