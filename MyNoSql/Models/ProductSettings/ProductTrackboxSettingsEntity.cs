@@ -9,7 +9,7 @@ public class ProductTrackboxSettingsEntity : MyNoSqlDbEntity, IProductTrackboxSe
 	public string Id => RowKey = "trackbox";
 
 	[JsonProperty("api_keys")]
-    public List<string> ApiKeys { get; set; }
+    public List<string> ApiKeys { get; set; } = new();
 
     public static string GeneratePartitionKey()
     {

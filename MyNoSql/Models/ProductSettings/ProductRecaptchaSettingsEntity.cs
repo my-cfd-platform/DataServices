@@ -7,6 +7,8 @@ namespace DataServices.MyNoSql.Models.ProductSettings;
 public class ProductRecaptchaSettingsEntity : MyNoSqlDbEntity, IProductRecaptchaSettings
 {
     public string Id => RowKey = "recaptcha";
+    [JsonProperty("disabled")]
+	public bool Disabled { get; set; }
     [JsonProperty("public_key")]
     public string PublicKey { get; set; } = string.Empty;
     [JsonProperty("secret_key")]
@@ -25,6 +27,7 @@ public class ProductRecaptchaSettingsEntity : MyNoSqlDbEntity, IProductRecaptcha
         {
             PartitionKey = GeneratePartitionKey(),
             RowKey = "recaptcha",
+            Disabled = src.Disabled,
             PublicKey = src.PublicKey,
             SecretKey = src.SecretKey,
             ScoreToVerify = src.ScoreToVerify,
