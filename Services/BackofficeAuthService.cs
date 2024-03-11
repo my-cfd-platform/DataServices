@@ -58,14 +58,19 @@ public class BackofficeAuthService : IBackofficeAuthService
             return;
         };
 
-        await AddUpdateUserAsync(new BackOfficeUserModel
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (_usersCache.Get("admin") is null)
         {
-            Id = "admin",
-            PersonalName = "Global Admin",
-            IsAdmin = true,
-            IsBlocked = false,
-            PhoneNumberIds = new()
-        });
+            await AddUpdateUserAsync(new BackOfficeUserModel
+            {
+                Id = "admin",
+                PersonalName = "Global Admin",
+                IsAdmin = true,
+                IsBlocked = false,
+                PhoneNumberIds = new()
+            });
+        }
+
         _usersInitialised = true;
     }
 
