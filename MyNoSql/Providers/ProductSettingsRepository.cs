@@ -35,9 +35,9 @@ public class ProductSettingsRepository : IProductSettingsRepository
         return await _brandTable.GetAsync(ProductBrandSettingsEntity.GeneratePartitionKey(), "brand");
     }
 
-    public async void SetBrandSettingsAsync(IProductBrandSettings brandSettings)
+    public async void SetBrandSettingsAsync(IProductBrandSettings settings)
     {
-        var entity = ProductBrandSettingsEntity.Create(brandSettings);
+        var entity = ProductBrandSettingsEntity.Create(settings);
         await _brandTable.InsertOrReplaceAsync(entity);
     }
 
@@ -46,8 +46,20 @@ public class ProductSettingsRepository : IProductSettingsRepository
         return await _recaptchaTable.GetAsync(ProductRecaptchaSettingsEntity.GeneratePartitionKey(), "recaptcha");
     }
 
+    public async void SetRecaptchaSettingsAsync(IProductRecaptchaSettings settings)
+    {
+		var entity = ProductRecaptchaSettingsEntity.Create(settings);
+		await _recaptchaTable.InsertOrReplaceAsync(entity);
+    }
+
     public async Task<IProductTrackboxSettings> GetTrackboxSettingsAsync()
     {
         return await _trackboxTable.GetAsync(ProductTrackboxSettingsEntity.GeneratePartitionKey(), "trackbox");
     }
+
+    public async void SetTrackboxSettingsAsync(IProductTrackboxSettings settings)
+    {
+	    var entity = ProductTrackboxSettingsEntity.Create(settings);
+	    await _trackboxTable.InsertOrReplaceAsync(entity);
+	}
 }

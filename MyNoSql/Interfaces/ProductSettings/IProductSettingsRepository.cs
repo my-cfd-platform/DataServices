@@ -3,7 +3,9 @@
 public interface IProductSettingsRepository
 {
     public Task<IProductBrandSettings> GetBrandSettingsAsync();
-    public void SetBrandSettingsAsync(IProductBrandSettings brandSettings);
+    public void SetBrandSettingsAsync(IProductBrandSettings settings);
     public Task<IProductRecaptchaSettings> GetRecaptchaSettingsAsync();
-    public Task<IProductTrackboxSettings> GetTrackboxSettingsAsync();
+    public void SetRecaptchaSettingsAsync(IProductRecaptchaSettings settings);
+	public Task<IProductTrackboxSettings> GetTrackboxSettingsAsync();
+	public void SetTrackboxSettingsAsync(IProductTrackboxSettings settings);
 }

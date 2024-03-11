@@ -5,11 +5,10 @@ using Newtonsoft.Json;
 namespace DataServices.MyNoSql.Models.ProductSettings;
 
 public class ProductTrackboxSettingsEntity : MyNoSqlDbEntity, IProductTrackboxSettings
-{
-    public new string RowKey = "trackbox";
-    public string Id => RowKey;
+{ 
+	public string Id => RowKey = "trackbox";
 
-    [JsonProperty("api_keys")]
+	[JsonProperty("api_keys")]
     public List<string> ApiKeys { get; set; }
 
     public static string GeneratePartitionKey()

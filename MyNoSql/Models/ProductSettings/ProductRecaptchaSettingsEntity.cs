@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using DataServices.MyNoSql.Interfaces.ProductSettings;
+﻿using DataServices.MyNoSql.Interfaces.ProductSettings;
 using MyNoSqlServer.Abstractions;
 using Newtonsoft.Json;
 
@@ -7,11 +6,13 @@ namespace DataServices.MyNoSql.Models.ProductSettings;
 
 public class ProductRecaptchaSettingsEntity : MyNoSqlDbEntity, IProductRecaptchaSettings
 {
-    public new string RowKey = "recaptcha";
-    public string Id => RowKey;
-
+    public string Id => RowKey = "recaptcha";
     [JsonProperty("public_key")]
-    public string PublicKey { get; set; }
+    public string PublicKey { get; set; } = string.Empty;
+    [JsonProperty("secret_key")]
+	public string SecretKey { get; set; } = string.Empty;
+	[JsonProperty("score_to_verify")]
+	public double ScoreToVerify { get; set; }
 
     public static string GeneratePartitionKey()
     {
@@ -25,6 +26,8 @@ public class ProductRecaptchaSettingsEntity : MyNoSqlDbEntity, IProductRecaptcha
             PartitionKey = GeneratePartitionKey(),
             RowKey = "recaptcha",
             PublicKey = src.PublicKey,
+            SecretKey = src.SecretKey,
+            ScoreToVerify = src.ScoreToVerify,
         };
     }
 }
