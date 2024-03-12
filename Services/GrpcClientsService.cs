@@ -13,6 +13,7 @@ using DotNetCoreDecorators;
 using Google.Protobuf;
 using Grpc.Core;
 using Grpc.Net.Client;
+using InternalReportsFlows;
 using Keyvalue;
 using ManagerAccessFlows;
 using Pd;
@@ -24,11 +25,12 @@ using Kyclog;
 using PositionManager;
 using TraderFtd;
 using WithdrawalsFlows;
+using FromToUint64Model = InternalReportsFlows.FromToUint64Model;
 using GetTradersRequest = TraderCredentials.GetTradersRequest;
 
 namespace DataServices.Services;
 
-public class ClientsService : IClientsService
+public class GrpcClientsService : IGrpcClientsService
 {
     private readonly TraderCredentialsGrpcService.TraderCredentialsGrpcServiceClient? _traderCredentialsClient;
     private readonly ReportGrpcService.ReportGrpcServiceClient? _reportClient;
@@ -44,10 +46,11 @@ public class ClientsService : IClientsService
     private readonly WithdrawalFlowsService.WithdrawalFlowsServiceClient? _withdrawalsClient;
     private readonly PositionManagerGrpcService.PositionManagerGrpcServiceClient? _positionManagerClient;
     private readonly TraderFtdGrpcService.TraderFtdGrpcServiceClient? _traderFtdClient;
+    private readonly InternalReportsGrpcService.InternalReportsGrpcServiceClient? _internalReportsClient;
 
     private readonly IPriceService _priceService;
 
-    public ClientsService(DataServicesSettings settings, IPriceService priceService)
+    public GrpcClientsService(DataServicesSettings settings, IPriceService priceService)
     {
         _priceService = priceService;
         if (settings.KeyValueGrpcServiceUrl.IsNotNullOrEmpty())
@@ -97,7 +100,7 @@ public class ClientsService : IClientsService
             _managerAccessClient = new ManagerAccessService.ManagerAccessServiceClient(
                 GrpcChannel.ForAddress(settings.ManagerAccessGrpcServiceUrl));
         }
-        
+
         if (settings.KycStatusGrpcServiceUrl.IsNotNullOrEmpty())
         {
             _kycStatusClient = new KycStatusService.KycStatusServiceClient(
@@ -121,7 +124,7 @@ public class ClientsService : IClientsService
             _withdrawalsClient = new WithdrawalFlowsService.WithdrawalFlowsServiceClient(
                 GrpcChannel.ForAddress(settings.WithdrawalsGrpcServiceUrl));
         }
-        
+
         if (settings.PositionsManagerServiceUrl.IsNotNullOrEmpty())
         {
             _positionManagerClient = new(
@@ -131,6 +134,12 @@ public class ClientsService : IClientsService
         {
             _traderFtdClient = new(
                 GrpcChannel.ForAddress(settings.TraderFtdFlowsGrpcServiceUrl));
+        }
+
+        if (settings.InternalReportsFlowsGrpcServiceUrl.IsNotNullOrEmpty())
+        {
+            _internalReportsClient = new(
+                GrpcChannel.ForAddress(settings.InternalReportsFlowsGrpcServiceUrl));
         }
     }
 
@@ -142,7 +151,7 @@ public class ClientsService : IClientsService
         var call = _traderFtdClient!.Get();
         foreach (var traderId in traders)
         {
-            await call.RequestStream.WriteAsync(new ()
+            await call.RequestStream.WriteAsync(new()
             {
                 TraderId = traderId
 
@@ -160,7 +169,7 @@ public class ClientsService : IClientsService
         return result;
 
     }
-    
+
 
     #endregion
 
@@ -168,7 +177,7 @@ public class ClientsService : IClientsService
 
     public async Task ChargeSwap(string positionId, string accountId, double amount)
     {
-        await _positionManagerClient!.ChargeSwapAsync(new ()
+        await _positionManagerClient!.ChargeSwapAsync(new()
         {
             PositionId = positionId,
             AccountId = accountId,
@@ -187,11 +196,11 @@ public class ClientsService : IClientsService
         var stream = _traderCredentialsClient!.GetTraders(request).ResponseStream;
 
         var data = new List<TraderBrandModel>();
-       while (await stream.MoveNext())
-       {
-           data.Add(TraderBrandModel.FromGrpc(stream.Current));
-       }
-       return data;
+        while (await stream.MoveNext())
+        {
+            data.Add(TraderBrandModel.FromGrpc(stream.Current));
+        }
+        return data;
     }
 
     public async Task<List<TraderBrandModel>> SearchTraderBrandsAsync(string searchValue)
@@ -339,7 +348,7 @@ public class ClientsService : IClientsService
         while (await call.ResponseStream.MoveNext())
         {
             var keyValue = call.ResponseStream.Current;
-            if(!keyValue.HasValue)
+            if (!keyValue.HasValue)
                 continue;
             result.Add(keyValue);
         }
@@ -350,7 +359,7 @@ public class ClientsService : IClientsService
     public async Task<GetKeyValueGrpcResponseModel> GetClientKeyValue(string clientId, string key)
     {
         var call = _keyValueClient!.Get();
-        
+
         await call.RequestStream.WriteAsync(new GetKeyValueGrpcRequestModel
         {
             ClientId = clientId,
@@ -381,7 +390,7 @@ public class ClientsService : IClientsService
     #endregion
 
     #region Manager Access
-    
+
     private bool CanManagerAccess(IBackOfficeUser manager, string traderId)
     {
         var res = _managerAccessClient!.CanAccess(new() { ManagerId = manager.Id, TraderId = traderId });
@@ -441,7 +450,7 @@ public class ClientsService : IClientsService
         while (await dataStream.MoveNext())
         {
             var traderId = dataStream.Current.TraderId!;
-            data.TryAdd(dataStream.Current.TraderId, new ());
+            data.TryAdd(dataStream.Current.TraderId, new());
             data[traderId].Add(dataStream.Current.ManagerType, dataStream.Current.ManagerId);
         }
         return data;
@@ -497,7 +506,7 @@ public class ClientsService : IClientsService
 
     public async Task<KycStatus> GetClientKycStatusAsync(string clientId)
     {
-        var request = new GetStatusRequest { ClientId = clientId};
+        var request = new GetStatusRequest { ClientId = clientId };
         var clientData = await _kycStatusClient!.GetAsync(request);
         return clientData.Status;
     }
@@ -633,18 +642,18 @@ public class ClientsService : IClientsService
         return operations;
     }
 
-    public async Task<Dictionary<string, Dictionary<string,List<ReportOperationHistoryItem>>>> SearchOperationsHistoryAsync(SearchHistory search)
+    public async Task<Dictionary<string, Dictionary<string, List<ReportOperationHistoryItem>>>> SearchOperationsHistoryAsync(SearchHistory search)
     {
         var dataStream =
             _reportClient!.SearchHistoryPositions(search).ResponseStream;
 
-        var data = new Dictionary<string, Dictionary<string,List<ReportOperationHistoryItem>>>();
+        var data = new Dictionary<string, Dictionary<string, List<ReportOperationHistoryItem>>>();
         while (await dataStream.MoveNext())
         {
             var traderId = dataStream.Current.TraderId!;
             var accountId = dataStream.Current.AccountId!;
-            data.TryAdd(traderId, new ()); 
-            data[traderId].TryAdd(accountId,new());
+            data.TryAdd(traderId, new());
+            data[traderId].TryAdd(accountId, new());
             data[traderId][accountId].Add(dataStream.Current);
         }
         return data;
@@ -851,6 +860,22 @@ public class ClientsService : IClientsService
         request.TraderIds.AddRange(traderIds);
         var stream = _withdrawalsClient!.SearchWithdrawals(request).ResponseStream;
         return await GetItemsList<WithdrawalGrpcModel>(stream);
+    }
+
+    #endregion
+
+    #region Internal Reports Service
+
+    public async Task<NetDepositReportModel> GetNetDepositReportAsync(DateTime from, DateTime to)
+    {
+        var request = new FromToUint64Model
+        {
+            From = (ulong)from.UnixTime(),
+            To = (ulong)to.UnixTime()
+        };
+
+        var report = await _internalReportsClient!.GetNetDepositReportAsync(request);
+        return report;
     }
 
     #endregion

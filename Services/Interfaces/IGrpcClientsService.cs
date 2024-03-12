@@ -2,20 +2,20 @@
 using DataServices.Models.Auth.Users;
 using DataServices.Models.Clients;
 using Docs;
+using InternalReportsFlows;
 using Keyvalue;
 using Kyc;
 using Kyclog;
 using ManagerAccessFlows;
 using Pd;
 using ReportGrpc;
-using System.Threading.Tasks;
 using TradeLog;
 using TraderFtd;
 using WithdrawalsFlows;
 
 namespace DataServices.Services.Interfaces;
 
-public interface IClientsService
+public interface IGrpcClientsService
 {
     public Task<string> GetClientRedirectUrl(string clientId);
 
@@ -120,6 +120,12 @@ public interface IClientsService
     Task DenyWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId);
 
     Task<List<WithdrawalGrpcModel>> SearchWithdrawals(IEnumerable<string> traderIds, WithdrawalStatus status);
+
+    #endregion
+
+    #region Internal Reports service
+
+    Task<NetDepositReportModel> GetNetDepositReportAsync(DateTime from, DateTime to);
 
     #endregion
 }
