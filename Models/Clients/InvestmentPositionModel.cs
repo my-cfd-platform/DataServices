@@ -26,11 +26,13 @@ public class InvestmentPositionModel
     public double TakeProfitInAssetPrice { get; set; }
     public double StopLossInAssetPrice { get; set; }
     public double OpenPrice { get; set; }
+    [Ignore]
     public BidAskModel OpenBidAsk { get; set; }
     [Ignore]
     public string OpenProcessId { get; set; }
     public DateTime OpenDate { get; set; }
     public double ClosePrice { get; set; }
+    [Ignore]
     public BidAskModel CloseBidAsk { get; set; }
     [Ignore]
     public string CloseProcessId { get; set; }
