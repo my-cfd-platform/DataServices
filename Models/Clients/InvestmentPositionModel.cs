@@ -1,4 +1,5 @@
-﻿using DataServices.Extensions;
+﻿using CsvHelper.Configuration.Attributes;
+using DataServices.Extensions;
 using ReportGrpc;
 
 namespace DataServices.Models.Clients;
@@ -14,8 +15,10 @@ public class InvestmentPositionModel
     public double InvestAmount { get; set; }
     public double Leverage { get; set; }
     public double StopOutPercent { get; set; }
+    [Ignore]
     public string CreateProcessId { get; set; }
     public DateTime Created { get; set; }
+    [Ignore]
     public string LastUpdateProcessId { get; set; }
     public DateTime LastUpdateDate { get; set; }
     public double TpInProfit { get; set; }
@@ -24,10 +27,12 @@ public class InvestmentPositionModel
     public double StopLossInAssetPrice { get; set; }
     public double OpenPrice { get; set; }
     public BidAskModel OpenBidAsk { get; set; }
+    [Ignore]
     public string OpenProcessId { get; set; }
     public DateTime OpenDate { get; set; }
     public double ClosePrice { get; set; }
     public BidAskModel CloseBidAsk { get; set; }
+    [Ignore]
     public string CloseProcessId { get; set; }
     public DateTime CloseDate { get; set; }
     public ReportsFlowsClosePositionReason CloseReason { get; set; }
@@ -36,12 +41,15 @@ public class InvestmentPositionModel
     public string Base { get; set; }
     public string Quote { get; set; }
     public string Collateral { get; set; }
+    [Ignore]
     public bool SimpleInstrument { get; set; } = true;
     public double CollateralBaseOpenPrice { get; set; }
     public double CollateralQuoteClosePrice { get; set; }
+    [Ignore]
     public BidAskModel CollateralBaseOpenBidAsk { get; set; }
+    [Ignore]
     public BidAskModel CollateralQuoteCloseBidAsk { get; set; }
-
+    [Ignore]
     public List<PositionSwap> Swaps { get; set; }
 
     public static InvestmentPositionModel FromGrpc(ReportsFlowsActivePositionGrpcModel src)
