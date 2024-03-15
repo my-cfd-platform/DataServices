@@ -1,9 +1,10 @@
 ﻿using DataServices.MyNoSql.Interfaces;
-using DataServices.MyNoSql.Models;
+using DataServices.MyNoSql.Interfaces.Authentication;
+using DataServices.MyNoSql.Models.Authentication;
 using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataWriter;
 
-namespace DataServices.MyNoSql.Providers;
+namespace DataServices.MyNoSql.Providers.Authentication;
 
 public class BackOfficeUsersRepository : IRepository<IBackofficeUser>
 {
@@ -56,5 +57,10 @@ public class BackOfficeUsersRepository : IRepository<IBackofficeUser>
     public async Task DeleteAsync(IBackofficeUser item)
     {
         await DeleteAsync(item.Id);
+    }
+
+    public async Task<int> GetCountAsync()
+    {
+        return await _table.GetCountAsync(BackofficeUserMyNoSqlEntity.GeneratePartitionKey());
     }
 }

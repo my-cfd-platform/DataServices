@@ -1,4 +1,5 @@
 using DataServices.MyNoSql.Interfaces;
+using DataServices.MyNoSql.Interfaces.Authentication;
 
 namespace DataServices.Models.Backoffice;
 

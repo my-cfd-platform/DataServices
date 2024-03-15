@@ -58,4 +58,9 @@ public class ClientSearchRepository : IRepository<IClientSearch>
     {
         await DeleteAsync(item.Id);
     }
+
+    public Task<int> GetCountAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

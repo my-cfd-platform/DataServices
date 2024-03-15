@@ -57,4 +57,9 @@ public class TradingInstrumentRepository : IRepository<ITradingInstrument>
     {
         await DeleteAsync(item.Id);
     }
+
+    public Task<int> GetCountAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -2,10 +2,10 @@
 using DataServices.Models.Auth.Roles;
 using DataServices.Models.Auth.Users;
 using DataServices.MyNoSql.Enums;
-using DataServices.MyNoSql.Interfaces;
+using DataServices.MyNoSql.Interfaces.Authentication;
 using MyNoSqlServer.Abstractions;
 
-namespace DataServices.MyNoSql.Models;
+namespace DataServices.MyNoSql.Models.Authentication;
 
 public class BackofficeUserMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeUser
 {
@@ -13,7 +13,7 @@ public class BackofficeUserMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeUser
 
     public static string GenerateRowKey(string id) => id;
 
-    public string Id => this.RowKey;
+    public string Id => RowKey;
 
     public DateTime Registered { get; set; }
     public bool IsBlocked { get; set; }
@@ -36,17 +36,17 @@ public class BackofficeUserMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeUser
             PartitionKey = GeneratePartitionKey(),
             RowKey = GenerateRowKey(src.Id),
             Registered = src.Registered,
-            IsBlocked = src.IsBlocked ,
-            PersonalName = src.PersonalName ,
-            IsAdmin = src.IsAdmin ,
+            IsBlocked = src.IsBlocked,
+            PersonalName = src.PersonalName,
+            IsAdmin = src.IsAdmin,
             ReferralLink = src.ReferralLink,
-            Roles = src.Roles ,
-            CertAliases = src.CertAliases ,
-            InternalPhoneNumberId = src.InternalPhoneNumberId ,
-            AssignedPhonePoolIds = src.AssignedPhonePoolIds ,
-            AsteriskPhoneNumberId = src.AsteriskPhoneNumberId ,
-            TeamId = src.TeamId ,
-            DataAccessRules = src.DataAccessRules ,
+            Roles = src.Roles,
+            CertAliases = src.CertAliases,
+            InternalPhoneNumberId = src.InternalPhoneNumberId,
+            AssignedPhonePoolIds = src.AssignedPhonePoolIds,
+            AsteriskPhoneNumberId = src.AsteriskPhoneNumberId,
+            TeamId = src.TeamId,
+            DataAccessRules = src.DataAccessRules,
             SkillLevel = src.SkillLevel
         };
     }
@@ -58,18 +58,18 @@ public class BackofficeUserMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeUser
             PartitionKey = GeneratePartitionKey(),
             RowKey = GenerateRowKey(src.Id),
             Registered = src.Registered,
-            IsBlocked = src.IsBlocked ,
-            PersonalName = src.PersonalName ,
-            IsAdmin = src.IsAdmin ,
+            IsBlocked = src.IsBlocked,
+            PersonalName = src.PersonalName,
+            IsAdmin = src.IsAdmin,
             ReferralLink = src.ReferralLink,
-            Roles = src.Roles.Select(r=>r.Id) ,
-            CertAliases = src.CertAliases ,
-            InternalPhoneNumberId = src.PhoneNumberIds.FirstOrDefault(n => n.Key == (int) CallProviderType.Samcon).Value,
-            AssignedPhonePoolIds = src.AssignedPhonePoolIds ,
-            AsteriskPhoneNumberId = src.PhoneNumberIds.FirstOrDefault(n => n.Key == (int) CallProviderType.Asterisk).Value,
+            Roles = src.Roles.Select(r => r.Id),
+            CertAliases = src.CertAliases,
+            InternalPhoneNumberId = src.PhoneNumberIds.FirstOrDefault(n => n.Key == (int)CallProviderType.Samcon).Value,
+            AssignedPhonePoolIds = src.AssignedPhonePoolIds,
+            AsteriskPhoneNumberId = src.PhoneNumberIds.FirstOrDefault(n => n.Key == (int)CallProviderType.Asterisk).Value,
             TeamId = (string.IsNullOrEmpty(src.TeamId) ? null : src.TeamId)!,
-            DataAccessRules = (int) src.DataAccessRules,
-            SkillLevel = src.SkillLevel.HasValue ? (int) src.SkillLevel : null
+            DataAccessRules = (int)src.DataAccessRules,
+            SkillLevel = src.SkillLevel.HasValue ? (int)src.SkillLevel : null
         };
     }
 

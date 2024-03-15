@@ -1,9 +1,9 @@
 ﻿using DataServices.Extensions;
 using DataServices.MyNoSql.Enums;
-using DataServices.MyNoSql.Interfaces;
+using DataServices.MyNoSql.Interfaces.Authentication;
 using MyNoSqlServer.Abstractions;
 
-namespace DataServices.MyNoSql.Models;
+namespace DataServices.MyNoSql.Models.Authentication;
 
 public class BackofficeAutoOwnerMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeAutoOwner
 {
@@ -13,8 +13,8 @@ public class BackofficeAutoOwnerMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeAuto
 
     public string Id
     {
-        get => this.RowKey;
-        set => this.RowKey = value;
+        get => RowKey;
+        set => RowKey = value;
     }
 
     public string OfficeId { get; set; }
@@ -26,7 +26,7 @@ public class BackofficeAutoOwnerMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeAuto
 
     public static BackofficeAutoOwnerMyNoSqlEntity Create(IBackofficeAutoOwner src)
     {
-        if(src.Id.IsNullOrEmpty()) 
+        if (src.Id.IsNullOrEmpty())
             src.Id = Guid.NewGuid().ToString();
         return new BackofficeAutoOwnerMyNoSqlEntity
         {

@@ -96,4 +96,9 @@ public class StatusesRepository : IRepository<IStatus>
     {
         await _table.DeleteAsync(item.Type, item.Id);
     }
+
+    public Task<int> GetCountAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

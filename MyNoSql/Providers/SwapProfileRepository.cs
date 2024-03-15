@@ -65,6 +65,11 @@ public class SwapProfileRepository : IRepository<ISwapProfile>
         await _table.DeleteAsync(partitionKey, rowKey);
     }
 
+    public Task<int> GetCountAsync()
+    {
+        throw new NotImplementedException();
+    }
+
     #endregion
 
 }

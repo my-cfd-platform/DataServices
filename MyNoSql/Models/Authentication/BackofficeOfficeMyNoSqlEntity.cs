@@ -1,8 +1,9 @@
 ﻿using DataServices.Extensions;
 using DataServices.MyNoSql.Interfaces;
+using DataServices.MyNoSql.Interfaces.Authentication;
 using MyNoSqlServer.Abstractions;
 
-namespace DataServices.MyNoSql.Models;
+namespace DataServices.MyNoSql.Models.Authentication;
 
 public class BackofficeOfficeMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeOffice
 {
@@ -12,17 +13,17 @@ public class BackofficeOfficeMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeOffice
 
     public string Id
     {
-        get => this.RowKey;
-        set => this.RowKey = value;
+        get => RowKey;
+        set => RowKey = value;
     }
 
-    public string Name { get; set;}
-    public bool IsDisabled { get; set;}
-    public string BrandId { get; set;}
+    public string Name { get; set; }
+    public bool IsDisabled { get; set; }
+    public string BrandId { get; set; }
 
     public static BackofficeOfficeMyNoSqlEntity Create(IBackofficeOffice src)
     {
-        if(src.Id.IsNullOrEmpty()) 
+        if (src.Id.IsNullOrEmpty())
             src.Id = Guid.NewGuid().ToString();
         return new BackofficeOfficeMyNoSqlEntity
         {

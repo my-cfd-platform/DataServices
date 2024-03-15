@@ -1,6 +1,7 @@
 ﻿using DataServices.Models.Auth.Roles;
 using DataServices.Models.Auth.Users;
 using DataServices.MyNoSql.Interfaces;
+using DataServices.MyNoSql.Interfaces.Authentication;
 
 namespace DataServices.Services.Interfaces;
 

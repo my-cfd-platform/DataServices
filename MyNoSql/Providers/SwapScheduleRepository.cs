@@ -66,4 +66,9 @@ public class SwapScheduleRepository : IRepository<ISwapSchedule>
         var partitionKey = SwapScheduleMyNoSqlEntity.GeneratePartitionKey(item);
         await _table.DeleteAsync(partitionKey, rowKey);
     }
+
+    public Task<int> GetCountAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

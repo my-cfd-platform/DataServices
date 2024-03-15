@@ -1,4 +1,4 @@
-﻿namespace DataServices.MyNoSql.Interfaces;
+﻿namespace DataServices.MyNoSql.Interfaces.Authentication;
 
 public interface IBackofficeOffice
 {

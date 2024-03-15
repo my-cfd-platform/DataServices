@@ -1,9 +1,10 @@
 ﻿using DataServices.MyNoSql.Interfaces;
-using DataServices.MyNoSql.Models;
+using DataServices.MyNoSql.Interfaces.Authentication;
+using DataServices.MyNoSql.Models.Authentication;
 using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataWriter;
 
-namespace DataServices.MyNoSql.Providers;
+namespace DataServices.MyNoSql.Providers.Authentication;
 
 public class BackOfficeTeamsRepository : IRepository<IBackofficeTeam>
 {
@@ -56,5 +57,10 @@ public class BackOfficeTeamsRepository : IRepository<IBackofficeTeam>
     public async Task DeleteAsync(IBackofficeTeam item)
     {
         await DeleteAsync(item.Id);
+    }
+
+    public Task<int> GetCountAsync()
+    {
+        throw new NotImplementedException();
     }
 }

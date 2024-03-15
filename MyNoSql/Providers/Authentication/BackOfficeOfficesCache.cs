@@ -1,9 +1,10 @@
 ﻿using DataServices.MyNoSql.Interfaces;
-using DataServices.MyNoSql.Models;
+using DataServices.MyNoSql.Interfaces.Authentication;
+using DataServices.MyNoSql.Models.Authentication;
 using MyNoSqlServer.Abstractions;
 using MyNoSqlServer.DataReader;
 
-namespace DataServices.MyNoSql.Providers;
+namespace DataServices.MyNoSql.Providers.Authentication;
 
 public class BackOfficeOfficesCache : ICache<IBackofficeOffice>
 {

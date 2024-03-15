@@ -3,8 +3,10 @@ using DataServices.Models;
 using DataServices.Models.Auth.Roles;
 using DataServices.Models.Auth.Users;
 using DataServices.MyNoSql.Interfaces;
-using DataServices.MyNoSql.Models;
+using DataServices.MyNoSql.Interfaces.Authentication;
+using DataServices.MyNoSql.Models.Authentication;
 using DataServices.MyNoSql.Providers;
+using DataServices.MyNoSql.Providers.Authentication;
 using DataServices.Services.Interfaces;
 using MyNoSqlServer.DataReader;
 

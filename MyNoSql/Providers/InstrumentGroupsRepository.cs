@@ -58,4 +58,9 @@ public class InstrumentGroupsRepository : IRepository<IInstrumentGroup>
     {
         await DeleteAsync(item.Id);
     }
+
+    public Task<int> GetCountAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

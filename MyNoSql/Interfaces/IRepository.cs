@@ -11,4 +11,5 @@ public interface IRepository<T>
     Task UpdateAsync(T item);
     Task DeleteAsync(string key);
     Task DeleteAsync(T item);
+    Task<int> GetCountAsync();
 }

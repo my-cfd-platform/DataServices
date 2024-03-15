@@ -1,9 +1,9 @@
 ﻿using DataServices.Models.Auth.Permissions;
 using DataServices.Models.Auth.Roles;
-using DataServices.MyNoSql.Interfaces;
+using DataServices.MyNoSql.Interfaces.Authentication;
 using MyNoSqlServer.Abstractions;
 
-namespace DataServices.MyNoSql.Models;
+namespace DataServices.MyNoSql.Models.Authentication;
 
 public class BackofficeRoleMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeRole
 {
@@ -11,7 +11,7 @@ public class BackofficeRoleMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeRole
 
     public static string GenerateRowKey(string id) => id;
 
-    public string Id => this.RowKey;
+    public string Id => RowKey;
 
     public string Name { get; set; }
     public IEnumerable<PermissionEntity> Permissions { get; set; }
@@ -26,7 +26,7 @@ public class BackofficeRoleMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeRole
             Permissions = src.Permissions,
         };
     }
-    
+
     public static BackofficeRoleMyNoSqlEntity Create(BackofficeRoleModel src)
     {
         return new BackofficeRoleMyNoSqlEntity
@@ -35,7 +35,7 @@ public class BackofficeRoleMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeRole
             RowKey = GenerateRowKey(src.Name),
             Name = src.Name,
             Permissions = src.Permissions
-                .Select(p=>new PermissionEntity
+                .Select(p => new PermissionEntity
                 {
                     Resource = p.Resource.ToString(),
                     Action = p.Actions
@@ -50,7 +50,7 @@ public class BackofficeRoleMyNoSqlEntity : MyNoSqlDbEntity, IBackofficeRole
             Id = src.Id,
             Name = src.Name,
             Permissions = src.Permissions
-                .Select(p=>
+                .Select(p =>
                 {
                     return new Permission(Enum.Parse<PermissionResource>(p.Resource), p.Action);
                 }),

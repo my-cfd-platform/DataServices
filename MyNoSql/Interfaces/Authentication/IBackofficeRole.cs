@@ -1,6 +1,6 @@
-﻿using DataServices.MyNoSql.Models;
+﻿using DataServices.MyNoSql.Models.Authentication;
 
-namespace DataServices.MyNoSql.Interfaces;
+namespace DataServices.MyNoSql.Interfaces.Authentication;
 
 public interface IBackofficeRole
 {

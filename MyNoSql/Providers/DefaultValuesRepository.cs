@@ -57,4 +57,9 @@ public class DefaultValuesRepository : IRepository<IDefaultValues>
     {
         await DeleteAsync(item.Id);
     }
+
+    public Task<int> GetCountAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

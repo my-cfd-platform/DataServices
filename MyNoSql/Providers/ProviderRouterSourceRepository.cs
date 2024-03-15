@@ -57,4 +57,9 @@ public class ProviderRouterSourceRepository : IRepository<IProviderRouterSource>
     {
         await DeleteAsync(item.Id);
     }
+
+    public Task<int> GetCountAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

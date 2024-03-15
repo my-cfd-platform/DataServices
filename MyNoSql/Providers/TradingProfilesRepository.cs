@@ -59,4 +59,9 @@ public class TradingProfilesRepository : IRepository<ITradingProfile>
     {
         await DeleteAsync(item.Id);
     }
+
+    public Task<int> GetCountAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

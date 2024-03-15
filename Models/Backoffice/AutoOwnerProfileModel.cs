@@ -1,6 +1,7 @@
 using DataServices.MyNoSql.Enums;
 using DataServices.MyNoSql.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using DataServices.MyNoSql.Interfaces.Authentication;
 
 namespace DataServices.Models.Backoffice;
 

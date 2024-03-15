@@ -57,4 +57,9 @@ public class InstrumentMappingRepository : IRepository<IProviderInstrumentMap>
     {
         await DeleteAsync(item.Id);
     }
+
+    public Task<int> GetCountAsync()
+    {
+        throw new NotImplementedException();
+    }
 }
