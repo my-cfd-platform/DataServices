@@ -185,6 +185,18 @@ public class GrpcClientsService : IGrpcClientsService
         });
     }
 
+    public async Task<PositionManagerOperationsCodes> ClosePosition(string positionId, string accountId, string traderId)
+    {
+        var res = await _positionManagerClient!.ClosePositionAsync(new PositionManagerClosePositionGrpcRequest
+        {
+            ProcessId = GetProcessId(),
+            PositionId = positionId,
+            TraderId = traderId,
+            AccountId = accountId
+        });
+        return res.Status;
+    }
+
     #endregion
 
     #region Trader and Account

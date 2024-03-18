@@ -8,6 +8,7 @@ using Kyc;
 using Kyclog;
 using ManagerAccessFlows;
 using Pd;
+using PositionManager;
 using ReportGrpc;
 using TradeLog;
 using TraderFtd;
@@ -24,7 +25,7 @@ public interface IGrpcClientsService
     #region PositionManager
 
     Task ChargeSwap(string positionId, string accountId, double amount);
-
+    Task<PositionManagerOperationsCodes> ClosePosition(string positionId, string accountId, string traderId);
     #endregion
 
     #region Trader and Account
