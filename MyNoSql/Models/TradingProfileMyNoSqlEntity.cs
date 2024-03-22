@@ -15,25 +15,26 @@ public class TradingProfileMyNoSqlEntity : MyNoSqlDbEntity, ITradingProfile
 
     public double StopOutPercent { get; set; }
 
-    public double PositionToppingUpPercent { get; set; }
+    public double ToppingUpPercent { get; set; }
 
     public bool IsABook { get; set; }
 
-    IEnumerable<ITradingProfileInstrument> ITradingProfile.Instruments =>
-        Instruments;
+    IEnumerable<ITradingProfileInstrument> ITradingProfile.Instruments => Instruments;
 
     public List<TradingProfileInstrumentMyNoSqlEntity> Instruments { get; set; }
 
     public static TradingProfileMyNoSqlEntity Create(ITradingProfile src)
     {
-        TradingProfileMyNoSqlEntity profileMyNoSqlEntity = new TradingProfileMyNoSqlEntity();
-        profileMyNoSqlEntity.PartitionKey = TradingProfileMyNoSqlEntity.GeneratePartitionKey();
-        profileMyNoSqlEntity.RowKey = TradingProfileMyNoSqlEntity.GenerateRowKey(src.Id);
-        profileMyNoSqlEntity.MarginCallPercent = src.MarginCallPercent;
-        profileMyNoSqlEntity.PositionToppingUpPercent = src.PositionToppingUpPercent;
-        profileMyNoSqlEntity.StopOutPercent = src.StopOutPercent;
-        profileMyNoSqlEntity.Instruments = src.Instruments.Select<ITradingProfileInstrument, TradingProfileInstrumentMyNoSqlEntity>(new Func<ITradingProfileInstrument, TradingProfileInstrumentMyNoSqlEntity>(TradingProfileInstrumentMyNoSqlEntity.Create)).ToList<TradingProfileInstrumentMyNoSqlEntity>();
-        profileMyNoSqlEntity.IsABook = src.IsABook;
-        return profileMyNoSqlEntity;
+
+        return new TradingProfileMyNoSqlEntity
+        {
+            PartitionKey = GeneratePartitionKey(),
+            RowKey = GenerateRowKey(src.Id),
+            MarginCallPercent = src.MarginCallPercent,
+            ToppingUpPercent = src.ToppingUpPercent,
+            StopOutPercent = src.StopOutPercent,
+            Instruments = src.Instruments.Select(TradingProfileInstrumentMyNoSqlEntity.Create).ToList(),
+            IsABook = src.IsABook
+        };
     }
 }
