@@ -221,6 +221,8 @@ namespace DataServices.Models.Auth.Permissions
         Affiliates,
         [PermissionResourceInfo("Phone Pools", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         PhonePools,
+        [PermissionResourceInfo("Reports")]
+        Reports,
         [PermissionResourceInfo("Permissions")]
         Permissions,
         [PermissionResourceInfo("Onboardings", PermissionActions.View, PermissionActions.Edit, Demo = true)]
@@ -377,6 +379,8 @@ namespace DataServices.Models.Auth.Permissions
         MarketAlertsMarketMovement,
         [PermissionResourceInfo("Educations", PermissionActions.View, PermissionActions.Edit, Demo = true)]
         Educations,
+        [PermissionResourceInfo(Reports, "Balance Transactions")]
+        ReportsBalanceTransactions,
         [PermissionResourceInfo(Permissions, "Users", PermissionActions.View, PermissionActions.Edit)]
         PermissionsUsers,
         [PermissionResourceInfo(Permissions, "Teams", PermissionActions.View, PermissionActions.Edit)]
