@@ -1,6 +1,8 @@
 ﻿using AccountsManager;
+using DataServices.Models;
 using DataServices.Models.Auth.Users;
 using DataServices.Models.Clients;
+using DepositFlows;
 using Docs;
 using InternalReportsFlows;
 using Keyvalue;
@@ -120,7 +122,14 @@ public interface IGrpcClientsService
     Task ApproveWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId);
     Task DenyWithdrawalRequestsAsync(string id, string traderId, string accountId, string agentId);
 
-    Task<List<WithdrawalGrpcModel>> SearchWithdrawals(IEnumerable<string> traderIds, WithdrawalStatus status);
+    Task<List<WithdrawalGrpcModel>> SearchWithdrawals(IEnumerable<string> traderIds,
+        WithdrawalStatus? status = null, DateTimeRange? range = null);
+
+    #endregion
+
+    #region Deposits
+
+    Task<List<DepositGrpcModel>> SearchDeposits(IEnumerable<string> traderIds, DateTimeRange? range = null);
 
     #endregion
 

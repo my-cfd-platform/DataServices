@@ -8,6 +8,7 @@ using DataServices.Models.Clients;
 using DataServices.MyNoSql.Interfaces;
 using DataServices.Services.Interfaces;
 using DataServices.Utils;
+using DepositFlows;
 using Docs;
 using DotNetCoreDecorators;
 using Google.Protobuf;
@@ -25,7 +26,6 @@ using Kyclog;
 using PositionManager;
 using TraderFtd;
 using WithdrawalsFlows;
-using FromToUint64Model = InternalReportsFlows.FromToUint64Model;
 using GetTradersRequest = TraderCredentials.GetTradersRequest;
 
 namespace DataServices.Services;
@@ -44,6 +44,7 @@ public class GrpcClientsService : IGrpcClientsService
     private readonly DocumentsService.DocumentsServiceClient? _documentsClient;
     private readonly KycChangeLogsService.KycChangeLogsServiceClient? _kycChangeLogsClient;
     private readonly WithdrawalFlowsService.WithdrawalFlowsServiceClient? _withdrawalsClient;
+    private readonly DepositFlowsService.DepositFlowsServiceClient? _depositsClient;
     private readonly PositionManagerGrpcService.PositionManagerGrpcServiceClient? _positionManagerClient;
     private readonly TraderFtdGrpcService.TraderFtdGrpcServiceClient? _traderFtdClient;
     private readonly InternalReportsGrpcService.InternalReportsGrpcServiceClient? _internalReportsClient;
@@ -123,6 +124,12 @@ public class GrpcClientsService : IGrpcClientsService
         {
             _withdrawalsClient = new WithdrawalFlowsService.WithdrawalFlowsServiceClient(
                 GrpcChannel.ForAddress(settings.WithdrawalsGrpcServiceUrl));
+        }
+
+        if (settings.DepositsGrpcServiceUrl.IsNotNullOrEmpty())
+        {
+            _depositsClient = new DepositFlowsService.DepositFlowsServiceClient(
+                GrpcChannel.ForAddress(settings.DepositsGrpcServiceUrl));
         }
 
         if (settings.PositionsManagerServiceUrl.IsNotNullOrEmpty())
@@ -863,12 +870,24 @@ public class GrpcClientsService : IGrpcClientsService
         });
     }
 
-    public async Task<List<WithdrawalGrpcModel>> SearchWithdrawals(IEnumerable<string> traderIds, WithdrawalStatus status)
+    public async Task<List<WithdrawalGrpcModel>> SearchWithdrawals(IEnumerable<string> traderIds,
+        WithdrawalStatus? status = null, DateTimeRange? range = null)
     {
-        var request = new SearchWithdrawalsRequest
+        var request = new SearchWithdrawalsRequest();
+        if (status is not null)
         {
-            Status = WithdrawalStatus.Pending
-        };
+            request.Status = status.Value;
+        }
+
+        if (range is not null)
+        {
+            request.Range = new()
+            {
+                From = (ulong)range.From.UnixTime(),
+                To = (ulong)range.To.UnixTime()
+            };
+        }
+
         request.TraderIds.AddRange(traderIds);
         var stream = _withdrawalsClient!.SearchWithdrawals(request).ResponseStream;
         return await GetItemsList<WithdrawalGrpcModel>(stream);
@@ -876,18 +895,36 @@ public class GrpcClientsService : IGrpcClientsService
 
     #endregion
 
+    #region Deposits service
+
+    public async Task<List<DepositGrpcModel>> SearchDeposits(IEnumerable<string> traderIds, DateTimeRange? range = null)
+    {
+        var request = new SearchDepositsRequest();
+        if (range is not null)
+        {
+            request.Range = new()
+            {
+                From = (ulong)range.From.UnixTime(),
+                To = (ulong)range.To.UnixTime()
+            };
+        }
+        request.TraderIds.AddRange(traderIds);
+        var stream = _depositsClient!.SearchDeposits(request).ResponseStream;
+        return await GetItemsList<DepositGrpcModel>(stream);
+    }
+
+    #endregion
+
+
     #region Internal Reports Service
 
     public async Task<NetDepositReportModel> GetNetDepositReportAsync(DateTime from, DateTime to)
     {
-        var request = new FromToUint64Model
+        return await _internalReportsClient!.GetNetDepositReportAsync(new()
         {
             From = (ulong)from.UnixTime(),
             To = (ulong)to.UnixTime()
-        };
-
-        var report = await _internalReportsClient!.GetNetDepositReportAsync(request);
-        return report;
+        });
     }
 
     #endregion
