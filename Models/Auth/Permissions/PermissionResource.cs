@@ -32,9 +32,9 @@ namespace DataServices.Models.Auth.Permissions
         ClientViewDeposits,
         [PermissionResourceInfo(ClientView, "Withdrawals", PermissionActions.View, PermissionActions.Edit)]
         ClientViewWithdrawals,
-        [PermissionResourceInfo(ClientView, "Transactions")]
+        [PermissionResourceInfo(ClientView, "Trading transactions")]
         ClientViewTransactions,
-        [PermissionResourceInfo(ClientView, "Balances")]
+        [PermissionResourceInfo(ClientView, "Balance transactions")]
         ClientViewBalances,
         [PermissionResourceInfo(ClientView, "Active deals")]
         ClientViewActiveDeals,
