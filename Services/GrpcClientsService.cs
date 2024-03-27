@@ -1,6 +1,6 @@
-using System.Text;
 using AccountsManager;
 using AuthenticationIntegration;
+using BidaskSnapshotWriter;
 using DataServices.Extensions;
 using DataServices.Models;
 using DataServices.Models.Auth.Users;
@@ -16,14 +16,14 @@ using Grpc.Core;
 using Grpc.Net.Client;
 using InternalReportsFlows;
 using Keyvalue;
+using Kyc;
+using Kyclog;
 using ManagerAccessFlows;
 using Pd;
+using PositionManager;
 using ReportGrpc;
 using TradeLog;
 using TraderCredentials;
-using Kyc;
-using Kyclog;
-using PositionManager;
 using TraderFtd;
 using WithdrawalsFlows;
 using GetTradersRequest = TraderCredentials.GetTradersRequest;
@@ -48,6 +48,7 @@ public class GrpcClientsService : IGrpcClientsService
     private readonly PositionManagerGrpcService.PositionManagerGrpcServiceClient? _positionManagerClient;
     private readonly TraderFtdGrpcService.TraderFtdGrpcServiceClient? _traderFtdClient;
     private readonly InternalReportsGrpcService.InternalReportsGrpcServiceClient? _internalReportsClient;
+    private readonly BidAskSnapshotWriterGrpcService.BidAskSnapshotWriterGrpcServiceClient? _priceWriterClient;
 
     private readonly IPriceService _priceService;
 
@@ -147,6 +148,12 @@ public class GrpcClientsService : IGrpcClientsService
         {
             _internalReportsClient = new(
                 GrpcChannel.ForAddress(settings.InternalReportsFlowsGrpcServiceUrl));
+        }
+        
+        if (settings.BidAskSnapshotWriterGrpcServiceUrl.IsNotNullOrEmpty())
+        {
+            _priceWriterClient = new(
+                GrpcChannel.ForAddress(settings.BidAskSnapshotWriterGrpcServiceUrl));
         }
     }
 
@@ -915,7 +922,6 @@ public class GrpcClientsService : IGrpcClientsService
 
     #endregion
 
-
     #region Internal Reports Service
 
     public async Task<NetDepositReportModel> GetNetDepositReportAsync(DateTime from, DateTime to)
@@ -924,6 +930,22 @@ public class GrpcClientsService : IGrpcClientsService
         {
             From = (ulong)from.UnixTime(),
             To = (ulong)to.UnixTime()
+        });
+    }
+
+    #endregion
+
+    #region BidAskPriceWriter
+
+    public async Task ThrowPrice(ITradingInstrument instrument, double bid, double ask)
+    {
+        await _priceWriterClient!.PublishPriceAsync(new PublishPriceGrpcRequest
+        {
+            Id = instrument.Id,
+            Ask = ask,
+            Bid = bid,
+            Base = instrument.Base,
+            Quote = instrument.Quote
         });
     }
 

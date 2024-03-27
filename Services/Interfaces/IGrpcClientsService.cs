@@ -2,6 +2,7 @@
 using DataServices.Models;
 using DataServices.Models.Auth.Users;
 using DataServices.Models.Clients;
+using DataServices.MyNoSql.Interfaces;
 using DepositFlows;
 using Docs;
 using InternalReportsFlows;
@@ -136,6 +137,12 @@ public interface IGrpcClientsService
     #region Internal Reports service
 
     Task<NetDepositReportModel> GetNetDepositReportAsync(DateTime from, DateTime to);
+
+    #endregion
+
+    #region Bid Ask Snapshot Writer
+
+    Task ThrowPrice(ITradingInstrument instrument, double bid, double ask);
 
     #endregion
 }

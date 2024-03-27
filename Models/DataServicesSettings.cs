@@ -24,6 +24,8 @@ public class DataServicesSettings
     public string PositionsManagerServiceUrl { get; set; } = null!;
     public string TraderFtdFlowsGrpcServiceUrl { get; set; } = null!;
     public string InternalReportsFlowsGrpcServiceUrl { get; set; } = null!;
+    public string BidAskSnapshotWriterGrpcServiceUrl { get; set; } = null!;
+
 
     public DataServicesSettings(object settings)
     {
