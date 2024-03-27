@@ -34,6 +34,8 @@ namespace DataServices.Models.Auth.Permissions
         ClientViewWithdrawals,
         [PermissionResourceInfo(ClientView, "Transactions")]
         ClientViewTransactions,
+        [PermissionResourceInfo(ClientView, "Balances")]
+        ClientViewBalances,
         [PermissionResourceInfo(ClientView, "Active deals")]
         ClientViewActiveDeals,
         [PermissionResourceInfo(ClientView, "Auth logs", Demo = true)]
